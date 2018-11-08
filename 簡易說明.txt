@@ -1,0 +1,4 @@
+app.js ----> Server
+view/test.ejs ----> 模擬機器人的web
+view/home.ejs ----> 芷涵的畫面
+view/line.ejs ----> 先旻簡易畫面
