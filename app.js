@@ -18,6 +18,7 @@ var route = new Array(); //預定路線
 var endPoint = new Array(); //終點位置
 var direction = new Array(); //前進方向
 var number_plate = new Array(); //號碼牌
+var stepCount = new Array(); //步數
 var mapLength = 10;
 //
 
@@ -431,6 +432,7 @@ function next(robot_ID, index, socket) {
 		default: break;
 	}
 	console.log(direction);
+
 	if(count > 2){
 		throwNumberPlate(index, route[index].route_point[0].x, route[index].route_point[0].y);
 		re_find_route(point[index].x, point[index].y, route[index].route_point[route[index].route_point.length - 1].x, route[index].route_point[route[index].route_point.length - 1].y, index, lock)
@@ -445,8 +447,9 @@ function next(robot_ID, index, socket) {
 					//上下準備對撞時，判斷上邊的robot位置，位置在前2行或倒數第3行，往右方繞路
 					if(point[index].x == route[index].route_point[0].x && point[index].x <= 1 && point[index].y < point[i].y || point[index].x == route[index].route_point[0].x && point[index].x == mapLength - 3 && point[index].y < point[i].y){
 						var barrier = false;
+						//判斷上方robot的右方是否有障礙物
 						for(let j = 0; j < point.length; j++){
-							if(point[index].x + 1 == point[j].x && point[index].y + 1 == point[j].y){
+							if(point[index].x + 1 == point[j].x && point[index].y == point[j].y){
 								barrier = true;
 							}
 						}
@@ -492,22 +495,49 @@ function next(robot_ID, index, socket) {
 					}
 					//上下準備對撞時，判斷下邊的robot位置，位置在第3行或倒數前2行，往左方繞路
 					else if(point[index].x == route[index].route_point[0].x && point[index].x == 2 && point[index].y > point[i].y || point[index].x == route[index].route_point[0].x && point[index].x >= mapLength - 2 && point[index].y > point[i].y){
-						if(route[index].route_point.length > 1 && route[index].route_point[1].x == point[index].x - 1 && route[index].route_point[1].y == point[index].y - 1){
-							route[index].route_point.shift();
-						} else {
+						var barrier = false;
+						//判斷下方robot的左方是否有障礙物
+						for(let j = 0; j < point.length; j++){
+							if(point[index].x - 1 == point[j].x && point[index].y == point[j].y){
+								barrier = true;
+							}
+						}
+						if(!barrier){
+							if(route[index].route_point.length > 1 && route[index].route_point[1].x == point[index].x - 1 && route[index].route_point[1].y == point[index].y - 1){
+								route[index].route_point.shift();
+							} else {
+								route[index].route_point.unshift(
+									{
+										x : point[index].x - 1,
+										y : point[index].y - 1
+									}
+								)
+							}
 							route[index].route_point.unshift(
 								{
 									x : point[index].x - 1,
-									y : point[index].y - 1
+									y : point[index].y
 								}
-							)
-						}
-						route[index].route_point.unshift(
-							{
-								x : point[index].x - 1,
-								y : point[index].y
+							);
+						//若下方robot的左方有阻礙，則由上方robot往左方繞路
+						} else {
+							if(route[i].route_point.length > 1 && route[i].route_point[1].x == point[i].x - 1 && route[i].route_point[1].y == point[i].y - 1){
+								route[i].route_point.shift();
+							} else {
+								route[i].route_point.unshift(
+									{
+										x : point[i].x - 1,
+										y : point[i].y - 1
+									}
+								)
 							}
-						);
+							route[i].route_point.unshift(
+								{
+									x : point[i].x - 1,
+									y : point[i].y
+								}
+							);
+						}
 					}
 					//左右準備對撞時，判斷左邊的robot位置，位置在前5列時，往下方繞路
 					else if(point[index].y == route[index].route_point[0].y && point[index].y <= 4 && point[index].x < point[i].x){
@@ -614,19 +644,20 @@ io.on('connection', function (socket) {
     //connectionEvent start
   	socket.on('start', function (data) {
   		if (io.sockets.connected[socket.id]) {
-	  		var valid = true;
-	  		for(let i = 0; i < point.length ; i++){
+	  		var exist = false; //此robot是否存在於當前point Array
+	  		for(let i = 0; i < point.length; i++){
 	  			if(point[i].id == data.id){
 	  	  			point[i] = {
 	  	  				x : data.now_x,
 	  	  				y : data.now_y,
 	  	  				id : data.id
 	  	  			};
-	  	 			valid = false;
+	  	 			exist = true;
 	  	  			break;
 	  			}
 	  		}
-	  		if(valid){
+	  		//當robot不存在時，新增資料進point Array
+	  		if(!exist){
 	  			point.push(
 	  				{
 	  					x : data.now_x,
@@ -642,6 +673,9 @@ io.on('connection', function (socket) {
   				y : data.goto_y,
   				id : data.id
   			}
+  			if(isNaN(stepCount[index])){
+  				stepCount[index] = 0
+  			}
 	  		find_route(data.now_x, data.now_y, data.goto_x, data.goto_y, data.id, index);
 	  		next(data.id, index, socket);
   		}
@@ -653,8 +687,12 @@ io.on('connection', function (socket) {
 			route[data.index].route_point.shift();
 			next(data.id, data.index, socket);
 		}
-		else
+		else{
 			next(data.id, data.index, socket);
+		}
+		if(!data.isStop){
+			stepCount[data.index]++;
+		}
   	});
 
   	socket.on('disconnect', function() { console.log("disconnect connectCount : " + io.engine.clientsCount) });

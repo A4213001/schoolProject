@@ -135,7 +135,8 @@
         	socket.emit('walk',
 		  		{
 		  			id : id,
-		  			index : index
+		  			index : index,
+		  			isStop : true
 		  		}
 	  		);
 		});
@@ -151,7 +152,8 @@
 		  		socket.emit('walk',
 			  		{
 			  			id : id,
-			  			index : index
+			  			index : index,
+			  			isStop : false
 			  		}
 		  		);
 		  	}
