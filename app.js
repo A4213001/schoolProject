@@ -46,6 +46,31 @@ function point_equal(point1, point2){
 }
 
 /*
+  判斷前方是否有障礙物
+  params index robot的index
+  		 direction 前進方向
+  return 是否有障礙物
+*/
+function haveBarrier(index, direction){
+	var b = {
+		x : 0,
+		y : 0
+	}
+	switch(direction){
+		case 'up': b.y = -1; break;
+		case 'down': b.y = 1; break;
+		case 'left': b.x = -1; break;
+		case 'right': b.x = 1; break;
+		default: console.log("haveBarrier function direction error"); return false;
+	}
+	for(let i = 0; i < point.length; i++){
+		if(point[index].x + b.x == point[i].x && point[index].y + b.y == point[i].y){
+			barrier = true;
+		}
+	}
+}
+
+/*
   尋找robot index
   params robot_ID robot編號
          socket socket連線(用於發送return_index事件)
@@ -514,14 +539,8 @@ function next(robot_ID, index, socket) {
 					throwNumberPlate(index, route[index].route_point[0].x, route[index].route_point[0].y);
 					//上下準備對撞時，判斷上邊的robot位置，位置在前2行或倒數第3行，往右方繞路
 					if(point[index].x == route[index].route_point[0].x && point[index].x <= 1 && point[index].y < point[i].y || point[index].x == route[index].route_point[0].x && point[index].x == mapLength - 3 && point[index].y < point[i].y){
-						var barrier = false;
 						//判斷上方robot的右方是否有障礙物
-						for(let j = 0; j < point.length; j++){
-							if(point[index].x + 1 == point[j].x && point[index].y == point[j].y){
-								barrier = true;
-							}
-						}
-						if(!barrier){
+						if(!haveBarrier(index, 'right')){
 							if(route[index].route_point.length > 1 && route[index].route_point[1].x == point[index].x + 1 && route[index].route_point[1].y == point[index].y + 1){
 								route[index].route_point.shift();
 							} else {
@@ -563,14 +582,7 @@ function next(robot_ID, index, socket) {
 					}
 					//上下準備對撞時，判斷下邊的robot位置，位置在第3行或倒數前2行，往左方繞路
 					else if(point[index].x == route[index].route_point[0].x && point[index].x == 2 && point[index].y > point[i].y || point[index].x == route[index].route_point[0].x && point[index].x >= mapLength - 2 && point[index].y > point[i].y){
-						var barrier = false;
-						//判斷下方robot的左方是否有障礙物
-						for(let j = 0; j < point.length; j++){
-							if(point[index].x - 1 == point[j].x && point[index].y == point[j].y){
-								barrier = true;
-							}
-						}
-						if(!barrier){
+						if(!haveBarrier(index, 'left')){
 							if(route[index].route_point.length > 1 && route[index].route_point[1].x == point[index].x - 1 && route[index].route_point[1].y == point[index].y - 1){
 								route[index].route_point.shift();
 							} else {
