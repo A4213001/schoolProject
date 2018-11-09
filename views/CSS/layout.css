@@ -1,10 +1,35 @@
-.addressColor{
-	/* background-color: #ee3e; */
+
+ .addressColor{
+	background-color: #ee3e;
 	border: 3px solid black;
 	padding: 0px;
 	display: inline-block;
 	margin: 0px;
 }
-/* h1{
-	color: #ee3e80;	
-} */
+.row{
+	/* color: #b22222; */
+	position: absolute;
+    z-index: 10;	/* 將文字留在最上層 */
+	right: 20%;
+	top: 0%;
+	font-size: 36px;
+	/* font-family: monotype; */
+}
+
+#cvs{
+	padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+#topImage{
+	padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    position:relative;
+
+
+}
