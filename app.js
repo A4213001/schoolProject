@@ -29,7 +29,14 @@ for(var i = 0; i < mapLength; i++)
 var graph = new astar.Graph(x);
 //
 
-//---function---
+//----------------------------------function----------------------------------
+
+/*
+  位置相等判斷
+  params point1 座標1
+         point2 座標2
+  return 是否相等
+*/
 function point_equal(point1, point2){
 	if(point1.x == point2.x && point1.y == point2.y){
 		return true;
@@ -38,6 +45,12 @@ function point_equal(point1, point2){
 	}
 }
 
+/*
+  尋找robot index
+  params robot_ID robot編號
+         socket socket連線(用於發送return_index事件)
+  return index
+*/
 function find_index(robot_ID, socket){
 	for(let i = 0; i < point.length; i++){
 		if(robot_ID == point[i].id){
@@ -47,8 +60,18 @@ function find_index(robot_ID, socket){
 	}
 };
 
+/*
+  尋找路徑
+  params now_X 當前X座標
+         now_Y 當前Y座標
+         goto_X 目的地X座標
+         goto_Y 目的地Y座標
+         robot_ID robot編號
+         index robot的index
+  return 無
+  會將尋找好的路徑存進route Array中
+*/
 function find_route(now_X, now_Y, goto_X, goto_Y, robot_ID, index) {
-	// io.emit("console",{graph : graph});
 	var graphLine = new astar.Graph(x);
 	if(goto_X == 0){
 		for(let i = 1; i < mapLength - 1; i++){
@@ -66,7 +89,6 @@ function find_route(now_X, now_Y, goto_X, goto_Y, robot_ID, index) {
 			}
 		}
 	}
-	io.emit("console",{graph : graphLine});
 	var start = graphLine.grid[now_X][now_Y];
 	var end = graphLine.grid[goto_X][goto_Y];
 	var result = astar.astar.search(graphLine, start, end);
@@ -79,15 +101,15 @@ function find_route(now_X, now_Y, goto_X, goto_Y, robot_ID, index) {
 			}
 		);
 	});
-	var valid = true;
+	var exist = true;
 	for(let i = 0 ; i < route.length; i++){
 	  	if(route[i].id == robot_ID){
 	  	    route[i].route_point = route_point;
-	  	    valid = false;
+	  	    exist = false;
 	  	    break;
 	  	}
 	}
-	if(valid){
+	if(exist){
 	  	route.push(
 	  		{
 	  			id : robot_ID,
@@ -97,6 +119,17 @@ function find_route(now_X, now_Y, goto_X, goto_Y, robot_ID, index) {
 	}
 };
 
+/*
+  重新尋找路徑(因原路徑上有區域賭塞)
+  params now_X 當前X座標
+         now_Y 當前Y座標
+         goto_X 目的地X座標
+         goto_Y 目的地Y座標
+         index robot的index
+         lock 賭塞的區域(將此區域鎖住後來尋找路徑)
+  return 無
+  會將尋找好的路徑存進route Array中
+*/
 function re_find_route(now_X, now_Y, goto_X, goto_Y, index, lock) {
 	var graphLine = new astar.Graph(x);
 	if(goto_X == 0){
@@ -136,15 +169,21 @@ function re_find_route(now_X, now_Y, goto_X, goto_Y, index, lock) {
 	}
 };
 
+/*
+  抽號碼牌
+  params index robot的index
+  return 無
+  會將抽出的號碼牌存進number_plate Array中
+*/
 function drawNumberPlate(index){
-	var vaild = true;
+	var exist = true;
 	//已抽過號碼牌不再抽取
 	for(let i = 0; i < number_plate.length; i++){
 		if(point_equal(number_plate[i], route[index].route_point[0]) && number_plate[i].index == index){
-			vaild = false;
+			exist = false;
 		}
 	}
-	if(vaild){
+	if(exist){
 		number_plate.push(
 			{
 				x : route[index].route_point[0].x,
@@ -155,6 +194,14 @@ function drawNumberPlate(index){
 	}
 };
 
+/*
+  使用號碼牌
+  params index robot的index
+  		 x 此號碼牌的X座標
+  		 y 此號碼牌的Y座標
+  return 無
+  會將使用的號碼牌從number_plate Array中移除
+*/
 function useNumberPlate(index, x, y){
 	if(point[index].x != x || point[index].y != y){
 		for(let i = 0; i < number_plate.length; i++){
@@ -164,6 +211,14 @@ function useNumberPlate(index, x, y){
 	}
 }
 
+/*
+  丟棄號碼牌(因路徑轉換而捨棄原本的號碼牌)
+  params index robot的index
+  		 x 此號碼牌的X座標
+  		 y 此號碼牌的Y座標
+  return 無
+  會將丟棄的號碼牌從number_plate Array中移除
+*/
 function throwNumberPlate(index, x, y){
 	for(let i = 0; i < number_plate.length; i++){
 		if(number_plate[i].index == index && number_plate[i].x == x && number_plate[i].y == y){
@@ -172,6 +227,11 @@ function throwNumberPlate(index, x, y){
 	}
 }
 
+/*
+  判斷robot前進方向
+  params index robot的index
+  return 前進方向
+*/
 function trunWhere(index){
 	if(point[index].x == route[index].route_point[0].x){
 		if(point[index].y - route[index].route_point[0].y == 0)
@@ -183,6 +243,14 @@ function trunWhere(index){
 	}
 }
 
+/*
+  robot前進下一步
+  params robot_ID robot編號
+         index robot的index
+         socket socket連線(用於發送事件)
+  return 無
+  判斷此robot是否需要停下、改道，若不需要就讓robot繼續前進
+*/
 function next(robot_ID, index, socket) {
 	if(robot_ID == 0){
 		// console.log(number_plate);
@@ -610,7 +678,7 @@ function next(robot_ID, index, socket) {
 	    io.emit('draw',{ point : point, nextPoint : nextPoint });
 	}
 };
-//
+//----------------------------------function End----------------------------------
 
 //webroute start
 app.get('/', function (req, res) {
