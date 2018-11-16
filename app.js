@@ -57,10 +57,10 @@ function haveBarrier(index, direction){
 		y : 0
 	}
 	switch(direction){
-		case 'up': b.y = -1; break;
-		case 'down': b.y = 1; break;
-		case 'left': b.x = -1; break;
-		case 'right': b.x = 1; break;
+		case 'up' : b.y = -1; break;
+		case 'down' : b.y = 1; break;
+		case 'left' : b.x = -1; break;
+		case 'right' : b.x = 1; break;
 		default: console.log("haveBarrier function direction error"); return false;
 	}
 	for(let i = 0; i < point.length; i++){
@@ -201,14 +201,14 @@ function re_find_route(now_X, now_Y, goto_X, goto_Y, index, lock) {
   會將抽出的號碼牌存進number_plate Array中
 */
 function drawNumberPlate(index){
-	var exist = true;
+	var exist = fasle;
 	//已抽過號碼牌不再抽取
 	for(let i = 0; i < number_plate.length; i++){
 		if(point_equal(number_plate[i], route[index].route_point[0]) && number_plate[i].index == index){
-			exist = false;
+			exist = true;
 		}
 	}
-	if(exist){
+	if(!exist){
 		number_plate.push(
 			{
 				x : route[index].route_point[0].x,
@@ -216,6 +216,23 @@ function drawNumberPlate(index){
 				index : index
 			}
 		);
+	}
+	if(route[index].route_point.length > 1){
+		exist = false;
+		for(let i = 0; i < number_plate.length; i++){
+			if(point_equal(number_plate[i], route[index].route_point[1]) && number_plate[i].index == index){
+				exist = true;
+			}
+		}
+		if(!exist){
+			number_plate.push(
+				{
+					x : route[index].route_point[1].x,
+					y : route[index].route_point[1].y,
+					index : index
+				}
+			);
+		}
 	}
 };
 
@@ -269,22 +286,15 @@ function trunWhere(index){
 }
 
 /*
-  robot前進下一步
-  params robot_ID robot編號
-         index robot的index
-         socket socket連線(用於發送事件)
-  return 無
-  判斷此robot是否需要停下、改道，若不需要就讓robot繼續前進
+  判斷前方是否塞車
+  params index robot的index
+  return 是否塞車
 */
-function next(robot_ID, index, socket) {
-	if(robot_ID == 0){
-		// console.log(number_plate);
-	}
-	var stop = false;
-	var count = 0;
+function isTrafficCongestion(index){
 	var lock = new Array();
-	xe = point[index].x;
-	ye = point[index].y;
+	var count = 0;
+	var xe = point[index].x;
+	var ye = point[index].y;
 	switch(trunWhere(index)){
 		//向下前進時
 		case "down":
@@ -524,17 +534,36 @@ function next(robot_ID, index, socket) {
 
 		default: break;
 	}
-	console.log(direction);
-
 	if(count > 2){
+		return lock;
+	} else {
+		return null;
+	}
+}
+
+/*
+  robot前進下一步
+  params robot_ID robot編號
+         index robot的index
+         socket socket連線(用於發送事件)
+  return 無
+  判斷此robot是否需要停下、改道，若不需要就讓robot繼續前進
+*/
+function next(robot_ID, index, socket) {
+	var stop = false;
+
+	var lock = isTrafficCongestion(index);
+	if(lock != null){
 		throwNumberPlate(index, route[index].route_point[0].x, route[index].route_point[0].y);
 		re_find_route(point[index].x, point[index].y, route[index].route_point[route[index].route_point.length - 1].x, route[index].route_point[route[index].route_point.length - 1].y, index, lock)
 		stop = true;
 	}
+	console.log(direction);
 	if(!stop){
 		for(let i = 0; i < point.length; i++){
-			if(i != index){
-				//判斷對撞
+			//在同一行或同一列時才判斷是否對撞---!
+			if(i != index && (point[i].x == point[index].x || point[i].y == point[index].y)){
+				//判斷是否對撞
 				if(point[index].x == route[i].route_point[0].x && point[index].y == route[i].route_point[0].y && point[i].x == route[index].route_point[0].x && point[i].y == route[index].route_point[0].y){
 					throwNumberPlate(index, route[index].route_point[0].x, route[index].route_point[0].y);
 					//上下準備對撞時，判斷上邊的robot位置，位置在前2行或倒數第3行，往右方繞路
@@ -582,6 +611,7 @@ function next(robot_ID, index, socket) {
 					}
 					//上下準備對撞時，判斷下邊的robot位置，位置在第3行或倒數前2行，往左方繞路
 					else if(point[index].x == route[index].route_point[0].x && point[index].x == 2 && point[index].y > point[i].y || point[index].x == route[index].route_point[0].x && point[index].x >= mapLength - 2 && point[index].y > point[i].y){
+						//判斷下方robot的左方是否有障礙物
 						if(!haveBarrier(index, 'left')){
 							if(route[index].route_point.length > 1 && route[index].route_point[1].x == point[index].x - 1 && route[index].route_point[1].y == point[index].y - 1){
 								route[index].route_point.shift();
@@ -665,6 +695,14 @@ function next(robot_ID, index, socket) {
 		drawNumberPlate(index);
 		for(let i = 0; i < number_plate.length; i++){
 			if(route[index].route_point[0].x == number_plate[i].x && route[index].route_point[0].y == number_plate[i].y){
+				//若即將前往的格子的優先權不屬於自己，則先停止前進
+				if(number_plate[i].index != index){
+					stop = true;
+				}
+				break;
+			}
+			if(route[index].route_point[1].x == number_plate[i].x && route[index].route_point[1].y == number_plate[i].y){
+				//若即將前往的格子的優先權不屬於自己，則先停止前進
 				if(number_plate[i].index != index){
 					stop = true;
 				}
