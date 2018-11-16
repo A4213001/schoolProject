@@ -5,6 +5,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var sizeof = require('object-sizeof');
 var extend = require('jquery-extend');
+var fs = require('fs');
 
 server.listen(80);
 console.log('Server running at port 80');
@@ -201,7 +202,7 @@ function re_find_route(now_X, now_Y, goto_X, goto_Y, index, lock) {
   會將抽出的號碼牌存進number_plate Array中
 */
 function drawNumberPlate(index){
-	var exist = fasle;
+	var exist = false;
 	//已抽過號碼牌不再抽取
 	for(let i = 0; i < number_plate.length; i++){
 		if(point_equal(number_plate[i], route[index].route_point[0]) && number_plate[i].index == index){
@@ -701,13 +702,6 @@ function next(robot_ID, index, socket) {
 				}
 				break;
 			}
-			if(route[index].route_point[1].x == number_plate[i].x && route[index].route_point[1].y == number_plate[i].y){
-				//若即將前往的格子的優先權不屬於自己，則先停止前進
-				if(number_plate[i].index != index){
-					stop = true;
-				}
-				break;
-			}
 		}
 	}
 	if(stop){
@@ -742,6 +736,10 @@ app.get('/line', function (req, res) {
 app.get('/home', function (req, res) {
     res.render('home.ejs');
 });
+
+app.get('/testJson', function (req, res) {
+    res.json(JSON.parse(fs.readFileSync("test.json")));
+});
 //webroute end
 
 //socket connect start
@@ -759,8 +757,8 @@ io.on('connection', function (socket) {
   		io.emit('draw',{ point : point, nextPoint : nextPoint });
   	});
 
-    //connectionEvent start
-  	socket.on('start', function (data) {
+  	//connectionEvent set
+  	socket.on('initSet', function (data) {
   		if (io.sockets.connected[socket.id]) {
 	  		var exist = false; //此robot是否存在於當前point Array
 	  		for(let i = 0; i < point.length; i++){
@@ -786,17 +784,38 @@ io.on('connection', function (socket) {
 	  		}
 	  		io.emit('draw',{ point : point, nextPoint : nextPoint });
 	  		var index = find_index(data.id, socket);
-	  		endPoint[index] = {
-  				x : data.goto_x,
-  				y : data.goto_y,
-  				id : data.id
-  			}
   			if(isNaN(stepCount[index])){
   				stepCount[index] = 0
   			}
-	  		find_route(data.now_x, data.now_y, data.goto_x, data.goto_y, data.id, index);
-	  		next(data.id, index, socket);
   		}
+  	});
+
+    //connectionEvent start
+  	socket.on('start', function (data) {
+  		var exist = false; //此robot是否存在於當前endPoint Array
+  		for(let i = 0; i < endPoint.length; i++){
+  			if(endPoint[i].id == data.id){
+  	  			endPoint[i] = {
+  	  				x : data.now_x,
+  	  				y : data.now_y,
+  	  				id : data.id
+  	  			};
+  	 			exist = true;
+  	  			break;
+  			}
+  		}
+  		//當robot不存在時，新增資料進endPoint Array
+  		if(!exist){
+  			endPoint.push(
+  				{
+  					x : data.now_x,
+  					y : data.now_y,
+  					id : data.id
+  				}
+  			);
+  		}
+  		find_route(point[data.index].x, point[data.index].y, data.goto_x, data.goto_y, data.id, data.index);
+  		next(data.id, data.index, socket);
   	});
 
   	//connectionEvent walk

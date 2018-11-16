@@ -59,10 +59,13 @@
 	    <label>goto_y</label>
 	    <input type="number" id="goto_y">
 	    <br>
+	    <button onclick="initSet()">初始設定</button>
 	    <button onclick="start()">開始</button>
 	    <button onclick="autoStart()">自動模式</button>
+	    <button onclick="testStart()">固定數據模式</button>
 	</p>
 	<div id="goto"></div>
+	<div id="index"></div>
     <script>
 	    function setAddress(){
 	        socket.emit('setAddress',
@@ -77,22 +80,38 @@
 	        );
 	    };
 
-	    function start(){
-	    	auto = false;
+	    function initSet(){
 	    	now_x = parseInt($("#now_x").val());
 	    	now_y = parseInt($("#now_y").val());
+	    	socket.emit('initSet',
+		    	{
+		    		id : id,
+		    		now_x : now_x,
+		    		now_y : now_y
+		    	}
+		    );
+	    }
+
+	    function start(){
+	    	auto = false;
 	    	goto_x = parseInt($("#goto_x").val());
 	    	goto_y = parseInt($("#goto_y").val());
 		    socket.emit('start',
 		    	{
 		    		id : id,
-		    		now_x : now_x,
-		    		now_y : now_y,
+		    		index : index,
 		    		goto_x : goto_x,
 		    		goto_y : goto_y
 		    	}
 		    );
         };
+
+        //產生測試數據用
+        function randomNumber(){
+        	for(let i = 0; i < 10; i++)
+        		console.log(Math.floor(Math.random() * 10));
+        }
+        // randomNumber();
 
         function autoStart(){
         	auto = true;
@@ -111,9 +130,7 @@
         	}
         	socket.emit('start',
 	        	{
-	        		id : id,
-		    		now_x : now_x,
-		    		now_y : now_y,
+	        		index : index,
 		    		goto_x : goto_x,
 		    		goto_y : goto_y
 	        	}
@@ -122,12 +139,35 @@
 	        // sleep(1000);。
         };
 
+        function testStart(){
+        	var requestURL = 'testJson';
+        	var request = new XMLHttpRequest();
+        	request.open('GET', requestURL);
+        	request.responseType = 'json';
+			request.send();
+			request.onload = function() {
+				console.log(request.response);
+			}
+			for(let i = 0; i < 10; i++){
+				socket.emit('start',
+		        	{
+		        		id : 0,
+			    		now_x : 0,
+			    		now_y : i,
+			    		goto_x : 0,
+			    		goto_y : i + 1
+		        	}
+		        );
+			}
+        }
+
 	    socket.on('message', function (data) {
         	console.log(data);    
 		});
 
 		socket.on('return_index', function (data) {
         	index = data.index;   
+        	$("#index").html("index is " + index);
 		});
 
 		socket.on('stop', function (data) {
