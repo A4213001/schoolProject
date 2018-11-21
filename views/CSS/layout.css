@@ -1,4 +1,6 @@
-
+body{
+	margin:15px 10px 15px 10px;
+}
  .addressColor{
 	background-color: #ee3e;
 	border: 3px solid black;
@@ -10,9 +12,9 @@
 	/* color: #b22222; */
 	position: absolute;
     z-index: 10;	/* 將文字留在最上層 */
-	right: 20%;
+	right: 5px;
 	top: 0%;
-	font-size: 36px;
+	font-size: 18px;
 	/* font-family: monotype; */
 }
 

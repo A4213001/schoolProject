@@ -6,9 +6,9 @@
 
 				var list = ["","Ⅰ","Ⅱ","Ⅲ","Ⅳ","Ⅴ","Ⅵ","Ⅶ","Ⅷ","Ⅸ","Ⅹ"];
 				let XYlenght=10, //位置
-					nowX=0,nowY=102; //陣列畫到的位置(nowY初始位置是第二排)
-				var	distance=20, //兩隔間的距離
-					size=82, //每格的大小
+					nowX=0,nowY=51; //陣列畫到的位置(nowY初始位置是第二排)
+				var	distance=10, //兩隔間的距離
+					size=41, //每格的大小
 					listNum=1,
 					listNumE=1;
 				var lastLenght=0;
@@ -21,12 +21,12 @@
 				for (var locationX = 0; locationX < XYlenght; locationX++) {	//走訪x
 					for (var locationY = 0; locationY < XYlenght; locationY++) {	//走訪y
 						if(locationX==0){	//第一排座標
-							ctx.font = "normal 30px Arial";
-							ctx.fillText(list[listNum],nowY-61,nowX+50);
+							ctx.font = "normal 15px Arial";
+							ctx.fillText(list[listNum],nowY-30.5,nowX+25);
 							listNum++; } 
 						if(locationX==9){	//最後一排座標
-							ctx.font = "normal 30px Arial";
-							ctx.fillText(list[listNumE],nowY+100,nowX+50);
+							ctx.font = "normal 15px Arial";
+							ctx.fillText(list[listNumE],nowY+50,nowX+25);
 							listNumE++;	} 
 						ctx.strokeRect(nowY,nowX,size,size);
 						nowX+=distance;
@@ -36,7 +36,7 @@
 					nowY+=size;
 					nowX=0;
 				}
-				ctx.font = "normal 20px Arial";	//設定id顯示的大小
+				ctx.font = "normal 10px Arial";	//設定id顯示的大小
 			
 
 			function Direction(now_X,now_Y,next_X,next_Y){	//判斷左右上下
@@ -48,8 +48,8 @@
 
 			function drawArrow(ctx, fromX, fromY, toX, toY,theta,headlen,width,color) {	//畫出箭頭
 
-			    theta = typeof(theta) != 'undefined' ? theta : 30;
-			    headlen = typeof(theta) != 'undefined' ? headlen : 10;
+			    theta = typeof(theta) != 'undefined' ? theta : 15;
+			    headlen = typeof(theta) != 'undefined' ? headlen : 30;
 			    width = typeof(width) != 'undefined' ? width : 1;
 			    color = typeof(color) != 'color' ? color : '#000';
 			    var angle = Math.atan2(fromY - toY, fromX - toX) * 180 / Math.PI,
@@ -85,19 +85,19 @@
 			function Arrow(ctx,nowX,nowY,now_X,now_Y,next_X,next_Y){	//根據上下左右對應到function
 				switch(Direction(now_X,now_Y,next_X,next_Y)){
 					case 'left':
-						drawArrow(ctx, nowY+70 ,nowX+41, nowY+10, nowX+41,30,30,5,'#fff');
+						drawArrow(ctx, nowY+35 ,nowX+20.5, nowY+5, nowX+20.5,30,15,5,'#fff');
 						break;   
 
 					case 'right':
-						drawArrow(ctx, nowY+10, nowX+41, nowY+70 ,nowX+41,30,30,5,'#fff');
+						drawArrow(ctx, nowY+5, nowX+20.5, nowY+35 ,nowX+20.5,30,15,2.5,'#fff');
 						break;
 
 					case 'upper':
-						drawArrow(ctx, nowY+41 ,nowX+70, nowY+41, nowX+10,30,30,5,'#fff');
+						drawArrow(ctx, nowY+20.5 ,nowX+35, nowY+20.5, nowX+5,30,15,2.5,'#fff');
 						break;
 
 					case 'under':
-						drawArrow(ctx, nowY+41, nowX+10, nowY+41 ,nowX+70,30,30,5,'#fff');
+						drawArrow(ctx, nowY+20.5, nowX+5, nowY+20.5 ,nowX+35,30,15,2.5,'#fff');
 						break;
 				}
 			}
@@ -106,7 +106,7 @@
 				socket.on('draw',function(data){
 ///////			
 					let XYlenght=10, //位置
-						nowX=0,nowY=102; //陣列畫到的位置(nowY初始位置是第二排)
+						nowX=0,nowY=51; //陣列畫到的位置(nowY初始位置是第二排)
 					var now = data.point;
 					var next = data.nextPoint;
 					for(lastLenght;lastLenght>=0;lastLenght--){
@@ -121,7 +121,7 @@
 									clearX[data]=nowX;
 									Arrow(ctx,nowX,nowY,now[data].x,now[data].y,next[data].x,next[data].y);
 									ctx.fillStyle="white";
-									ctx.fillText(now[data].id,nowY+65,nowX+70);	//顯示的文字和位置
+									ctx.fillText(now[data].id,nowY+32.5,nowX+35);	//顯示的文字和位置
 									ctx.fillStyle="black";
 								} else {
 									ctx.strokeRect(nowY,nowX,size,size);
