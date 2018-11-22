@@ -745,9 +745,14 @@ app.get('/testJson', function (req, res) {
 //socket connect start
 io.on('connection', function (socket) {
     console.log("connect connectCount : " + io.engine.clientsCount);
+    io.emit('test',{ data : "Hello" });
 
     //connectionEvent setADDress
     socket.on('setAddress', function (data){
+    	console.log("位置設定");
+    	console.log(data.x);
+    	console.log(da ta.y);
+    	console.log(data.id);
 		point[data.index] = {
 			x : data.now_x,
 			y : data.now_y,
