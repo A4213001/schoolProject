@@ -10,6 +10,7 @@ server.listen(80);
 console.log('Server running at port 80');
 
 app.use(express.static('views'));
+//抽號碼牌2張 改道問題
 
 // ---varInit---
 var point = new Array(); //當前位置
@@ -526,11 +527,13 @@ function next(robot_ID, index, socket) {
 	}
 	console.log(direction);
 
+	//當前方區域車輛>2，就先避開前方區域 ##單行道不需避開(未撰寫) 
 	if(count > 2){
 		throwNumberPlate(index, route[index].route_point[0].x, route[index].route_point[0].y);
 		re_find_route(point[index].x, point[index].y, route[index].route_point[route[index].route_point.length - 1].x, route[index].route_point[route[index].route_point.length - 1].y, index, lock)
 		stop = true;
 	}
+	
 	if(!stop){
 		for(let i = 0; i < point.length; i++){
 			if(i != index){
@@ -676,12 +679,27 @@ function next(robot_ID, index, socket) {
 		socket.emit('stop');
 	}
 	else{
-	    socket.emit('go',
-	    	{
-	    		x : route[index].route_point[0].x,
-	    		y : route[index].route_point[0].y
-	    	}
-	    );
+	   if(route[index].route_point.length > 1){
+			//傳給robot即將前往的下2個位置
+			socket.emit('go',
+		    	{
+		    		x : [route[index].route_point[0].x, route[index].route_point[1].x],
+		    		y : [route[index].route_point[0].y, route[index].route_point[1].y],
+		    		time : Date.now()
+		    	}
+		    );
+		} else if(route[index].route_point.length == 1){
+			//傳給robot即將前往的下一個位置
+		    socket.emit('go',
+		    	{
+		    		x : [route[index].route_point[0].x],
+		    		y : [route[index].route_point[0].y],
+		    		time : Date.now()
+		    	}
+		    );
+		} else {
+			console.log("robot id : " + id + "沒有路徑");
+		}
 	    nextPoint[index] = {
 	    	x : route[index].route_point[0].x,
 	    	y : route[index].route_point[0].y,
@@ -694,7 +712,7 @@ function next(robot_ID, index, socket) {
 
 //webroute start
 app.get('/', function (req, res) {
-    res.render('test.ejs');
+    res.render('robot.ejs');
 });
 
 app.get('/line', function (req, res) {
@@ -703,6 +721,10 @@ app.get('/line', function (req, res) {
 
 app.get('/home', function (req, res) {
     res.render('home.ejs');
+});
+
+app.get('/work', function (req, res) {
+    res.render('workJS.ejs');
 });
 //webroute end
 

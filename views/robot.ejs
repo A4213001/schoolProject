@@ -21,24 +21,28 @@
 </script>
 <head>
     <meta charset="UTF-8">
-    <title>test</title>
+    <title>robot</title>
     <style>
     </style>
     <script src="/socket.io/socket.io.js"></script><!--webSocket-->
 	<script>
 		var socket = io.connect('http://localhost');//webSocket
 		var id = parseInt(getQueryVariable("id"));
-		var now_x = 0;
-        var now_y = Math.floor(Math.random() * 10);
-		var goto_x = 0;
-		var goto_y = 0;
-		var auto = false;
-		var index = null;
-		var previous_x = null;
-		var previous_y = null;
-		var mapLength = 10;
-		if(!id)
+		var now_x = 0;//初始位置x = 0
+        var now_y = Math.floor(Math.random() * 10);//初始位置y = 0~9隨機一個
+		var goto_x = 0;//目標位置x
+		var goto_y = 0;//目標位置y
+		var auto = false;//是否開始自動測試模式
+		var index = null;//robot於server中的index
+		var previous_x = null;//前一個位置x
+		var previous_y = null;//前一個位置y
+		var mapLength = 10;//場地大小為10*10
+		var stop_signal = true;//停止訊號
+		var route_point = new Array();//路徑
+		var now_step = 0;//接收到路徑後已走步數
+		if(!id){
 			id = 0;
+		}
 	</script>
 </head>
 <body>
@@ -61,9 +65,43 @@
 	    <br>
 	    <button onclick="start()">開始</button>
 	    <button onclick="autoStart()">自動模式</button>
+	    <button onclick="running()">發動</button>
 	</p>
 	<div id="goto"></div>
     <script>
+    	function running(){
+		    setInterval(function(){
+		    	if(!stop_signal){
+			    	previous_x = now_x;
+			  		previous_y = now_y;
+			  		if(route_point.x.length > 0 && route_point.y.length > 0){
+			  			if(now_x == route_point.x[0] && now_y == route_point.y[0]){
+			  				route_point.x.shift();
+			  				route_point.y.shift();
+			  			}
+			  			if(route_point.x.length > 0 && route_point.y.length > 0){
+			    			now_x = route_point.x.shift();
+						  	now_y = route_point.y.shift();
+					    }
+				  	}
+				  	setAddress();
+			  	}
+			  	if(now_x != goto_x || now_y != goto_y){
+			  		socket.emit('walk',
+				  		{
+				  			id : id,
+				  			index : index,
+				  			isStop : false
+				  		}
+			  		);
+			  	} else {
+			  		if(auto){
+			  			autoStart();
+			  		}
+			  	}
+		    }, 1000);
+    	}
+
 	    function setAddress(){
 	        socket.emit('setAddress',
 	        	{
@@ -122,47 +160,44 @@
 	        // sleep(1000);。
         };
 
-	    socket.on('message', function (data) {
-        	console.log(data);    
-		});
-
 		socket.on('return_index', function (data) {
         	index = data.index;   
 		});
 
 		socket.on('stop', function (data) {
-        	sleep(1000);
-        	socket.emit('walk',
-		  		{
-		  			id : id,
-		  			index : index,
-		  			isStop : true
-		  		}
-	  		);
+			stop_signal = true;
+     //    	sleep(1000);
+     //    	socket.emit('walk',
+		  	// 	{
+		  	// 		id : id,
+		  	// 		index : index,
+		  	// 		isStop : true
+		  	// 	}
+	  		// );
 		});
-
 		socket.on('go', function (data) {
-		  	previous_x = now_x;
-		  	previous_y = now_y;
-		  	now_x = data.x;
-		  	now_y = data.y;
-		  	sleep(1000);
-		  	setAddress();
-		  	if(now_x != goto_x || now_y != goto_y){
-		  		socket.emit('walk',
-			  		{
-			  			id : id,
-			  			index : index,
-			  			isStop : false
-			  		}
-		  		);
-		  	}
-		  	else{
-		  		if(auto){
-		  			autoStart();
-		  		}
-		  	}
-		});   
+			if(Math.floor(Math.random() * 10) < 3){
+				t1 = Date.now();
+				setTimeout(function(){
+					route_point = {
+				  		x : data.x,
+				  		y : data.y
+				  	};
+				  	stop_signal = false;
+				  	console.log(route_point);
+					console.log(t1 + "delay");
+			    }, 500);
+			} else {
+			    route_point = {
+			  		x : data.x,
+			  		y : data.y
+			  	};
+			  	stop_signal = false;
+			  	console.log(route_point);
+			  	t = Date.now();
+				console.log(t);
+			}
+		});  
 	</script>
 </body>
 </html>
