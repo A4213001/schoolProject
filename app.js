@@ -288,7 +288,7 @@ function next(robot_ID, index, socket) {
 		for(let i = 0; i < point.length; i++){
 			if(i != index){
 				//判斷對撞
-				if(point[index].x == route[i].route_point[0].x && point[index].y == route[i].route_point[0].y && point[i].x == route[index].route_point[0].x && point[i].y == route[index].route_point[0].y && point[index].x < 3 && point[index].x >= mapLength - 3){
+				if(point[index].x == route[i].route_point[0].x && point[index].y == route[i].route_point[0].y && point[i].x == route[index].route_point[0].x && point[i].y == route[index].route_point[0].y && (point[index].x < 3 || point[index].x >= mapLength - 3)){
 					noChangRoute = false;
 					//上下準備對撞時，判斷上邊的robot位置，位置在前2行或倒數第3行，往右方繞路
 					if(point[index].x == route[index].route_point[0].x && point[index].x <= 1 && point[index].y < point[i].y || point[index].x == route[index].route_point[0].x && point[index].x == mapLength - 3 && point[index].y < point[i].y){
@@ -423,10 +423,10 @@ function next(robot_ID, index, socket) {
 
 	var count = 0;
 	var lock = new Array();
-	xe = point[index].x;
-	ye = point[index].y;
 	direction[index] = trunWhere(index)
 	if(noChangRoute){
+		var xe = point[index].x;//用於計算觀看前方區域
+		var ye = point[index].y;//用於計算觀看前方區域
 		switch(direction[index]){
 			//向下前進時
 			case "down":
@@ -665,7 +665,7 @@ function next(robot_ID, index, socket) {
 	}
 	console.log(direction);
 
-	if(count > 2){
+	if(count > 3){
 		throwNumberPlate(index, route[index].route_point[0].x, route[index].route_point[0].y);
 		re_find_route(point[index].x, point[index].y, route[index].route_point[route[index].route_point.length - 1].x, route[index].route_point[route[index].route_point.length - 1].y, index, lock)
 		stop = true;
@@ -673,6 +673,7 @@ function next(robot_ID, index, socket) {
 	
 	if(!stop){
 		drawNumberPlate(index);
+		console.log(number_plate);
 		for(let i = 0; i < number_plate.length; i++){
 			if(route[index].route_point[0].x == number_plate[i].x && route[index].route_point[0].y == number_plate[i].y){
 				if(number_plate[i].index != index){
@@ -684,8 +685,7 @@ function next(robot_ID, index, socket) {
 	}
 	if(stop){
 		socket.emit('stop');
-	}
-	else{
+	} else {
 	    socket.emit('go',
 	    	{
 	    		x : route[index].route_point[0].x,
