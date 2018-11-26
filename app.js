@@ -11,6 +11,9 @@ console.log('Server running at port 80');
 
 app.use(express.static('views'));
 
+//#################
+// 明天預定修改項目!!! 重新規畫路徑時，將賭塞區域排除
+
 // ---varInit---
 var point = new Array(); //當前位置
 var nextPoint = new Array(); //下個位置
@@ -19,6 +22,8 @@ var endPoint = new Array(); //終點位置
 var direction = new Array(); //前進方向
 var number_plate = new Array(); //號碼牌
 var stepCount = new Array(); //步數
+var changeRoute = new Array(); //更換路徑
+var stopCount = new Array(); //停止次數
 var mapLength = 10;
 //
 
@@ -146,6 +151,52 @@ function find_route(now_X, now_Y, goto_X, goto_Y, robot_ID, index) {
 };
 
 /*
+  重新尋找路徑(因停止次數>5)
+  params now_X 當前X座標
+         now_Y 當前Y座標
+         goto_X 目的地X座標
+         goto_Y 目的地Y座標
+         index robot的index
+  return 無
+  會將尋找好的路徑存進route Array中
+*/
+function stop_re_find_route(now_X, now_Y, goto_X, goto_Y, index) {
+	var graphLine = new astar.Graph(x);
+	if(goto_X == 0){
+		for(let i = 1; i < mapLength - 1; i++){
+			if(i >= 3 && i <= mapLength - 4){
+				for(let j = 0; j < mapLength; j+=2)
+					graphLine.grid[i][j].weight = 0;
+			}
+		}
+	}
+	if(goto_X == mapLength - 1){
+		for(let i = 1; i < mapLength - 1; i++){
+			if(i >= 3 && i <= mapLength - 4){
+				for(let j = 1; j < mapLength; j+=2)
+					graphLine.grid[i][j].weight = 0;
+			}
+		}
+	}
+	io.emit("console",{graph : graphLine});
+	var start = graphLine.grid[now_X][now_Y];
+	var end = graphLine.grid[goto_X][goto_Y];
+	var result = astar.astar.search(graphLine, start, end);
+	var route_point = new Array();
+	result.forEach(function(element) {
+		route_point.push(
+			{
+				x : element.x,
+				y : element.y
+			}
+		);
+	});
+	if(route_point.length > 0){
+		route[index].route_point = route_point;
+	}
+};
+
+/*
   重新尋找路徑(因原路徑上有區域賭塞)
   params now_X 當前X座標
          now_Y 當前Y座標
@@ -238,16 +289,32 @@ function useNumberPlate(index, x, y){
 }
 
 /*
-  丟棄號碼牌(因路徑轉換而捨棄原本的號碼牌)
+  丟棄當前位置以外的號碼牌(因路徑轉換而或前方壅擠)
+  params index robot的index
+  		 x 當前X座標
+  		 y 當前Y座標
+  return 無
+  會將丟棄的號碼牌從number_plate Array中移除
+*/
+function throwNumberPlate(index, x, y){
+	for(let i = 0; i < number_plate.length; i++){
+		if(number_plate[i].index == index && (number_plate[i].x != x || number_plate[i].y != y)){
+			number_plate.splice(i, 1);
+		}
+	}
+}
+
+/*
+  丟棄所有號碼牌(因重新規畫路徑)
   params index robot的index
   		 x 此號碼牌的X座標
   		 y 此號碼牌的Y座標
   return 無
   會將丟棄的號碼牌從number_plate Array中移除
 */
-function throwNumberPlate(index, x, y){
+function throwAllNumberPlate(index){
 	for(let i = 0; i < number_plate.length; i++){
-		if(number_plate[i].index == index && number_plate[i].x == x && number_plate[i].y == y){
+		if(number_plate[i].index == index){
 			number_plate.splice(i, 1);
 		}
 	}
@@ -279,7 +346,8 @@ function trunWhere(index){
 */
 function next(robot_ID, index, socket) {
 	if(robot_ID == 0){
-		// console.log(number_plate);
+		console.log(number_plate);
+		console.log(direction);
 	}
 	var stop = false;
 	var noChangRoute = true;
@@ -290,11 +358,12 @@ function next(robot_ID, index, socket) {
 				//判斷對撞
 				if(point[index].x == route[i].route_point[0].x && point[index].y == route[i].route_point[0].y && point[i].x == route[index].route_point[0].x && point[i].y == route[index].route_point[0].y && (point[index].x < 4 || point[index].x >= mapLength - 4)){
 					noChangRoute = false;
+					changeRoute[index] = true;
 					//上下準備對撞時，判斷上邊的robot位置，位置在前2行或倒數第3行，往右方繞路
 					if(point[index].x == route[index].route_point[0].x && point[index].x <= 1 && point[index].y < point[i].y || point[index].x == route[index].route_point[0].x && point[index].x == mapLength - 3 && point[index].y < point[i].y){
 						//判斷上方robot的右方是否有障礙物
 						if(!haveBarrier(index, 'right')){
-							throwNumberPlate(index, route[index].route_point[0].x, route[index].route_point[0].y);
+							throwNumberPlate(index, point[index].x, point[index].y);
 							if(route[index].route_point.length > 1 && route[index].route_point[1].x == point[index].x + 1 && route[index].route_point[1].y == point[index].y + 1){
 								route[index].route_point.shift();
 							} else {
@@ -316,7 +385,7 @@ function next(robot_ID, index, socket) {
 							);
 						//若上邊robot的右方有阻礙，則由下方robot往右方繞路
 						} else {
-							throwNumberPlate(i, route[i].route_point[0].x, route[i].route_point[0].y);
+							throwNumberPlate(i, point[i].x, point[i].y);
 							if(route[i].route_point.length > 1 && route[i].route_point[1].x == point[i].x + 1 && route[i].route_point[1].y == point[i].y - 1){
 								route[i].route_point.shift();
 							} else {
@@ -338,7 +407,7 @@ function next(robot_ID, index, socket) {
 					//上下準備對撞時，判斷下邊的robot位置，位置在第3行或倒數前2行，往左方繞路
 					else if(point[index].x == route[index].route_point[0].x && point[index].x == 2 && point[index].y > point[i].y || point[index].x == route[index].route_point[0].x && point[index].x >= mapLength - 2 && point[index].y > point[i].y){
 						if(!haveBarrier(index, 'left')){
-							throwNumberPlate(index, route[index].route_point[0].x, route[index].route_point[0].y);
+							throwNumberPlate(index, point[index].x, point[index].y);
 							if(route[index].route_point.length > 1 && route[index].route_point[1].x == point[index].x - 1 && route[index].route_point[1].y == point[index].y - 1){
 								route[index].route_point.shift();
 							} else {
@@ -357,7 +426,7 @@ function next(robot_ID, index, socket) {
 							);
 						//若下方robot的左方有阻礙，則由上方robot往左方繞路
 						} else {
-							throwNumberPlate(i, route[i].route_point[0].x, route[i].route_point[0].y);
+							throwNumberPlate(i, point[i].x, point[i].y);
 							if(route[i].route_point.length > 1 && route[i].route_point[1].x == point[i].x - 1 && route[i].route_point[1].y == point[i].y + 1){
 								route[i].route_point.shift();
 							} else {
@@ -378,7 +447,7 @@ function next(robot_ID, index, socket) {
 					}
 					//左右準備對撞時，判斷左邊的robot位置，位置在前5列時，往下方繞路
 					else if(point[index].y == route[index].route_point[0].y && point[index].y <= 4 && point[index].x < point[i].x){
-						throwNumberPlate(index, route[index].route_point[0].x, route[index].route_point[0].y);
+						throwNumberPlate(index, point[index].x, point[index].y);
 						if(route[index].route_point.length > 1 && route[index].route_point[1].x == point[index].x + 1 && route[index].route_point[1].y == point[index].y + 1){
 							route[index].route_point.shift();
 						} else {
@@ -398,7 +467,7 @@ function next(robot_ID, index, socket) {
 					}
 					//左右準備對撞時，判斷右邊的robot位置，位置在後5列時，往上方繞路
 					else if(point[index].y == route[index].route_point[0].y && point[index].y >= 5 && point[index].x > point[i].x){
-						throwNumberPlate(index, route[index].route_point[0].x, route[index].route_point[0].y);
+						throwNumberPlate(index, point[index].x, point[index].y);
 						if(route[index].route_point.length > 1 && route[index].route_point[1].x == point[index].x - 1 && route[index].route_point[1].y == point[index].y - 1){
 							route[index].route_point.shift();
 						} else {
@@ -424,16 +493,16 @@ function next(robot_ID, index, socket) {
 	var count = 0;
 	var lock = new Array();
 	direction[index] = trunWhere(index)
-	if(noChangRoute){
+	if(!changeRoute[index].changeRouteStatus && stopCount[index] < 3){
 		var xe = point[index].x;//用於計算觀看前方區域
 		var ye = point[index].y;//用於計算觀看前方區域
 		switch(direction[index]){
 			//向下前進時
 			case "down":
-				//當位置不在最左或最右，且下方還>=3格
-				if(xe > 0 && xe < mapLength - 1 && ye < mapLength - 3){
+				//當位置不在最左或最右，且下方還>=2格
+				if(xe > 0 && xe < mapLength - 1 && ye < mapLength - 2){
 					for(let i = xe - 1; i <= xe + 1; i++){
-						for(let j = ye + 1; j <= ye + 3; j++){
+						for(let j = ye + 1; j <= ye + 2; j++){
 							lock.push(
 								{
 									x : i,
@@ -448,10 +517,10 @@ function next(robot_ID, index, socket) {
 						}
 					}
 				}
-				//當位置在最左時，且下方還>=3格
-				else if(xe == 0 && ye < mapLength - 3){
+				//當位置在最左時，且下方還>=2格
+				else if(xe == 0 && ye < mapLength - 2){
 					for(let i = xe; i <= xe + 1; i++){
-						for(let j = ye + 1; j <= ye + 3; j++){
+						for(let j = ye + 1; j <= ye + 2; j++){
 							lock.push(
 								{
 									x : i,
@@ -466,10 +535,10 @@ function next(robot_ID, index, socket) {
 						}
 					}
 				}
-				//當位置在最右時，且下方還>=3格
-				else if(xe == mapLength - 1 && ye < mapLength - 3){
+				//當位置在最右時，且下方還>=2格
+				else if(xe == mapLength - 1 && ye < mapLength - 2){
 					for(let i = xe; i >= xe - 1; i--){
-						for(let j = ye + 1; j <= ye + 3; j++){
+						for(let j = ye + 1; j <= ye + 2; j++){
 							lock.push(
 								{
 									x : i,
@@ -488,10 +557,10 @@ function next(robot_ID, index, socket) {
 
 			//向上前進時
 			case "up":
-				//當位置不在最左或最右時，且上方還>=3格
-				if(xe > 0 && xe < mapLength - 1 && ye > 2){
+				//當位置不在最左或最右時，且上方還>=2格
+				if(xe > 0 && xe < mapLength - 1 && ye > 1){
 					for(let i = xe - 1; i <= xe + 1; i++){
-						for(let j = ye - 1; j >= ye - 3; j--){
+						for(let j = ye - 1; j >= ye - 2; j--){
 							lock.push(
 								{
 									x : i,
@@ -506,10 +575,10 @@ function next(robot_ID, index, socket) {
 						}
 					}
 				}
-				//當位置在最左時，且上方還>=3格
-				else if(xe == 0 && ye > 2){
+				//當位置在最左時，且上方還>=2格
+				else if(xe == 0 && ye > 1){
 					for(let i = xe; i <= xe + 1; i++){
-						for(let j = ye - 1; j >= ye - 3; j--){
+						for(let j = ye - 1; j >= ye - 2; j--){
 							lock.push(
 								{
 									x : i,
@@ -524,10 +593,10 @@ function next(robot_ID, index, socket) {
 						}
 					}
 				}
-				//當位置在最右時，且上方還>=3格
-				else if(xe == mapLength - 1 && ye > 2){
+				//當位置在最右時，且上方還>=2格
+				else if(xe == mapLength - 1 && ye > 1){
 					for(let i = xe; i >= xe - 1; i--){
-						for(let j = ye - 1; j >= ye - 3; j--){
+						for(let j = ye - 1; j >= ye - 2; j--){
 							lock.push(
 								{
 									x : i,
@@ -546,9 +615,9 @@ function next(robot_ID, index, socket) {
 
 			//向左前進時
 			case "left":
-				//當位置不在最上或最下時，且左方還>=3格
-				if(xe > 2 && ye > 0 && ye < mapLength - 1){
-					for(let i = xe - 1; i >= xe - 3; i--){
+				//當位置不在最上或最下時，且左方還>=2格
+				if(xe > 1 && ye > 0 && ye < mapLength - 1){
+					for(let i = xe - 1; i >= xe - 2; i--){
 						for(let j = ye - 1; j <= ye + 1; j++){
 							lock.push(
 								{
@@ -564,9 +633,9 @@ function next(robot_ID, index, socket) {
 						}
 					}
 				}
-				//當位置在最左時，且上方還>=3格
-				else if(xe > 2 && ye == 0){
-					for(let i = xe - 1; i >= xe - 3; i--){
+				//當位置在最左時，且上方還>=2格
+				else if(xe > 1 && ye == 0){
+					for(let i = xe - 1; i >= xe - 2; i--){
 						for(let j = ye; j <= ye + 1; j++){
 							lock.push(
 								{
@@ -582,9 +651,9 @@ function next(robot_ID, index, socket) {
 						}
 					}
 				}
-				//當位置在最右時，且上方還>=3格
-				else if(xe > 2 && ye < mapLength - 1){
-					for(let i = xe - 1; i >= xe - 3; i--){
+				//當位置在最右時，且上方還>=2格
+				else if(xe > 1 && ye < mapLength - 1){
+					for(let i = xe - 1; i >= xe - 2; i--){
 						for(let j = ye; j >= ye - 1; j--){
 							lock.push(
 								{
@@ -604,9 +673,9 @@ function next(robot_ID, index, socket) {
 
 			//向右前進時
 			case "right":
-				//當位置不在最上或最下時，且右方還>=3格
-				if(xe < mapLength - 3 && ye > 0 && ye < mapLength - 1){
-					for(let i = xe + 1; i <= xe + 3; i++){
+				//當位置不在最上或最下時，且右方還>=2格
+				if(xe < mapLength - 2 && ye > 0 && ye < mapLength - 1){
+					for(let i = xe + 1; i <= xe + 2; i++){
 						for(let j = ye - 1; j <= ye + 1; j++){
 							lock.push(
 								{
@@ -622,9 +691,9 @@ function next(robot_ID, index, socket) {
 						}
 					}
 				}
-				//當位置在最上時，且右方還>=3格
-				else if(xe < mapLength - 3 && ye == 0){
-					for(let i = xe + 1; i <= xe + 3; i++){
+				//當位置在最上時，且右方還>=2格
+				else if(xe < mapLength - 2 && ye == 0){
+					for(let i = xe + 1; i <= xe + 2; i++){
 						for(let j = ye; j <= ye + 1; j++){
 							lock.push(
 								{
@@ -640,9 +709,9 @@ function next(robot_ID, index, socket) {
 						}
 					}
 				}
-				//當位置在最下時，且右方還>=3格
-				else if(xe < mapLength - 3 && ye == mapLength - 1){
-					for(let i = xe + 1; i <= xe + 3; i++){
+				//當位置在最下時，且右方還>=2格
+				else if(xe < mapLength - 2 && ye == mapLength - 1){
+					for(let i = xe + 1; i <= xe + 2; i++){
 						for(let j = ye; j >= ye - 1; j--){
 							lock.push(
 								{
@@ -663,21 +732,26 @@ function next(robot_ID, index, socket) {
 			default: break;
 		}
 	}
-	console.log(direction);
 
 	if(count > 2){
-		throwNumberPlate(index, route[index].route_point[0].x, route[index].route_point[0].y);
 		//若不在單行道則進行避開擁擠區的重新規劃路徑
-		if(point[index].x > 3 && point[index].x <= mapLength - 3){
+		if(point[index].x < 3 && point[index].x >= mapLength - 3){
+			throwNumberPlate(index, point[index].x, point[index].y);
 			re_find_route(point[index].x, point[index].y, route[index].route_point[route[index].route_point.length - 1].x, route[index].route_point[route[index].route_point.length - 1].y, index, lock)
-		} else {
+		} else if (point[index].x == 3 || point[index].x == 6){
+			throwNumberPlate(index, point[index].x, point[index].y);
 			stop = true;
 		}
+	}
+
+	if(stopCount[index] > 4){
+		throwNumberPlate(index, point[index].x, point[index].y);
+		stop_re_find_route(point[index].x, point[index].y, route[index].route_point[route[index].route_point.length - 1].x, route[index].route_point[route[index].route_point.length - 1].y, index);
+		stopCount[index] = 0;
 	}
 	
 	if(!stop){
 		drawNumberPlate(index);
-		console.log(number_plate);
 		for(let i = 0; i < number_plate.length; i++){
 			if(route[index].route_point[0].x == number_plate[i].x && route[index].route_point[0].y == number_plate[i].y){
 				if(number_plate[i].index != index){
@@ -687,9 +761,13 @@ function next(robot_ID, index, socket) {
 			}
 		}
 	}
+
 	if(stop){
 		socket.emit('stop');
+		stopCount[index]++;
 	} else {
+		stopCount[index] = 0;
+		changeRoute[index].changeRouteStatus = false;
 	    socket.emit('go',
 	    	{
 	    		x : route[index].route_point[0].x,
@@ -759,6 +837,13 @@ io.on('connection', function (socket) {
 	  					id : data.id
 	  				}
 	  			);
+	  			changeRoute.push(
+		  			{
+		  				changeRouteStatus : false,
+		  				id : data.id
+		  			}
+		  		);
+		  		stopCount.push(0);	
 	  		}
 	  		io.emit('draw',{ point : point, nextPoint : nextPoint });
 	  		var index = find_index(data.id, socket);
