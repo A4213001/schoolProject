@@ -288,7 +288,7 @@ function next(robot_ID, index, socket) {
 		for(let i = 0; i < point.length; i++){
 			if(i != index){
 				//判斷對撞
-				if(point[index].x == route[i].route_point[0].x && point[index].y == route[i].route_point[0].y && point[i].x == route[index].route_point[0].x && point[i].y == route[index].route_point[0].y && (point[index].x < 3 || point[index].x >= mapLength - 3)){
+				if(point[index].x == route[i].route_point[0].x && point[index].y == route[i].route_point[0].y && point[i].x == route[index].route_point[0].x && point[i].y == route[index].route_point[0].y && (point[index].x < 4 || point[index].x >= mapLength - 4)){
 					noChangRoute = false;
 					//上下準備對撞時，判斷上邊的robot位置，位置在前2行或倒數第3行，往右方繞路
 					if(point[index].x == route[index].route_point[0].x && point[index].x <= 1 && point[index].y < point[i].y || point[index].x == route[index].route_point[0].x && point[index].x == mapLength - 3 && point[index].y < point[i].y){
@@ -667,8 +667,12 @@ function next(robot_ID, index, socket) {
 
 	if(count > 2){
 		throwNumberPlate(index, route[index].route_point[0].x, route[index].route_point[0].y);
-		re_find_route(point[index].x, point[index].y, route[index].route_point[route[index].route_point.length - 1].x, route[index].route_point[route[index].route_point.length - 1].y, index, lock)
-		stop = true;
+		//若不在單行道則進行避開擁擠區的重新規劃路徑
+		if(point[index].x > 3 && point[index].x <= mapLength - 3){
+			re_find_route(point[index].x, point[index].y, route[index].route_point[route[index].route_point.length - 1].x, route[index].route_point[route[index].route_point.length - 1].y, index, lock)
+		} else {
+			stop = true;
+		}
 	}
 	
 	if(!stop){
