@@ -665,7 +665,7 @@ function next(robot_ID, index, socket) {
 	}
 	console.log(direction);
 
-	if(count > 3){
+	if(count > 2){
 		throwNumberPlate(index, route[index].route_point[0].x, route[index].route_point[0].y);
 		re_find_route(point[index].x, point[index].y, route[index].route_point[route[index].route_point.length - 1].x, route[index].route_point[route[index].route_point.length - 1].y, index, lock)
 		stop = true;
