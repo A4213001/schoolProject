@@ -710,7 +710,7 @@ function next(robot_ID, index, socket) {
 		if(stopCount[index] % 5 == 0){
 			lock = new Array();
 			for(let i = 0; i < point.length; i++){
-				if(stopCount[i] > 5){
+				if(stopCount[i] > 5 && i != index){
 					lock.push(
 						{
 							x : point[i].x,
