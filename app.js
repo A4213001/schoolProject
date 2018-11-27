@@ -11,8 +11,14 @@ console.log('Server running at port 80');
 
 app.use(express.static('views'));
 
-//#################
-// 明天預定修改項目!!! 重新規畫路徑時，將賭塞區域排除
+/*#################
+預定修改項目!!! 
+
+1. 重新規畫路徑時，將賭塞區域排除 : 已修改function，未測試
+2. 定義及傳送狀態 : 已保存各種停止狀態
+3. robotCount
+*/
+
 
 // ---varInit---
 var point = new Array(); //當前位置
@@ -24,6 +30,7 @@ var number_plate = new Array(); //號碼牌
 var stepCount = new Array(); //步數
 var changeRoute = new Array(); //更換路徑
 var stopCount = new Array(); //停止次數
+var robotStatus = new Array(); //robot狀態
 var mapLength = 10;
 //
 
@@ -151,53 +158,7 @@ function find_route(now_X, now_Y, goto_X, goto_Y, robot_ID, index) {
 };
 
 /*
-  重新尋找路徑(因停止次數>5)
-  params now_X 當前X座標
-         now_Y 當前Y座標
-         goto_X 目的地X座標
-         goto_Y 目的地Y座標
-         index robot的index
-  return 無
-  會將尋找好的路徑存進route Array中
-*/
-function stop_re_find_route(now_X, now_Y, goto_X, goto_Y, index) {
-	var graphLine = new astar.Graph(x);
-	if(goto_X == 0){
-		for(let i = 1; i < mapLength - 1; i++){
-			if(i >= 3 && i <= mapLength - 4){
-				for(let j = 0; j < mapLength; j+=2)
-					graphLine.grid[i][j].weight = 0;
-			}
-		}
-	}
-	if(goto_X == mapLength - 1){
-		for(let i = 1; i < mapLength - 1; i++){
-			if(i >= 3 && i <= mapLength - 4){
-				for(let j = 1; j < mapLength; j+=2)
-					graphLine.grid[i][j].weight = 0;
-			}
-		}
-	}
-	io.emit("console",{graph : graphLine});
-	var start = graphLine.grid[now_X][now_Y];
-	var end = graphLine.grid[goto_X][goto_Y];
-	var result = astar.astar.search(graphLine, start, end);
-	var route_point = new Array();
-	result.forEach(function(element) {
-		route_point.push(
-			{
-				x : element.x,
-				y : element.y
-			}
-		);
-	});
-	if(route_point.length > 0){
-		route[index].route_point = route_point;
-	}
-};
-
-/*
-  重新尋找路徑(因原路徑上有區域賭塞)
+  重新尋找路徑(因原路徑上有區域賭塞 or 停止次數>5)
   params now_X 當前X座標
          now_Y 當前Y座標
          goto_X 目的地X座標
@@ -741,13 +702,27 @@ function next(robot_ID, index, socket) {
 		} else if (point[index].x == 3 || point[index].x == 6){
 			throwNumberPlate(index, point[index].x, point[index].y);
 			stop = true;
+			robotStatus[index].crowded = true;//前方擁擠
 		}
 	}
 
 	if(stopCount[index] > 4){
-		throwNumberPlate(index, point[index].x, point[index].y);
-		stop_re_find_route(point[index].x, point[index].y, route[index].route_point[route[index].route_point.length - 1].x, route[index].route_point[route[index].route_point.length - 1].y, index);
-		stopCount[index] = 0;
+		if(stopCount[index] % 5 == 0){
+			lock = new Array();
+			for(let i = 0; i < point.length; i++){
+				if(stopCount[i] > 5){
+					lock.push(
+						{
+							x : point[i].x,
+							y : point[i].y
+						}
+					)
+				}
+			}
+			throwNumberPlate(index, point[index].x, point[index].y);
+			re_find_route(point[index].x, point[index].y, route[index].route_point[route[index].route_point.length - 1].x, route[index].route_point[route[index].route_point.length - 1].y, index, lock);
+		}
+		robotStatus[index].stopCountExceed4 = true;//停留次數超過4次
 	}
 	
 	if(!stop){
@@ -756,6 +731,7 @@ function next(robot_ID, index, socket) {
 			if(route[index].route_point[0].x == number_plate[i].x && route[index].route_point[0].y == number_plate[i].y){
 				if(number_plate[i].index != index){
 					stop = true;
+					robotStatus[index].numberPlateIsNotPreferred = true;//號碼牌不優先
 				}
 				break;
 			}
@@ -843,6 +819,13 @@ io.on('connection', function (socket) {
 		  				id : data.id
 		  			}
 		  		);
+		  		robotStatus.push(
+		  			{
+		  				crowded : false,
+		  				stopCountExceed4 : false,
+		  				numberPlateIsNotPreferred : false
+		  			}
+		  		)
 		  		stopCount.push(0);	
 	  		}
 	  		io.emit('draw',{ point : point, nextPoint : nextPoint });
