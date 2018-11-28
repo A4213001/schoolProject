@@ -19,7 +19,7 @@
 ###將本機上傳至雲端時的步驟為
 1. ```git status```查看
 
-##git相關工具教學
+## git相關工具教學
 * https://github.com/doggy8088/Learn-Git-in-30-days/blob/master/zh-tw/02.md
 
 * * *
