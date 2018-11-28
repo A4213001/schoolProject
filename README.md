@@ -8,7 +8,7 @@
 2. 輸入指令```node app.js```
 3. 打開瀏覽器進入測試頁面首頁```localhost:80/home```
 
-##git相關工具教學
+## git相關工具教學
 * https://github.com/doggy8088/Learn-Git-in-30-days/blob/master/zh-tw/02.md
 
 * * *
