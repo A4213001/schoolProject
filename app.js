@@ -21,6 +21,7 @@ app.use(express.static('views'));
 
 
 // ---varInit---
+var robotCount = 0; //機器人數量
 var point = new Array(); //當前位置
 var nextPoint = new Array(); //下個位置
 var route = new Array(); //預定路線
@@ -762,7 +763,7 @@ function next(robot_ID, index, socket) {
 
 //webroute start
 app.get('/', function (req, res) {
-    res.render('test.ejs');
+    res.render('robot.ejs');
 });
 
 app.get('/line', function (req, res) {
@@ -806,6 +807,7 @@ io.on('connection', function (socket) {
 	  		}
 	  		//當robot不存在時，新增資料進point Array
 	  		if(!exist){
+	  			robotCount++;
 	  			point.push(
 	  				{
 	  					x : data.now_x,
