@@ -1,7 +1,8 @@
 # 專案說明
 
-## 執行環境
-* Node.js v8.11.3
+## 開發環境
+* Node.js-v10.14.0(https://nodejs.org/en/)
+* Sublime Text(https://www.sublimetext.com/)
 
 ## 執行方法
 1. 打開cmd並進入專案資料夾
@@ -14,6 +15,12 @@
 + ```view/robot.ejs``` ----> 模擬機器人的前端頁面
 + ```view/home.ejs``` ----> 芷涵製作的前端頁面
 + ```view/line.ejs``` ----> 先旻製作的簡易前端畫面
+
+## 使用套件說明
++ astar-0.4.1(https://github.com/bgrins/javascript-astar)
++ jquery-3.3.1(https://jquery.com/)
++ bootstrap-3.3.6(https://getbootstrap.com/)
++ socket.io-6.3.0(https://socket.io/)
 
 ## 先旻的git簡易教學
 ### 將本機上傳至雲端時的步驟為
