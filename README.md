@@ -8,6 +8,17 @@
 2. 輸入指令```node app.js```
 3. 打開瀏覽器進入測試頁面首頁```localhost:80/home```
 
+## 簡易說明
++ ```app.js``` ----> Server
++ ```astar.js``` ----> astar路徑規劃
++ ```view/robot.ejs``` ----> 模擬機器人的前端頁面
++ ```view/home.ejs``` ----> 芷涵製作的前端頁面
++ ```view/line.ejs``` ----> 先旻製作的簡易前端畫面
+
+##先旻的git簡易教學
+###將本機上傳至雲端時的步驟為
+1. ```git status```查看
+
 ##git相關工具教學
 * https://github.com/doggy8088/Learn-Git-in-30-days/blob/master/zh-tw/02.md
 
