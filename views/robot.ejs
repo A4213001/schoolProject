@@ -1,13 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<script src="JS/jquery-3.3.1.min.js"></script>
 <script>
-	function sleep(d){
-	  for(var t = Date.now(); Date.now() - t <= d;);
-	}
-
-	var go_x_size = 4, go_y_size = 4;
-
 	function getQueryVariable(variable)
 	{
 	    var query = window.location.search.substring(1);
@@ -61,6 +55,7 @@
 	    <br>
 	    <button onclick="start()">開始</button>
 	    <button onclick="autoStart()">自動模式</button>
+		<button onclick="openRobot()">多開9個</button>
 	</p>
 	<div id="goto"></div>
     <script>
@@ -119,8 +114,29 @@
 	        	}
 	        );
 	        $("#goto").html("<b>goto_x : " + goto_x + " goto_y : " + goto_y);
-	        // sleep(1000);。
+	        // sleep(500);。
         };
+
+        function openRobot(){
+			var newwin1 = window.open();
+ 			newwin1.location = "http://localhost:80?id=1";
+ 			var newwin2 = window.open();
+ 			newwin2.location = "http://localhost:80?id=2";
+ 			var newwin3 = window.open();
+ 			newwin3.location = "http://localhost:80?id=3";
+ 			var newwin4 = window.open();
+ 			newwin4.location = "http://localhost:80?id=4";
+ 			var newwin5 = window.open();
+ 			newwin5.location = "http://localhost:80?id=5";
+ 			var newwin6 = window.open();
+ 			newwin6.location = "http://localhost:80?id=6";
+ 			var newwin7 = window.open();
+ 			newwin7.location = "http://localhost:80?id=7";
+ 			var newwin8 = window.open();
+ 			newwin8.location = "http://localhost:80?id=8";
+ 			var newwin9 = window.open();
+ 			newwin9.location = "http://localhost:80?id=9";
+        }
 
 	    socket.on('message', function (data) {
         	console.log(data);    
@@ -131,14 +147,15 @@
 		});
 
 		socket.on('stop', function (data) {
-        	sleep(1000);
-        	socket.emit('walk',
-		  		{
-		  			id : id,
-		  			index : index,
-		  			isStop : true
-		  		}
-	  		);
+        	setTimeout(function(){
+        		socket.emit('walk',
+			  		{
+			  			id : id,
+			  			index : index,
+			  			isStop : true
+			  		}
+		  		);
+        	}, 1000);
 		});
 
 		socket.on('go', function (data) {
@@ -146,22 +163,23 @@
 		  	previous_y = now_y;
 		  	now_x = data.x;
 		  	now_y = data.y;
-		  	sleep(1000);
-		  	setAddress();
-		  	if(now_x != goto_x || now_y != goto_y){
-		  		socket.emit('walk',
-			  		{
-			  			id : id,
-			  			index : index,
-			  			isStop : false
+		  	setTimeout(function(){
+		  		setAddress();
+			  	if(now_x != goto_x || now_y != goto_y){
+			  		socket.emit('walk',
+				  		{
+				  			id : id,
+				  			index : index,
+				  			isStop : false
+				  		}
+			  		);
+			  	}
+			  	else{
+			  		if(auto){
+			  			autoStart();
 			  		}
-		  		);
-		  	}
-		  	else{
-		  		if(auto){
-		  			autoStart();
-		  		}
-		  	}
+			  	}
+		  	}, 1000);		  	
 		});   
 	</script>
 </body>
