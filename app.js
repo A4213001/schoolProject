@@ -704,6 +704,14 @@ app.get('/line', function (req, res) {
 app.get('/home', function (req, res) {
     res.render('home.ejs');
 });
+
+app.get('/search', function (req, res) {
+    res.render('search.ejs');
+});
+
+app.get('/button', function (req, res) {
+    res.render('button.ejs');
+});
 //webroute end
 
 //socket connect start

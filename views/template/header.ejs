@@ -5,7 +5,7 @@
 		<title>LOGISTICS ROBOT</title>
 		<link rel="stylesheet" href="CSS/layout.css">
 		<link rel="stylesheet"  type="text/css"  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-
+		<script src="../JS/method.js"></script>
 		<script src="JS/jquery-3.3.1.min.js"></script>
 		<script src="/socket.io/socket.io.js"></script>
 	</head>
@@ -13,9 +13,9 @@
 			$(function() {
 			  $(window).scroll(function() {
 			    if ($(this).scrollTop() > 495)  {          /* 要滑動到選單的距離 */
-			       $('.row').addClass('navFixed');   /* 幫選單加上固定效果 */
+			       $('.menu').addClass('navFixed');   /* 幫選單加上固定效果 */
 			    } else {
-			      $('.row').removeClass('navFixed'); /* 移除選單固定效果 */
+			      $('.menu').removeClass('navFixed'); /* 移除選單固定效果 */
 			    }
 			  });
 			});
@@ -26,27 +26,26 @@
 			  z-index: 10;          
 			  position: fixed;      
 			  top: 0;
-			  left: 0;
+			  left: 0px;
 			  margin-top: 0;
 			  /* min-width: 100%; */
 			  opacity: 0.70;
 			  transition: opacity .5s ease-out;
+			  background-color: #fff
 
 			}
 		</style> 
 		<div>  
 			<img src="../images/top2.0.png" alt="" width="1280" id="topImage">
-			<nav class="row">
-		   	<ul class="nav nav-tabs navbar navbar-light" >
-		      	<li><a href="../home"><img src="../images/home.svg" width="25
-
-		      		"></a></li>
-		        <li><a data-toggle="tab" href="/Asia">全場機器</a></li>
-		        <li><a data-toggle="tab" href="/Europe">設置動機</a></li>
-		        <li><a data-toggle="tab" href="/America">機器查詢</a></li>
-		    </ul>
-	   	</nav>
+			<nav class="menu">
+			   	<ul class="nav nav-tabs navbar navbar-light">
+			      	<li><a href="../home"><img src="../images/home.svg" width="25"></a></li>
+			        <li><a href="">設置動機</a></li>
+			        <li><a href="../search">機器查詢</a></li>
+			        <li><a href="../button">視覺化</a></li>
+			    </ul>
+		   	</nav>
 		</div>	   
 
 		<hr/>
-		
+		 

@@ -1,43 +1,11 @@
 <% include template/header.ejs %>
 
-		<canvas id="cvs" height="1000" width="1204">抱歉，您的瀏覽器不支持canvas</canvas>
+		<canvas id="cvs" height="500" width="602">抱歉，您的瀏覽器不支持canvas</canvas>
 		<script>
 			var socket = io.connect('http://localhost');
-
-				var list = ["","Ⅰ","Ⅱ","Ⅲ","Ⅳ","Ⅴ","Ⅵ","Ⅶ","Ⅷ","Ⅸ","Ⅹ"];
-				let XYlenght=10, //位置
-					nowX=0,nowY=51; //陣列畫到的位置(nowY初始位置是第二排)
-				var	distance=10, //兩隔間的距離
-					size=41, //每格的大小
-					listNum=1,
-					listNumE=1;
-				var lastLenght=0;
-				var clearX=new Array(),
-					clearY=new Array();
-				var cvs=document.getElementById("cvs");     
-				var ctx=cvs.getContext("2d");
-				ctx.fillStyle="black";
-				ctx.width = ctx.width;
-				for (var locationX = 0; locationX < XYlenght; locationX++) {	//走訪x
-					for (var locationY = 0; locationY < XYlenght; locationY++) {	//走訪y
-						if(locationX==0){	//第一排座標
-							ctx.font = "normal 15px Arial";
-							ctx.fillText(list[listNum],nowY-30.5,nowX+25);
-							listNum++; } 
-						if(locationX==9){	//最後一排座標
-							ctx.font = "normal 15px Arial";
-							ctx.fillText(list[listNumE],nowY+50,nowX+25);
-							listNumE++;	} 
-						ctx.strokeRect(nowY,nowX,size,size);
-						nowX+=distance;
-						nowX+=size;
-					}
-					nowY+=distance;
-					nowY+=size;
-					nowX=0;
-				}
-				ctx.font = "normal 10px Arial";	//設定id顯示的大小
-			
+			var cvs=document.getElementById("cvs");
+			var ctx=cvs.getContext("2d");
+			Square(ctx);	//畫出方格 function在JS/method.js
 
 			function Direction(now_X,now_Y,next_X,next_Y){	//判斷左右上下
 				if (now_X>next_X) {return 'left'; }
@@ -85,7 +53,7 @@
 			function Arrow(ctx,nowX,nowY,now_X,now_Y,next_X,next_Y){	//根據上下左右對應到function
 				switch(Direction(now_X,now_Y,next_X,next_Y)){
 					case 'left':
-						drawArrow(ctx, nowY+35 ,nowX+20.5, nowY+5, nowX+20.5,30,15,5,'#fff');
+						drawArrow(ctx, nowY+35 ,nowX+20.5, nowY+5, nowX+20.5,30,15,2.5,'#fff');
 						break;   
 
 					case 'right':
@@ -139,5 +107,15 @@
 				});
 			});
 		</script>
-	</body>
-</html>
+		<div class="detail">
+			<ul>
+				<li class="id"><h3>id</h3></li>
+				<li class="status"><h3>狀態</h3></li>
+			</ul>
+			<script>
+				function detail(id,purpose_X,purpose_Y,now_X,now_Y){
+					
+				}
+			</script>
+		</div>
+<% include template/footer.ejs %>

@@ -1,0 +1,14 @@
+<% include template/header.ejs %>
+	<script> 
+		onload=function button(){ 
+			// var insertText = '<input type="button" value="123">'; 
+			for(var i=0;i<10;i++){
+				for(var j=0;j<10;j++){
+					document.getElementById("button").innerHTML = document.getElementById("button").innerHTML+'<input type="button" value="'+i+'-'+j+'" id="'+i+'-'+j+'" class="look"> '; 
+				}
+				document.getElementById("button").innerHTML = document.getElementById("button").innerHTML+'<br/>'; 
+			}
+		} 
+	</script>
+	<center><div id="button"></div></center>
+<% include template/footer.ejs %>
