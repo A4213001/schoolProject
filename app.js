@@ -308,8 +308,9 @@ function trunWhere(index){
 */
 function next(robot_ID, index, socket) {
 	if(robot_ID == 0){
-		console.log(number_plate);
-		console.log(direction);
+		// console.log(number_plate);
+		// console.log(direction);
+		console.log(stepCount);
 	}
 	var stop = false;
 	var noChangRoute = true;
