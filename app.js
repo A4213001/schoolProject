@@ -878,8 +878,8 @@ io.on('connection', function (socket) {
   	});
 
   	//connectionEvent allStart
-  	socket.on('allStart', function (data, socket) {
-		io.emit('start');
+  	socket.on('allAutoStart', function (data, socket) {
+		io.emit('autoStart');
   	});
 
   	socket.on('disconnect', function() { console.log("disconnect connectCount : " + io.engine.clientsCount) });

@@ -56,7 +56,7 @@
 	    <button onclick="start()">開始</button>
 	    <button onclick="autoStart()">自動模式</button>
 		<button onclick="openRobot()">多開9個</button>
-		<button onclick="allStart()">全部開啟自動模式</button>
+		<button onclick="allAutoStart()">全部開啟自動模式</button>
 	</p>
 	<div id="goto"></div>
     <script>
@@ -115,7 +115,6 @@
 	        	}
 	        );
 	        $("#goto").html("<b>goto_x : " + goto_x + " goto_y : " + goto_y);
-	        // sleep(500);。
         };
 
         function openRobot(){
@@ -139,8 +138,8 @@
  			newwin9.location = "http://localhost:80?id=9";
         }
 
-        function allStart(){
-			socket.emit('allStart');
+        function allAutoStart(){
+			socket.emit('allAutoStart');
         }
 
 		socket.on('return_index', function (data) {
@@ -183,7 +182,7 @@
 		  	}, 1000);		  	
 		});
 
-		socket.on('start', function (data) {
+		socket.on('autoStart', function (data) {
         	autoStart();   
 		});
 	</script>
