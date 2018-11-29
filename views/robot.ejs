@@ -22,8 +22,10 @@
 	<script>
 		var socket = io.connect('http://localhost');//webSocket
 		var id = parseInt(getQueryVariable("id"));
-		var now_x = 0;
-        var now_y = Math.floor(Math.random() * 10);
+		if(!id)
+			id = 0;
+		var now_x = id % 2 == 0 ? 0 : 9;
+        var now_y = id;
 		var goto_x = 0;
 		var goto_y = 0;
 		var auto = false;
@@ -31,8 +33,6 @@
 		var previous_x = null;
 		var previous_y = null;
 		var mapLength = 10;
-		if(!id)
-			id = 0;
 	</script>
 </head>
 <body>
@@ -56,6 +56,7 @@
 	    <button onclick="start()">開始</button>
 	    <button onclick="autoStart()">自動模式</button>
 		<button onclick="openRobot()">多開9個</button>
+		<button onclick="allStart()">全部開啟自動模式</button>
 	</p>
 	<div id="goto"></div>
     <script>
@@ -138,9 +139,9 @@
  			newwin9.location = "http://localhost:80?id=9";
         }
 
-	    socket.on('message', function (data) {
-        	console.log(data);    
-		});
+        function allStart(){
+			socket.emit('allStart');
+        }
 
 		socket.on('return_index', function (data) {
         	index = data.index;   
@@ -180,7 +181,11 @@
 			  		}
 			  	}
 		  	}, 1000);		  	
-		});   
+		});
+
+		socket.on('start', function (data) {
+        	autoStart();   
+		});
 	</script>
 </body>
 </html>
