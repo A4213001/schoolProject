@@ -1,4 +1,4 @@
-function Square(ctx){
+function Square(ctx){		//用canvas畫出方格
 				var list = ["","Ⅰ","Ⅱ","Ⅲ","Ⅳ","Ⅴ","Ⅵ","Ⅶ","Ⅷ","Ⅸ","Ⅹ"];
 				let XYlenght=10, //位置
 					nowX=0,nowY=51; //陣列畫到的位置(nowY初始位置是第二排)
@@ -30,3 +30,94 @@ function Square(ctx){
 				}
 				ctx.font = "normal 10px Arial";	//設定id顯示的大小
 			}
+
+function Direction(now_X,now_Y,next_X,next_Y){	//判斷左右上下
+				if (now_X>next_X) {return 'left'; }
+				if (now_X<next_X) {return 'right'; }
+				if (now_Y>next_Y) {return 'upper'; }
+				if (now_Y<next_Y) {return 'under'; }
+			}
+
+function drawArrow(ctx, fromX, fromY, toX, toY,theta,headlen,width,color) {	//畫出箭頭
+
+			    theta = typeof(theta) != 'undefined' ? theta : 15;
+			    headlen = typeof(theta) != 'undefined' ? headlen : 30;
+			    width = typeof(width) != 'undefined' ? width : 1;
+			    color = typeof(color) != 'color' ? color : '#000';
+			    var angle = Math.atan2(fromY - toY, fromX - toX) * 180 / Math.PI,
+			        angle1 = (angle + theta) * Math.PI / 180,
+			        angle2 = (angle - theta) * Math.PI / 180,
+			        topX = headlen * Math.cos(angle1),
+			        topY = headlen * Math.sin(angle1),
+			        botX = headlen * Math.cos(angle2),
+			        botY = headlen * Math.sin(angle2);
+
+			    ctx.save();
+			    ctx.beginPath();
+
+			    var arrowX = fromX - topX,
+			        arrowY = fromY - topY;
+
+			    ctx.moveTo(arrowX, arrowY);
+			    ctx.moveTo(fromX, fromY);
+			    ctx.lineTo(toX, toY);
+			    arrowX = toX + topX;
+			    arrowY = toY + topY;
+			    ctx.moveTo(arrowX, arrowY);
+			    ctx.lineTo(toX, toY);
+			    arrowX = toX + botX;
+			    arrowY = toY + botY;
+			    ctx.lineTo(arrowX, arrowY);
+			    ctx.strokeStyle = color;
+			    ctx.lineWidth = width;
+			    ctx.stroke();
+			    ctx.restore();
+			}
+
+function Arrow(ctx,nowX,nowY,now_X,now_Y,next_X,next_Y){	//根據上下左右對應到function
+				switch(Direction(now_X,now_Y,next_X,next_Y)){
+					case 'left':
+						drawArrow(ctx, nowY+35 ,nowX+20.5, nowY+5, nowX+20.5,30,15,2.5,'#fff');
+						break;   
+
+					case 'right':
+						drawArrow(ctx, nowY+5, nowX+20.5, nowY+35 ,nowX+20.5,30,15,2.5,'#fff');
+						break;
+
+					case 'upper':
+						drawArrow(ctx, nowY+20.5 ,nowX+35, nowY+20.5, nowX+5,30,15,2.5,'#fff');
+						break;
+
+					case 'under':
+						drawArrow(ctx, nowY+20.5, nowX+5, nowY+20.5 ,nowX+35,30,15,2.5,'#fff');
+						break;
+				}
+			}
+
+function svgArrow(direction){
+	switch(direction){
+		case 'left':
+			document.write('<img src="../">');
+		case 'right':
+		case 'upper':
+			document.write('<img src="../images/arrow.svg">');
+		case 'under':
+	}
+}
+
+function init(cvs){
+	cvs.addEventListener('mousedown', mouseMoveHandler);
+}
+
+function mouseMoveHandler(event) {
+   var msg = "Mouse position: " + event.clientX+ "," + event.clientY;
+   document.getElementById("ppp").innerHTML=msg;
+}
+
+function show(msg) {
+   ctx.font = '20px Tahoma';
+   ctx.fillStyle = "#1569C7";
+   ctx.textAlign = "left";
+   ctx.textBaseline = "bottom";
+   ctx.fillText(msg, 299, 150);
+}
