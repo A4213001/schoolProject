@@ -110,14 +110,22 @@ function init(cvs){
 }
 
 function mouseMoveHandler(event) {
-   var msg = "Mouse position: " + event.clientX+ "," + event.clientY;
-   document.getElementById("ppp").innerHTML=msg;
+	// var X=event.clientX;
+	// var Y=event.clientY;
+   	let x=event.clientX-51,
+   		y=event.clientY, //y的起始位置是51
+   		lattice=41+10,//size+distance
+   		size=41;
+   	let coordinateX,
+   		coordinateY;
+   	if((x%lattice<=size)&&(y%lattice<=size)){
+   		coordinateX=Math.floor(x/lattice+1);
+   		coordinateY=Math.floor(y/lattice);
+   		var msg = "座標: " +coordinateY+ "," +coordinateX;
+   	}else{
+   		var msg = null;
+   	}
+   	if(coordinateX>10||coordinateX<1||coordinateY>10||coordinateY<1) msg=null;	
+   	document.getElementById("ppp").innerHTML=msg;
 }
 
-function show(msg) {
-   ctx.font = '20px Tahoma';
-   ctx.fillStyle = "#1569C7";
-   ctx.textAlign = "left";
-   ctx.textBaseline = "bottom";
-   ctx.fillText(msg, 299, 150);
-}

@@ -19,8 +19,7 @@
 					}
 					for (var locationX = 0; locationX < XYlenght; locationX++) {	//走訪x
 						for (var locationY = 0; locationY < XYlenght; locationY++) {	//走訪y
-							// ctx.fillText(init(cvs),500,100);
-							for (var data = 0; data < now.length; data++) {	//走訪現在位置的data
+ 							for (var data = 0; data < now.length; data++) {	//走訪現在位置的data
 								if (locationX==now[data].x && locationY==now[data].y) {	//位置 vs data
 									ctx.fillRect(nowY,nowX,size,size);
 									clearY[data]=nowY;//儲存此次的
@@ -45,7 +44,9 @@
 				});
 			});
 		</script>
-		<h1 class='select'>當前機器人數量</h1>
-		<h1 nowrap class='select' id='Qua'></h1>
-		<p id=ppp></p>
+		<div class='select'>
+			<h1>當前機器人數量</h1>
+			<h1 nowrap id='Qua'></h1>
+			<p id=ppp></p>
+		</div>
 <% include template/footer.ejs %>
