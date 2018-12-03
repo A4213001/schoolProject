@@ -5,6 +5,7 @@ var server = require('http').Server(app);
 var io = require('socket.io')(server);
 var sizeof = require('object-sizeof');
 var extend = require('jquery-extend');
+var fs = require('fs');
 
 server.listen(80);
 console.log('Server running at port 80');
@@ -781,6 +782,10 @@ app.get('/search', function (req, res) {
 
 app.get('/button', function (req, res) {
     res.render('button.ejs');
+});
+
+app.get('/testJson', function (req, res) {
+    res.json(JSON.parse(fs.readFileSync("cargo.json")));
 });
 //webroute end
 
