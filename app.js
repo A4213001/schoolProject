@@ -34,6 +34,7 @@ var changeRoute = new Array(); //更換路徑
 var stopCount = new Array(); //停止次數
 var robotStatus = new Array(); //robot狀態
 var mapLength = 10;
+var cargo = JSON.parse(fs.readFileSync("cargo.json"));
 //
 
 //---graphInit---
@@ -102,18 +103,18 @@ function find_index(robot_ID, socket){
 
 /*
   尋找路徑
-  params now_X 當前X座標
-         now_Y 當前Y座標
-         goto_X 目的地X座標
-         goto_Y 目的地Y座標
+  params now_x 當前X座標
+         now_y 當前Y座標
+         goto_x 目的地X座標
+         goto_y 目的地Y座標
          robot_ID robot編號
          index robot的index
   return 無
   會將尋找好的路徑存進route Array中
 */
-function find_route(now_X, now_Y, goto_X, goto_Y, robot_ID, index) {
+function find_route(now_x, now_y, goto_x, goto_y, robot_ID, index) {
 	var graphLine = new astar.Graph(x);
-	if(goto_X == 0){
+	if(goto_x == 0){
 		for(let i = 1; i < mapLength - 1; i++){
 			if(i >= 3 && i <= mapLength - 4){
 				for(let j = 0; j < mapLength; j+=2)
@@ -121,7 +122,7 @@ function find_route(now_X, now_Y, goto_X, goto_Y, robot_ID, index) {
 			}
 		}
 	}
-	if(goto_X == mapLength - 1){
+	if(goto_x == mapLength - 1){
 		for(let i = 1; i < mapLength - 1; i++){
 			if(i >= 3 && i <= mapLength - 4){
 				for(let j = 1; j < mapLength; j+=2)
@@ -129,8 +130,8 @@ function find_route(now_X, now_Y, goto_X, goto_Y, robot_ID, index) {
 			}
 		}
 	}
-	var start = graphLine.grid[now_X][now_Y];
-	var end = graphLine.grid[goto_X][goto_Y];
+	var start = graphLine.grid[now_x][now_y];
+	var end = graphLine.grid[goto_x][goto_y];
 	var result = astar.astar.search(graphLine, start, end);
 	var route_point = new Array();
 	result.forEach(function(element) {
@@ -161,18 +162,18 @@ function find_route(now_X, now_Y, goto_X, goto_Y, robot_ID, index) {
 
 /*
   重新尋找路徑(因原路徑上有區域賭塞 or 停止次數>5)
-  params now_X 當前X座標
-         now_Y 當前Y座標
-         goto_X 目的地X座標
-         goto_Y 目的地Y座標
+  params now_x 當前X座標
+         now_y 當前Y座標
+         goto_x 目的地X座標
+         goto_y 目的地Y座標
          index robot的index
          lock 賭塞的區域(將此區域鎖住後來尋找路徑)
   return 無
   會將尋找好的路徑存進route Array中
 */
-function re_find_route(now_X, now_Y, goto_X, goto_Y, index, lock) {
+function re_find_route(now_x, now_y, goto_x, goto_y, index, lock) {
 	var graphLine = new astar.Graph(x);
-	if(goto_X == 0){
+	if(goto_x == 0){
 		for(let i = 1; i < mapLength - 1; i++){
 			if(i >= 3 && i <= mapLength - 4){
 				for(let j = 0; j < mapLength; j+=2)
@@ -180,7 +181,7 @@ function re_find_route(now_X, now_Y, goto_X, goto_Y, index, lock) {
 			}
 		}
 	}
-	if(goto_X == mapLength - 1){
+	if(goto_x == mapLength - 1){
 		for(let i = 1; i < mapLength - 1; i++){
 			if(i >= 3 && i <= mapLength - 4){
 				for(let j = 1; j < mapLength; j+=2)
@@ -192,8 +193,8 @@ function re_find_route(now_X, now_Y, goto_X, goto_Y, index, lock) {
 		graphLine.grid[lock[i].x][lock[i].y] = 0;
 	}
 	io.emit("console",{graph : graphLine});
-	var start = graphLine.grid[now_X][now_Y];
-	var end = graphLine.grid[goto_X][goto_Y];
+	var start = graphLine.grid[now_x][now_y];
+	var end = graphLine.grid[goto_x][goto_y];
 	var result = astar.astar.search(graphLine, start, end);
 	var route_point = new Array();
 	result.forEach(function(element) {
@@ -857,6 +858,11 @@ io.on('connection', function (socket) {
 	  		find_route(data.now_x, data.now_y, data.goto_x, data.goto_y, data.id, index);
 	  		next(data.id, index, socket);
   		}
+  	});
+
+  	//connectionEvent getCargoEndPoint
+  	socket.on('getCargoEndPoint', function (data) {
+  		if(data.now_x)
   	});
 
   	//connectionEvent walk
