@@ -1,4 +1,6 @@
-
+body{
+	margin:15px 10px 15px 10px;
+}
  .addressColor{
 	background-color: #ee3e;
 	border: 3px solid black;
@@ -6,22 +8,27 @@
 	display: inline-block;
 	margin: 0px;
 }
-.row{
-	/* color: #b22222; */
+.menu{
 	position: absolute;
     z-index: 10;	/* 將文字留在最上層 */
-	right: 20%;
+	right: 5px;
 	top: 0%;
-	font-size: 36px;
+	font-size: 18px;
 	/* font-family: monotype; */
 }
 
+.menu a{
+	color: #444444;
+	font-family: DFKai-sb;
+	font-weight:300;
+}
+
 #cvs{
+	position : absolute;
 	padding-left: 0;
     padding-right: 0;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
+    z-index : -1;
+	
 }
 #topImage{
 	padding-left: 0;
@@ -30,6 +37,38 @@
     margin-right: auto;
     display: block;
     position:relative;
-
-
+}
+.detail{
+	margin:auto;
+	display:inline;
+	position: relative;
+	left: 700px;
+}
+.select { 
+	position: absolute;
+	left: 50%;
+}
+.input{
+	font-size: 18px;
+	text-align:center;
+}
+#single{
+	display:block;
+	margin:auto;
+}
+#button input{
+	width:41px;
+	height:41px;
+	margin:2px 2px;
+}
+#d1-1{
+	background-image:url('../images/arrow.svg');
+}
+#d2-2{
+	background-image:url(../images/arrow.svg) ;
+	transform: rotate(180deg);
+	-ms-transform: rotate(180deg); /* IE 9 */
+	-webkit-transform: rotate(180deg); /* Safari and Chrome */
+	-o-transform: rotate(180deg); /* Opera */
+	-moz-transform: rotate(180deg); /* Firefox */
 }
