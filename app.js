@@ -862,7 +862,24 @@ io.on('connection', function (socket) {
 
   	//connectionEvent getCargoEndPoint
   	socket.on('getCargoEndPoint', function (data) {
-  		if(data.now_x)
+  		var goto_x, goto_y , success = true;
+  		if(data.now_x == 0){
+  			goto_x = 9;
+  			goto_y = cargo.left[data.now_y][0];
+  		} else if(data.now_x == 9){
+  			goto_x = 0;
+  			goto_y = cargo.right[data.now_y][0];
+  		} else {
+  			success = false;
+  		}
+  		if(success){
+	  		socket.emit('return_CargoEndPoint',
+	  			{
+	  				goto_x : goto_x,
+	  				goto_y : goto_y
+	  			}
+	  		)
+  		}
   	});
 
   	//connectionEvent walk
