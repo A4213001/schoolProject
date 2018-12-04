@@ -1,8 +1,4 @@
-# 專案說明-測試報告版本
-
-## 差異
-* 檔案讀取
-* cargo.json
+# 專案說明
 
 ## 開發環境
 * Node.js-v10.14.0(https://nodejs.org/en/)
