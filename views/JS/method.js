@@ -105,27 +105,52 @@ function svgArrow(direction){
 	}
 }
 
+function destination(){
+	    socket.emit('destination',
+	    {
+	    	id : id
+	    });
+	};
+	socket.on('return_endPoint',function(data)
+        {
+        	 status(data.id,data.gotoX,data.gotoY)		////////////////////////////////////////////////////////////
+	    });
+
 function init(cvs){
 	cvs.addEventListener('mousedown', mouseMoveHandler);
 }
 
+   	var coordinateX,
+   		coordinateY,
+   		msg;
 function mouseMoveHandler(event) {
-	// var X=event.clientX;
-	// var Y=event.clientY;
-   	let x=event.clientX-51,
-   		y=event.clientY, //y的起始位置是51
+   	let x=event.clientX,
+   		y=event.clientY, 
    		lattice=41+10,//size+distance
    		size=41;
-   	let coordinateX,
-   		coordinateY;
    	if((x%lattice<=size)&&(y%lattice<=size)){
-   		coordinateX=Math.floor(x/lattice+1);
+   		coordinateX=Math.floor(x/lattice); //Math.floor去小數點
    		coordinateY=Math.floor(y/lattice);
-   		var msg = "座標: " +coordinateY+ "," +coordinateX;
+   		msg = "座標: " +coordinateY+ "," +coordinateX;
+   		if(coordinateX>10||coordinateX<1||coordinateY>10||coordinateY<1) msg=null;
    	}else{
-   		var msg = null;
+   		msg = null;
    	}
-   	if(coordinateX>10||coordinateX<1||coordinateY>10||coordinateY<1) msg=null;	
+   // 	$(document).ready(function(){
+	  //  	socket.on('draw',function(data){
+	  //  		var now = data.point;
+			// var next = data.nextPoint;
+	  //  		for (var data = 0; data < now.length; data++) {
+	  //  			if ((now[data].x==coordinateX)&&(now[data].y==coordinateY)) {
+	  //  				msg="id:"+data;
+	  //  				data=now.length;
+	  //  			}
+	  //  		}
+	  //  	});
+   // 	});
    	document.getElementById("ppp").innerHTML=msg;
 }
 
+function status(id,gotoX,gotoY){
+	document.getElementById(id).innerHTML='id:'+id+'<br/>終點目標('+gotoX+','+gotoY;		/////////////////////////////////////////////////
+}

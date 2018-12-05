@@ -5,10 +5,14 @@
 		<title>LOGISTICS ROBOT</title>
 		<link rel="stylesheet" href="CSS/layout.css">
 		<link rel="stylesheet"  type="text/css"  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../CSS/slick.css">	<!-- //// -->
+		<link rel="stylesheet" type="text/css" href="../CSS/slick-theme.css">	<!-- //// -->
 		<script src="../JS/method.js"></script>
 		<script src="JS/jquery-3.3.1.min.js"></script>
 		<script src="/socket.io/socket.io.js"></script>
+		<script src="../JS/slick.js" type="text/javascript" charset="utf-8"></script> <!-- //// -->
 	</head>
+	<body>
 	   	<script type="text/javascript">
 			$(function() {
 			  $(window).scroll(function() {
@@ -36,6 +40,72 @@
 			}
 		</style> 
 		<div>  
+			<section class="regular slider">
+			    <div id="status[0]" class="status"></div>
+			    <div id="status[1]" class="status"></div>
+			    <div id="status[2]" class="status"></div>
+			    <div id="status4" class="status"></div>
+			    <div id="status5" class="status"></div>
+		  	</section>
+		  	<script type="text/javascript">
+			    $(document).ready(function() {
+			      $(".vertical-center-4").slick({
+			        dots: true,
+			        vertical: true,
+			        centerMode: true,
+			        slidesToShow: 4,
+			        slidesToScroll: 2,
+			        nextArrow : "<button class='slick-next'>1</button>"
+			      });
+			      $(".vertical-center-3").slick({
+			        dots: true,
+			        vertical: true,
+			        centerMode: true,
+			        slidesToShow: 3,
+			        slidesToScroll: 3
+			      });
+			      $(".vertical-center-2").slick({
+			        dots: true,
+			        vertical: true,
+			        centerMode: true,
+			        slidesToShow: 2,
+			        slidesToScroll: 2
+			      });
+			      $(".vertical-center").slick({
+			        dots: true,
+			        vertical: true,
+			        centerMode: true,
+			      });
+			      $(".vertical").slick({
+			        dots: true,
+			        vertical: true,
+			        slidesToShow: 3,
+			        slidesToScroll: 3
+			      });
+			      $(".regular").slick({
+			        dots: true,
+			        infinite: true,
+			        slidesToShow: 3,
+			        slidesToScroll: 3
+			      });
+			      $(".center").slick({
+			        dots: true,
+			        infinite: true,
+			        centerMode: true,
+			        slidesToShow: 5,
+			        slidesToScroll: 3
+			      });
+			      $(".variable").slick({
+			        dots: true,
+			        infinite: true,
+			        variableWidth: true
+			      });
+			      $(".lazy").slick({
+			        lazyLoad: 'ondemand', // ondemand progressive anticipated
+			        infinite: true
+			      });
+			    });
+			</script>
 			<!-- <img src="../images/top2.0.png" alt="" width="1280" id="topImage"> -->
 			<nav class="menu">
 			   	<ul class="nav nav-tabs navbar navbar-light">
