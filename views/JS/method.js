@@ -136,21 +136,9 @@ function mouseMoveHandler(event) {
    	}else{
    		msg = null;
    	}
-   // 	$(document).ready(function(){
-	  //  	socket.on('draw',function(data){
-	  //  		var now = data.point;
-			// var next = data.nextPoint;
-	  //  		for (var data = 0; data < now.length; data++) {
-	  //  			if ((now[data].x==coordinateX)&&(now[data].y==coordinateY)) {
-	  //  				msg="id:"+data;
-	  //  				data=now.length;
-	  //  			}
-	  //  		}
-	  //  	});
-   // 	});
     for (var data = 0; data < now.length; data++) {
 		if ((now[data].x==(coordinateX-1))&&(now[data].y==(coordinateY-1))) {
-			msg="id:"+data;
+			msg="id:"+data+"<br/>座標:"+coordinateY+ "," +coordinateX;
 			data=now.length;
 		}
 	}
@@ -158,5 +146,5 @@ function mouseMoveHandler(event) {
 }
 
 function status(id,gotoX,gotoY){
-	document.getElementById(id).innerHTML='id:'+id+'<br/>終點目標('+gotoX+','+gotoY;		/////////////////////////////////////////////////
+	document.getElementById(id).innerHTML=msg;		/////////////////////////////////////////////////
 }
