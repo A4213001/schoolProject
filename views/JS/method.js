@@ -124,8 +124,8 @@ function init(cvs){
    		coordinateY,
    		msg;
 function mouseMoveHandler(event) {
-   	let x=event.clientX,
-   		y=event.clientY, 
+   	let x=event.clientX-cvs.getBoundingClientRect().left,
+   		y=event.clientY-cvs.getBoundingClientRect().top+51, 
    		lattice=41+10,//size+distance
    		size=41;
    	if((x%lattice<=size)&&(y%lattice<=size)){
@@ -148,6 +148,12 @@ function mouseMoveHandler(event) {
 	  //  		}
 	  //  	});
    // 	});
+    for (var data = 0; data < now.length; data++) {
+		if ((now[data].x==(coordinateX-1))&&(now[data].y==(coordinateY-1))) {
+			msg="id:"+data;
+			data=now.length;
+		}
+	}
    	document.getElementById("ppp").innerHTML=msg;
 }
 
