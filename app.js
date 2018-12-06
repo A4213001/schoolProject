@@ -862,17 +862,83 @@ io.on('connection', function (socket) {
 
   	//connectionEvent getCargoEndPoint
   	socket.on('getCargoEndPoint', function (data) {
-  		var goto_x, goto_y , success = true;
+  		console.log(cargo);
+  		var goto_x, goto_y, success = true;
   		if(data.now_x == 0){
-  			goto_x = 9;
-  			goto_y = cargo.left[data.now_y][0];
-  		} else if(data.now_x == 9){
-  			goto_x = 0;
-  			goto_y = cargo.right[data.now_y][0];
+  			//如果此位置還有貨物，直接取得此貨物的終點座標
+  			if(cargo.left[data.now_y].length > 0){
+	  			goto_x = 9;
+	  			goto_y = cargo.left[data.now_y][0];
+  			} 
+  			//若此位置沒有貨物，則去附近尋找貨物
+  			else {
+  				var offset = 1; //相鄰格數
+  				var turn = 1; //上方或下方
+  				var times = 0; //迴圈執行次數
+  				var cargoIndex; //貨物位置
+  				while(true){
+  					cargoIndex = data.now_y + offset * turn;
+  					if(cargoIndex >= 0 && cargoIndex < mapLength){
+	  					if(cargo.left[cargoIndex].length > 0){
+	  						goto_x = 0;
+	  						goto_y = cargoIndex; //前往有貨物的位置
+	  						break;
+	  					}
+	  				}
+  					if(times % 2 == 1){
+  						offset = offset + 1;
+  					}
+  					turn = turn * -1;
+  					times++;
+  					if((data.now_y + offset) > mapLength - 1 && (data.now_y - offset) < 0){
+  						success = false;
+  						break;
+  					}
+  				}
+  			}
+  		} else if(data.now_x == mapLength - 1){
+  			//如果此位置還有貨物，直接取得此貨物的終點座標
+  			if(cargo.right[data.now_y].length > 0){
+	  			goto_x = 0;
+	  			goto_y = cargo.right[data.now_y][0];
+  			} 
+  			//若此位置沒有貨物，則去附近尋找貨物
+  			else {
+  				console.log("找貨物");
+  				var offset = 1; //相鄰格數
+  				var turn = 1; //上方或下方
+  				var times = 0; //迴圈執行次數
+  				var cargoIndex; //貨物位置
+  				while(true){
+  					cargoIndex = data.now_y + offset * turn;
+  					console.log(cargoIndex);
+  					if(cargoIndex >= 0 && cargoIndex < mapLength){
+	  					if(cargo.right[cargoIndex].length > 0){
+	  						goto_x = 0;
+	  						goto_y = cargoIndex; //前往有貨物的位置
+	  						break;
+	  					}
+	  				}
+  					if(times % 2 == 1){
+  						offset = offset + 1;
+  					}
+  					turn = turn * -1;
+  					times++;
+  					if((data.now_y + offset) > (mapLength - 1) && (data.now_y - offset) < 0){
+  						success = false;
+  						break;
+  					}
+  				}
+  			}
   		} else {
   			success = false;
   		}
   		if(success){
+  			if(goto_x == mapLength - 1){
+  				cargo.left[goto_y].shift();
+  			} else {
+  				cargo.right[goto_y].shift();
+  			}
 	  		socket.emit('return_CargoEndPoint',
 	  			{
 	  				goto_x : goto_x,

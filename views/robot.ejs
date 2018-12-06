@@ -130,6 +130,8 @@
 		});
 
 		socket.on('return_CargoEndPoint', function (data) {
+			goto_x = data.goto_x;
+			goto_y = data.goto_y;
 			socket.emit('start',
 	        	{
 	        		id : id,
@@ -139,7 +141,7 @@
 		    		goto_y : data.goto_y
 	        	}
 	        );
-	        $("#goto").html("<b>goto_x : " + goto_x + " goto_y : " + goto_y);
+	        $("#goto").html("<b>goto_x : " + data.goto_x + " goto_y : " + data.goto_y);
 		});
 
 		socket.on('stop', function (data) {
