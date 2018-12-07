@@ -11,15 +11,6 @@ console.log('Server running at port 80');
 
 app.use(express.static('views'));
 
-/*#################
-預定修改項目!!! 
-
-1. 重新規畫路徑時，將賭塞區域排除 : 已修改function，未測試
-2. 定義及傳送狀態 : 已保存各種停止狀態
-3. robotCount
-*/
-
-
 // ---varInit---
 var robotCount = 0; //機器人數量
 var point = new Array(); //當前位置
@@ -308,8 +299,9 @@ function trunWhere(index){
 */
 function next(robot_ID, index, socket) {
 	if(robot_ID == 0){
-		console.log(number_plate);
-		console.log(direction);
+		// console.log(number_plate);
+		// console.log(direction);
+		console.log(stepCount);
 	}
 	var stop = false;
 	var noChangRoute = true;
