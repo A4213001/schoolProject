@@ -22,6 +22,22 @@
 + bootstrap-3.3.6(https://getbootstrap.com/)
 + socket.io-6.3.0(https://socket.io/)
 
+## socket.io事件說明
++ ```socket.emit('message', "this is a test"); //sending to sender-client only```
++ ```socket.broadcast.emit('message', "this is a test"); //sending to all clients except sender```
++ ```socket.broadcast.to('game').emit('message', 'nice game'); //sending to all clients in 'game' room(channel) except sender```
++ ```socket.to('game').emit('message', 'enjoy the game'); //sending to sender client, only if they are in 'game' room(channel)```
++ ```socket.broadcast.to(socketid).emit('message', 'for your eyes only'); //sending to individual socketid```
++ ```io.emit('message', "this is a test"); //sending to all clients, include sender```
++ ```io.in('game').emit('message', 'cool game'); //sending to all clients in 'game' room(channel), include sender```
++ ```io.of('myNamespace').emit('message', 'gg'); //sending to all clients in namespace 'myNamespace', include sender```
++ ```socket.emit(); //send to all connected clients```
++ ```socket.broadcast.emit(); //send to all connected clients except the one that sent the message```
++ ```socket.on(); //event listener, can be called on client to execute on server```
++ ```io.sockets.socket(); //for emiting to specific clients```
++ ```io.sockets.emit(); //send to all connected clients (same as socket.emit)```
++ ```io.sockets.on() ; //initial connection from a client.```
+
 ## 先旻的git簡易教學
 ### 連接雲端專案
 + ```git clone https://github.com/A4213001/schoolProject.git```
@@ -45,22 +61,28 @@
 * * *
 ## 預定完成項目
 ### 先旻(後端)
-1. 重新規畫路徑時，將賭塞區域排除 : 已修改function，未測試
-2. 定義及傳送狀態 : 已保存各種停止狀態
-3. robotCount
-4. 製作數據產生用版本(至少3種版本)
-5. 製作正式demo用版本(預計大小4*14)
-6. 計算步數
+1. 卡死的問題處理
+2. 逆向的問題處理
+3. 各種資料傳送事件
+4. 定義及傳送狀態 : 已保存各種停止狀態
+5. 製作數據產生用版本(至少3種版本)
+6. 數據細項
+  1. 各貨物運送花費時間
+  2. 總運送時間(共200個貨物)
+  3. 停止次數
+  4. 轉彎次數
 
 ### 芷涵(前端)
 1. 顯示機器人狀態(選擇單一、整體、輪播(可考慮))
-2. 顯示單一機器人路徑
-3. 顯示號碼牌(單一格子、單一機器人、整體)
-4. 區別單行道
-5. 顯示當前機器人數量
-6. 手動模式操作頁面
-7. static檔案優化(創建public資料夾於專案內存放static檔案)
+2. 顯示單一機器人累積步數
+3. 顯示單一機器人路徑
+4. 顯示號碼牌(單一格子、單一機器人、整體)
+5. 區別單行道
+6. 顯示當前機器人數量	OK
+7. 手動模式操作頁面
+8. static檔案優化(創建public資料夾於專案內存放static檔案)
 
 ### 共通
 1. 製作正式demo用版本(預計大小4*14)
 2. 將共有變數抽出，做成一個config檔
+3. 不連外網也要能正常運作

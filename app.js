@@ -859,6 +859,20 @@ io.on('connection', function (socket) {
 		}
   	});
 
+  	//connectionEvent XXXXX
+  	socket.on('XXXXX', function (data, socket) {
+		for(let i = 0; i < point.length; i++){
+			if(data.id == point[i].id){
+				io.emit('return_endPoint', { endPoint : endPoint[i] });
+			}
+		}
+  	});
+
+  	//connectionEvent allStart
+  	socket.on('allAutoStart', function (data, socket) {
+		io.emit('autoStart');
+  	});
+
   	socket.on('disconnect', function() { console.log("disconnect connectCount : " + io.engine.clientsCount) });
 });
 //socket connect end
