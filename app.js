@@ -312,7 +312,7 @@ function next(robot_ID, index, socket) {
 	if(robot_ID == 0){
 		// console.log(number_plate);
 		// console.log(direction);
-		console.log(stepCount);
+		// console.log(stepCount);
 	}
 	var stop = false;
 	var noChangRoute = true;
@@ -904,14 +904,12 @@ io.on('connection', function (socket) {
   			} 
   			//若此位置沒有貨物，則去附近尋找貨物
   			else {
-  				console.log("找貨物");
   				var offset = 1; //相鄰格數
   				var turn = 1; //上方或下方
   				var times = 0; //迴圈執行次數
   				var cargoIndex; //貨物位置
   				while(true){
   					cargoIndex = data.now_y + offset * turn;
-  					console.log(cargoIndex);
   					if(cargoIndex >= 0 && cargoIndex < mapLength){
 	  					if(cargo.right[cargoIndex].length > 0){
 	  						goto_x = 0;
@@ -934,10 +932,10 @@ io.on('connection', function (socket) {
   			success = false;
   		}
   		if(success){
-  			if(goto_x == mapLength - 1){
-  				cargo.left[goto_y].shift();
+  			if(data.now_x == 0){
+  				cargo.left[data.now_y].shift();
   			} else {
-  				cargo.right[goto_y].shift();
+  				cargo.right[data.now_y].shift();
   			}
 	  		socket.emit('return_CargoEndPoint',
 	  			{
