@@ -105,16 +105,16 @@ function svgArrow(direction){
 	}
 }
 
-function destination(){
-	    socket.emit('destination',
-	    {
-	    	id : id
-	    });
-	};
-	socket.on('return_endPoint',function(data)
-        {
-        	 status(data.id,data.gotoX,data.gotoY)		////////////////////////////////////////////////////////////
-	    });
+// function destination(){
+// 	    socket.emit('destination',
+// 	    {
+// 	    	id : id
+// 	    });
+// 	};
+// 	socket.on('return_endPoint',function(data)
+//         {
+//         	 status(data.id)		////////////////////////////////////////////////////////////
+// 	    });
 
 function init(cvs){
 	cvs.addEventListener('mousedown', mouseMoveHandler);
@@ -138,13 +138,14 @@ function mouseMoveHandler(event) {
    	}
     for (var data = 0; data < now.length; data++) {
 		if ((now[data].x==(coordinateX-1))&&(now[data].y==(coordinateY-1))) {
-			msg="id:"+data+"<br/>座標:"+coordinateY+ "," +coordinateX;
+			msg="id:"+data+"<br/>座標:"+coordinateY+ "," +	coordinateX;
 			data=now.length;
 		}
 	}
    	document.getElementById("ppp").innerHTML=msg;
+	status(0);
 }
 
-function status(id,gotoX,gotoY){
-	document.getElementById(id).innerHTML=msg;		/////////////////////////////////////////////////
+function status(id,x,y){
+	document.getElementById(id).innerHTML='id:'+id+'<br/>現在座標:'+(y+1)+','+(x+1);
 }

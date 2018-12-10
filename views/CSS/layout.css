@@ -21,7 +21,6 @@
 }
 
 #cvs{
-	position : absolute;
 	padding-left: 0;
     padding-right: 0;
     z-index : -1;
@@ -41,13 +40,12 @@
 	position: relative;
 	left: 700px;
 }
-.select { 
-	position: absolute;
-	left: 50%;
-}
+.inline{ 
+  float:left;
+} 
 .input{
 	font-size: 18px;
-	text-align:center;
+	.text-align:center;
 }
 #single{
 	display:block;

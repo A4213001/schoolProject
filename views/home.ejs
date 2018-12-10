@@ -1,6 +1,7 @@
 <% include template/header.ejs %>
-
-		<canvas id="cvs" height="500" width="602">抱歉，您的瀏覽器不支持canvas</canvas>
+		<div class='inline'>
+			<canvas id="cvs" height="510	" width="602">抱歉，您的瀏覽器不支持canvas</canvas>
+		</div>
 		<script>
 			var socket = io.connect('http://localhost');
 			var cvs=document.getElementById("cvs");
@@ -29,6 +30,7 @@
 									ctx.fillStyle="white";
 									ctx.fillText(now[data].id,nowY+32.5,nowX+35);	//顯示的文字和位置
 									ctx.fillStyle="black";
+									status(now[data].id,now[data].x,now[data].y);
 								} else {
 									ctx.strokeRect(nowY,nowX,size,size);
 								}
@@ -41,17 +43,10 @@
 						nowX=0;
 					}
 					lastLenght=now.length;
-					// for (var data = 0; data < now.length; data++) {
-			  //  			if ((now[data].x==coordinateX)&&(now[data].y==coordinateY)) {
-			  //  				msg="id:"+data;
-			  //  				data=now.length;
-			  //  			}
-			  //  		}
 				});
 			});
 		</script>
-		<div class='select'>
-			<!-- <h1>當前機器人數量</h1> -->
+		<div id='select' class='inline'>
 			<h1 nowrap id='Qua'></h1>
 			<p id=ppp></p> <!-- 得到座標 -->
 		</div>

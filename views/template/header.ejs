@@ -28,25 +28,29 @@
 		<style>
 			.navFixed {
 			  z-index: 10;          
-			  position: fixed;      
+			  position: fixed;
 			  top: 0;
 			  left: 0px;
 			  margin-top: 0;
-			  /* min-width: 100%; */
 			  opacity: 0.70;
 			  transition: opacity .5s ease-out;
 			  background-color: #fff
 
 			}
 		</style> 
+		<section class="regular slider" id="sli">
+			<script>
+				document.getElementById("sli").innerHTML=null;
+				for(let i=0;i<10;i++){
+					document.getElementById("sli").innerHTML+='<div id="'+i+'" class="status">id='+i+'<br/>休息中</div>';
+				}
+			</script>
+		    <!-- <div id="0" class="status"></div> -->
+		    <!-- <div id="1" class="status"></div>
+		    <div id="2" class="status"></div>
+		    <div id="3" class="status"></div> -->
+	  	</section>
 		<div>  
-			<section class="regular slider">
-			    <div id="status[0]" class="status"></div>
-			    <div id="status[1]" class="status"></div>
-			    <div id="status[2]" class="status"></div>
-			    <div id="status4" class="status"></div>
-			    <div id="status5" class="status"></div>
-		  	</section>
 		  	<script type="text/javascript">
 			    $(document).ready(function() {
 			      $(".vertical-center-4").slick({
