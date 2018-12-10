@@ -143,7 +143,6 @@ function mouseMoveHandler(event) {
 		}
 	}
    	document.getElementById("ppp").innerHTML=msg;
-	status(0);
 }
 
 function status(id,x,y){
