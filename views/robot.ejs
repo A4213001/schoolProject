@@ -24,14 +24,14 @@
 		var id = parseInt(getQueryVariable("id"));
 		if(!id)
 			id = 0;
-		var now_x = id % 2 == 0 ? 0 : 9;
-        var now_y = id;
-		var goto_x = 0;
-		var goto_y = 0;
+		var nowX = id % 2 == 0 ? 0 : 9;
+        var nowY = id;
+		var gotoX = 0;
+		var gotoY = 0;
 		var auto = false;
 		var index = null;
-		var previous_x = null;
-		var previous_y = null;
+		var previousX = null;
+		var previousY = null;
 		var mapLength = 10;
 	</script>
 </head>
@@ -43,15 +43,15 @@
 		</script>
 	</h1>
 	<p align="center">
-	    <label>now_x</label>
-	    <input type="number" id="now_x">
-	    <label>now_y</label>
-	    <input type="number" id="now_y">
+	    <label>nowX</label>
+	    <input type="number" id="nowX">
+	    <label>nowY</label>
+	    <input type="number" id="nowY">
 	    <br>
-	    <label>goto_x</label>
-	    <input type="number" id="goto_x">
-	    <label>goto_y</label>
-	    <input type="number" id="goto_y">
+	    <label>gotoX</label>
+	    <input type="number" id="gotoX">
+	    <label>gotoY</label>
+	    <input type="number" id="gotoY">
 	    <br>
 	    <button onclick="start()">開始</button>
 	    <button onclick="autoStart()">自動模式</button>
@@ -65,56 +65,56 @@
 	        	{
 	        		id : id,
 	        	 	index : index,
-	        		now_x : now_x,
-	        	 	now_y : now_y,
-	        	 	previous_x : previous_x,
-	        	 	previous_y : previous_y
+	        		nowX : nowX,
+	        	 	nowY : nowY,
+	        	 	previousX : previousX,
+	        	 	previousY : previousY
 	        	}
 	        );
 	    };
 
 	    function start(){
 	    	auto = false;
-	    	now_x = parseInt($("#now_x").val());
-	    	now_y = parseInt($("#now_y").val());
-	    	goto_x = parseInt($("#goto_x").val());
-	    	goto_y = parseInt($("#goto_y").val());
+	    	nowX = parseInt($("#nowX").val());
+	    	nowY = parseInt($("#nowY").val());
+	    	gotoX = parseInt($("#gotoX").val());
+	    	gotoY = parseInt($("#gotoY").val());
 		    socket.emit('start',
 		    	{
 		    		id : id,
-		    		now_x : now_x,
-		    		now_y : now_y,
-		    		goto_x : goto_x,
-		    		goto_y : goto_y
+		    		nowX : nowX,
+		    		nowY : nowY,
+		    		gotoX : gotoX,
+		    		gotoY : gotoY
 		    	}
 		    );
         };
 
         function autoStart(){
         	auto = true;
-        	if(now_x == 0){
-        		goto_x = mapLength - 1;
-        		goto_y = Math.floor(Math.random() * 10);
+        	if(nowX == 0){
+        		gotoX = mapLength - 1;
+        		gotoY = Math.floor(Math.random() * 10);
         	}
-        	else if(now_x == mapLength - 1){
-        		goto_x = 0;
-        		goto_y = Math.floor(Math.random() * 10);
+        	else if(nowX == mapLength - 1){
+        		gotoX = 0;
+        		gotoY = Math.floor(Math.random() * 10);
         	}
         	else{
-        		goto_x = 0;
-        		goto_y = 0;
-        		console.log("!!!!!!!!!!!! : " + now_x);
+        		gotoX = 0;
+        		gotoY = 0;
+        		console.log("!!!!!!!!!!!! : " + nowX);
         	}
         	socket.emit('start',
 	        	{
 	        		id : id,
-		    		now_x : now_x,
-		    		now_y : now_y,
-		    		goto_x : goto_x,
-		    		goto_y : goto_y
+		    		nowX : nowX,
+		    		nowY : nowY,
+		    		gotoX : gotoX,
+		    		gotoY : gotoY
 	        	}
 	        );
-	        $("#goto").html("<b>goto_x : " + goto_x + " goto_y : " + goto_y);
+	        $("#goto").html("<b>gotoX : " + gotoX + " gotoY : " + gotoY);
         };
 
         function openRobot(){
@@ -142,7 +142,7 @@
 			socket.emit('allAutoStart');
         }
 
-		socket.on('return_index', function (data) {
+		socket.on('returnIndex', function (data) {
         	index = data.index;   
 		});
 
@@ -159,13 +159,13 @@
 		});
 
 		socket.on('go', function (data) {
-		  	previous_x = now_x;
-		  	previous_y = now_y;
-		  	now_x = data.x;
-		  	now_y = data.y;
+		  	previousX = nowX;
+		  	previousY = nowY;
+		  	nowX = data.x;
+		  	nowY = data.y;
 		  	setTimeout(function(){
 		  		setAddress();
-			  	if(now_x != goto_x || now_y != goto_y){
+			  	if(nowX != gotoX || nowY != gotoY){
 			  		socket.emit('walk',
 				  		{
 				  			id : id,

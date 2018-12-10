@@ -3,11 +3,11 @@ var routeMethod = require('./routeMethod');
 
 exports.onSetAddress = function(data){
 	point[data.index] = {
-		x : data.now_x,
-		y : data.now_y,
+		x : data.nowX,
+		y : data.nowY,
 		id : data.id
 	};
-	routeMethod.useNumberPlate(data.index, data.previous_x, data.previous_y);
+	routeMethod.useNumberPlate(data.index, data.previousX, data.previousY);
 	io.emit('draw',{ point : point, nextPoint : nextPoint });
 }
 
@@ -17,8 +17,8 @@ exports.onStart = function(data, socket){
   		for(let i = 0; i < point.length; i++){
   			if(point[i].id == data.id){
   	  			point[i] = {
-  	  				x : data.now_x,
-  	  				y : data.now_y,
+  	  				x : data.nowX,
+  	  				y : data.nowY,
   	  				id : data.id
   	  			};
   	 			exist = true;
@@ -30,8 +30,8 @@ exports.onStart = function(data, socket){
   			robotCount++;
   			point.push(
   				{
-  					x : data.now_x,
-  					y : data.now_y,
+  					x : data.nowX,
+  					y : data.nowY,
   					id : data.id
   				}
   			);
@@ -44,7 +44,7 @@ exports.onStart = function(data, socket){
 	  		robotStatus.push(
 	  			{
 	  				crowded : false,
-	  				stopCountExceed4 : false,
+	  				stopOver : false,
 	  				numberPlateIsNotPreferred : false
 	  			}
 	  		)
@@ -53,21 +53,21 @@ exports.onStart = function(data, socket){
   		io.emit('draw',{ point : point, nextPoint : nextPoint });
   		var index = routeMethod.findIndex(data.id, socket);
   		endPoint[index] = {
-				x : data.goto_x,
-				y : data.goto_y,
+				x : data.gotoX,
+				y : data.gotoY,
 				id : data.id
 			}
 			if(isNaN(stepCount[index])){
 				stepCount[index] = 0
 			}
-  		routeMethod.findRoute(data.now_x, data.now_y, data.goto_x, data.goto_y, data.id, index);
+  		routeMethod.findRoute(data.nowX, data.nowY, data.gotoX, data.gotoY, data.id, index);
   		routeMethod.next(data.id, index, socket);
 	}
 }
 
 exports.onWalk = function(data, socket){
-	if(point[data.index].x == route[data.index].route_point[0].x && point[data.index].y == route[data.index].route_point[0].y){
-		route[data.index].route_point.shift();
+	if(point[data.index].x == route[data.index].routePoint[0].x && point[data.index].y == route[data.index].routePoint[0].y){
+		route[data.index].routePoint.shift();
 		routeMethod.next(data.id, data.index, socket);
 	}
 	else{
@@ -81,7 +81,7 @@ exports.onWalk = function(data, socket){
 exports.onXXXXX = function(data){
 	for(let i = 0; i < point.length; i++){
 		if(data.id == point[i].id){
-			io.emit('return_endPoint', { endPoint : endPoint[i] });
+			io.emit('returnEndPoint', { endPoint : endPoint[i] });
 		}
 	}
 }

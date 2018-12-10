@@ -36,29 +36,24 @@ app.get('/button', function (req, res) {
 io.on('connection', function (socket) {
     console.log("connect connectCount : " + io.engine.clientsCount);
 
-    //connectionEvent setAddress
     socket.on('setAddress', function (data){
-		serverRobotEvent.onSetAddress(data);
+		  serverRobotEvent.onSetAddress(data);
   	});
 
-    //connectionEvent start
   	socket.on('start', function (data) {
   		serverRobotEvent.onStart(data, socket);
   	});
 
-  	//connectionEvent walk
   	socket.on('walk', function (data) {
-		serverRobotEvent.onWalk(data, socket);
+		  serverRobotEvent.onWalk(data, socket);
   	});
 
-  	//connectionEvent XXXXX
   	socket.on('XXXXX', function (data) {
-		serverRobotEvent.onXXXXX(data);
+		  serverRobotEvent.onXXXXX(data);
   	});
 
-  	//connectionEvent allStart
   	socket.on('allAutoStart', function () {
-		serverRobotEvent.onAllAutoStart();
+		  serverRobotEvent.onAllAutoStart();
   	});
 
   	socket.on('disconnect', function() {
