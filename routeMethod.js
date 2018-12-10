@@ -1,14 +1,5 @@
 var astar = require('./astar');
 
-var mapLength = 10;
-
-//---graphInit---
-var x = new Array(mapLength);
-for(var i = 0; i < mapLength; i++)
-	x[i] = Array(mapLength).fill(1);
-var graph = new astar.Graph(x);
-//
-
 /*
   位置相等判斷
   params point1 座標1
