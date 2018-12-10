@@ -164,9 +164,9 @@ function trunWhere(index){
 }
 
 /*
-  
+  預先碰撞處理，繞路方法
   params index robot的index
-  return 
+  首先會判斷是否自己前方是否有對向來車，若有的話將其中一方繞路
 */
 function collision(index){
 	for(let i = 0; i < point.length; i++){
@@ -305,6 +305,12 @@ function collision(index){
 	}
 }
 
+/*
+  判斷前方區域是否壅擠
+  params index robot的index
+  		 lock 禁止通行的區域(傳入時為空)
+  return 前方2*3區域車子數量
+*/
 function frontAreaCount(index, lock){
 	var count = 0;
 	var frontAreaX = point[index].x;//用於計算觀看前方區域X
@@ -547,6 +553,10 @@ function frontAreaCount(index, lock){
 	return count;
 }
 
+/*
+  停止次數過多，重新尋找路徑
+  params index robot的index
+*/
 function stopOverReFindRoute(index){
 	var lock = [];
 	for(let i = 0; i < point.length; i++){
@@ -563,7 +573,11 @@ function stopOverReFindRoute(index){
 	reFindRoute(point[index].x, point[index].y, route[index].routePoint[route[index].routePoint.length - 1].x, route[index].routePoint[route[index].routePoint.length - 1].y, index, lock);
 }
 
-//return 是否停留
+/*
+  前方擁擠，重新尋找路徑
+  params index robot的index
+  return 是否停留
+*/
 function crowdedReFindRoute(index){
 	//若不在單行道則進行避開擁擠區的重新規劃路徑
 	if(point[index].x < 3 && point[index].x >= mapLength - 3){
@@ -577,7 +591,11 @@ function crowdedReFindRoute(index){
 	}
 }
 
-//return 號碼牌是否優先
+/*
+  檢查號碼牌優先權
+  params index robot的index
+  return 號碼牌是否優先
+*/
 function checkNumberPlate(index){
 	var valid = true;
 	for(let i = 0; i < numberPlate.length; i++){
