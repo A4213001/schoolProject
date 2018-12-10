@@ -1,4 +1,5 @@
 var server = require('./app');
+var routeMethod = require('./routeMethod');
 
 exports.onSetAddress = function(data){
 	point[data.index] = {
@@ -6,7 +7,7 @@ exports.onSetAddress = function(data){
 		y : data.now_y,
 		id : data.id
 	};
-	server.useNumberPlate(data.index, data.previous_x, data.previous_y);
+	routeMethod.useNumberPlate(data.index, data.previous_x, data.previous_y);
 	io.emit('draw',{ point : point, nextPoint : nextPoint });
 }
 
@@ -50,7 +51,7 @@ exports.onStart = function(data, socket){
 	  		stopCount.push(0);	
   		}
   		io.emit('draw',{ point : point, nextPoint : nextPoint });
-  		var index = server.find_index(data.id, socket);
+  		var index = routeMethod.findIndex(data.id, socket);
   		endPoint[index] = {
 				x : data.goto_x,
 				y : data.goto_y,
@@ -59,18 +60,18 @@ exports.onStart = function(data, socket){
 			if(isNaN(stepCount[index])){
 				stepCount[index] = 0
 			}
-  		server.find_route(data.now_x, data.now_y, data.goto_x, data.goto_y, data.id, index);
-  		server.next(data.id, index, socket);
+  		routeMethod.findRoute(data.now_x, data.now_y, data.goto_x, data.goto_y, data.id, index);
+  		routeMethod.next(data.id, index, socket);
 	}
 }
 
 exports.onWalk = function(data, socket){
 	if(point[data.index].x == route[data.index].route_point[0].x && point[data.index].y == route[data.index].route_point[0].y){
 		route[data.index].route_point.shift();
-		server.next(data.id, data.index, socket);
+		routeMethod.next(data.id, data.index, socket);
 	}
 	else{
-		server.next(data.id, data.index, socket);
+		routeMethod.next(data.id, data.index, socket);
 	}
 	if(!data.isStop){
 		stepCount[data.index]++;
