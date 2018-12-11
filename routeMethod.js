@@ -77,20 +77,18 @@ function drawNumberPlate(index){
   會將尋找好的路徑存進route Array中
 */
 function reFindRoute(nowX, nowY, gotoX, gotoY, index, lock) {
-	var graphLine = new astar.Graph(x);
+	var graphLine = new astar.Graph(map);
 	if(gotoX == 0){
-		for(let i = 1; i < mapLength - 1; i++){
-			if(i >= 3 && i <= mapLength - 4){
-				for(let j = 0; j < mapLength; j+=2)
-					graphLine.grid[i][j].weight = 0;
+		for(let i = 4; i < mapYLength - 5; i++){
+			for(let j = 0; j < mapXLength; j+=2){
+				graphLine.grid[i][j].weight = 0;
 			}
 		}
 	}
-	if(gotoX == mapLength - 1){
-		for(let i = 1; i < mapLength - 1; i++){
-			if(i >= 3 && i <= mapLength - 4){
-				for(let j = 1; j < mapLength; j+=2)
-					graphLine.grid[i][j].weight = 0;
+	if(gotoX == mapXLength - 1){
+		for(let i = 4; i < mapXLength - 5; i++){
+			for(let j = 1; j < mapYLength; j+=2){
+				graphLine.grid[i][j].weight = 0;
 			}
 		}
 	}
@@ -172,10 +170,10 @@ function collision(index){
 	for(let i = 0; i < point.length; i++){
 		if(i != index){
 			//判斷對撞
-			if(point[index].x == route[i].routePoint[0].x && point[index].y == route[i].routePoint[0].y && point[i].x == route[index].routePoint[0].x && point[i].y == route[index].routePoint[0].y && (point[index].x < 4 || point[index].x >= mapLength - 4)){
+			if(point[index].x == route[i].routePoint[0].x && point[index].y == route[i].routePoint[0].y && point[i].x == route[index].routePoint[0].x && point[i].y == route[index].routePoint[0].y && (point[index].x < 4 || point[index].x >= mapXLength - 5)){
 				changeRoute[index] = true;
 				//上下準備對撞時，判斷上邊的robot位置，位置在前2行或倒數第3行，往右方繞路
-				if(point[index].x == route[index].routePoint[0].x && point[index].x <= 1 && point[index].y < point[i].y || point[index].x == route[index].routePoint[0].x && point[index].x == mapLength - 3 && point[index].y < point[i].y){
+				if(point[index].x == route[index].routePoint[0].x && point[index].x <= 1 && point[index].y < point[i].y || point[index].x == route[index].routePoint[0].x && point[index].x == mapXLength - 3 && point[index].y < point[i].y){
 					//判斷上方robot的右方是否有障礙物
 					if(!haveBarrier(index, 'right')){
 						throwNumberPlate(index, point[index].x, point[index].y);
@@ -220,7 +218,7 @@ function collision(index){
 					}
 				}
 				//上下準備對撞時，判斷下邊的robot位置，位置在第3行或倒數前2行，往左方繞路
-				else if(point[index].x == route[index].routePoint[0].x && point[index].x == 2 && point[index].y > point[i].y || point[index].x == route[index].routePoint[0].x && point[index].x >= mapLength - 2 && point[index].y > point[i].y){
+				else if(point[index].x == route[index].routePoint[0].x && point[index].x == 2 && point[index].y > point[i].y || point[index].x == route[index].routePoint[0].x && point[index].x >= mapXLength - 2 && point[index].y > point[i].y){
 					if(!haveBarrier(index, 'left')){
 						throwNumberPlate(index, point[index].x, point[index].y);
 						if(route[index].routePoint.length > 1 && route[index].routePoint[1].x == point[index].x - 1 && route[index].routePoint[1].y == point[index].y - 1){
@@ -319,7 +317,7 @@ function frontAreaCount(index, lock){
 		//向下前進時
 		case "down":
 			//當位置不在最左或最右，且下方還>=2格
-			if(frontAreaX > 0 && frontAreaX < mapLength - 1 && frontAreaY < mapLength - 2){
+			if(frontAreaX > 0 && frontAreaX < mapXLength - 1 && frontAreaY < mapYLength - 2){
 				for(let i = frontAreaX - 1; i <= frontAreaX + 1; i++){
 					for(let j = frontAreaY + 1; j <= frontAreaY + 2; j++){
 						lock.push(
@@ -337,7 +335,7 @@ function frontAreaCount(index, lock){
 				}
 			}
 			//當位置在最左時，且下方還>=2格
-			else if(frontAreaX == 0 && frontAreaY < mapLength - 2){
+			else if(frontAreaX == 0 && frontAreaY < mapYLength - 2){
 				for(let i = frontAreaX; i <= frontAreaX + 1; i++){
 					for(let j = frontAreaY + 1; j <= frontAreaY + 2; j++){
 						lock.push(
@@ -355,7 +353,7 @@ function frontAreaCount(index, lock){
 				}
 			}
 			//當位置在最右時，且下方還>=2格
-			else if(frontAreaX == mapLength - 1 && frontAreaY < mapLength - 2){
+			else if(frontAreaX == mapXLength - 1 && frontAreaY < mapYLength - 2){
 				for(let i = frontAreaX; i >= frontAreaX - 1; i--){
 					for(let j = frontAreaY + 1; j <= frontAreaY + 2; j++){
 						lock.push(
@@ -377,7 +375,7 @@ function frontAreaCount(index, lock){
 		//向上前進時
 		case "up":
 			//當位置不在最左或最右時，且上方還>=2格
-			if(frontAreaX > 0 && frontAreaX < mapLength - 1 && frontAreaY > 1){
+			if(frontAreaX > 0 && frontAreaX < mapXLength - 1 && frontAreaY > 1){
 				for(let i = frontAreaX - 1; i <= frontAreaX + 1; i++){
 					for(let j = frontAreaY - 1; j >= frontAreaY - 2; j--){
 						lock.push(
@@ -413,7 +411,7 @@ function frontAreaCount(index, lock){
 				}
 			}
 			//當位置在最右時，且上方還>=2格
-			else if(frontAreaX == mapLength - 1 && frontAreaY > 1){
+			else if(frontAreaX == mapXLength - 1 && frontAreaY > 1){
 				for(let i = frontAreaX; i >= frontAreaX - 1; i--){
 					for(let j = frontAreaY - 1; j >= frontAreaY - 2; j--){
 						lock.push(
@@ -435,7 +433,7 @@ function frontAreaCount(index, lock){
 		//向左前進時
 		case "left":
 			//當位置不在最上或最下時，且左方還>=2格
-			if(frontAreaX > 1 && frontAreaY > 0 && frontAreaY < mapLength - 1){
+			if(frontAreaX > 1 && frontAreaY > 0 && frontAreaY < mapYLength - 1){
 				for(let i = frontAreaX - 1; i >= frontAreaX - 2; i--){
 					for(let j = frontAreaY - 1; j <= frontAreaY + 1; j++){
 						lock.push(
@@ -471,7 +469,7 @@ function frontAreaCount(index, lock){
 				}
 			}
 			//當位置在最右時，且上方還>=2格
-			else if(frontAreaX > 1 && frontAreaY < mapLength - 1){
+			else if(frontAreaX > 1 && frontAreaY < mapYLength - 1){
 				for(let i = frontAreaX - 1; i >= frontAreaX - 2; i--){
 					for(let j = frontAreaY; j >= frontAreaY - 1; j--){
 						lock.push(
@@ -493,7 +491,7 @@ function frontAreaCount(index, lock){
 		//向右前進時
 		case "right":
 			//當位置不在最上或最下時，且右方還>=2格
-			if(frontAreaX < mapLength - 2 && frontAreaY > 0 && frontAreaY < mapLength - 1){
+			if(frontAreaX < mapXLength - 2 && frontAreaY > 0 && frontAreaY < mapYLength - 1){
 				for(let i = frontAreaX + 1; i <= frontAreaX + 2; i++){
 					for(let j = frontAreaY - 1; j <= frontAreaY + 1; j++){
 						lock.push(
@@ -511,7 +509,7 @@ function frontAreaCount(index, lock){
 				}
 			}
 			//當位置在最上時，且右方還>=2格
-			else if(frontAreaX < mapLength - 2 && frontAreaY == 0){
+			else if(frontAreaX < mapXLength - 2 && frontAreaY == 0){
 				for(let i = frontAreaX + 1; i <= frontAreaX + 2; i++){
 					for(let j = frontAreaY; j <= frontAreaY + 1; j++){
 						lock.push(
@@ -529,7 +527,7 @@ function frontAreaCount(index, lock){
 				}
 			}
 			//當位置在最下時，且右方還>=2格
-			else if(frontAreaX < mapLength - 2 && frontAreaY == mapLength - 1){
+			else if(frontAreaX < mapXLength - 2 && frontAreaY == mapYLength - 1){
 				for(let i = frontAreaX + 1; i <= frontAreaX + 2; i++){
 					for(let j = frontAreaY; j >= frontAreaY - 1; j--){
 						lock.push(
@@ -580,7 +578,7 @@ function stopOverReFindRoute(index){
 */
 function crowdedReFindRoute(index){
 	//若不在單行道則進行避開擁擠區的重新規劃路徑
-	if(point[index].x < 3 && point[index].x >= mapLength - 3){
+	if(point[index].x < 3 && point[index].x >= mapXLength - 3){
 		throwNumberPlate(index, point[index].x, point[index].y);
 		reFindRoute(point[index].x, point[index].y, route[index].routePoint[route[index].routePoint.length - 1].x, route[index].routePoint[route[index].routePoint.length - 1].y, index, lock)
 		return false
@@ -637,20 +635,18 @@ exports.findIndex = function(robotId, socket){
   會將尋找好的路徑存進route Array中
 */
 exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
-	var graphLine = new astar.Graph(x);
+	var graphLine = new astar.Graph(map);
 	if(gotoX == 0){
-		for(let i = 1; i < mapLength - 1; i++){
-			if(i >= 3 && i <= mapLength - 4){
-				for(let j = 0; j < mapLength; j+=2)
-					graphLine.grid[i][j].weight = 0;
+		for(let i = 4; i < mapXLength - 5; i++){
+			for(let j = 0; j < mapYLength; j+=2){
+				graphLine.grid[i][j].weight = 0;
 			}
 		}
 	}
-	if(gotoX == mapLength - 1){
-		for(let i = 1; i < mapLength - 1; i++){
-			if(i >= 3 && i <= mapLength - 4){
-				for(let j = 1; j < mapLength; j+=2)
-					graphLine.grid[i][j].weight = 0;
+	if(gotoX == mapXLength - 1){
+		for(let i = 4; i < mapXLength - 5; i++){
+			for(let j = 1; j < mapYLength; j+=2){
+				graphLine.grid[i][j].weight = 0;
 			}
 		}
 	}
@@ -666,15 +662,15 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 			}
 		);
 	});
-	var exist = true;
+	var exist = false;
 	for(let i = 0 ; i < route.length; i++){
 	  	if(route[i].id == robotId){
 	  	    route[i].routePoint = routePoint;
-	  	    exist = false;
+	  	    exist = true;
 	  	    break;
 	  	}
 	}
-	if(exist){
+	if(!exist){
 	  	route.push(
 	  		{
 	  			id : robotId,
@@ -682,6 +678,7 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 	  		}
 	  	);
 	}
+	console.log(route[0].routePoint);
 };
 
 /*

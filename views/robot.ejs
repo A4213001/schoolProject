@@ -22,7 +22,7 @@
 		var id = parseInt(getQueryVariable("id"));
 		if(!id)
 			id = 0;
-		var nowX = id % 2 == 0 ? 0 : 9;
+		var nowX = id % 2 == 0 ? 0 : 13;
         var nowY = id;
 		var gotoX = 0;
 		var gotoY = 0;
@@ -30,7 +30,8 @@
 		var index = null;
 		var previousX = null;
 		var previousY = null;
-		var mapLength = 10;
+		var mapXLength = 14;
+		var mapYLength = 10;
 	</script>
 </head>
 <body>
@@ -91,10 +92,10 @@
         function autoStart(){
         	auto = true;
         	if(nowX == 0){
-        		gotoX = mapLength - 1;
+        		gotoX = mapXLength - 1;
         		gotoY = Math.floor(Math.random() * 10);
         	}
-        	else if(nowX == mapLength - 1){
+        	else if(nowX == mapXLength - 1){
         		gotoX = 0;
         		gotoY = Math.floor(Math.random() * 10);
         	}
