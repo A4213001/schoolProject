@@ -12,12 +12,13 @@ global.changeRoute = []; //更換路徑
 global.stopCount = []; //停止次數
 global.robotStatus = []; //robot狀態
 
-global.mapLength = 10;
+global.mapXLength = 14;
+global.mapYLength = 10;
 
 //---graphInit---
-global.x = new Array(mapLength);
-for(var i = 0; i < mapLength; i++){
-	x[i] = Array(mapLength).fill(1);
+global.map = new Array(mapXLength);
+for(var i = 0; i < mapXLength; i++){
+	map[i] = Array(mapYLength).fill(1);
 }
-global.graph = new astar.Graph(x);
+global.graph = new astar.Graph(map);
 //
