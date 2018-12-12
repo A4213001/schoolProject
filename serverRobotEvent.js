@@ -1,6 +1,92 @@
 var server = require('./app');
 var routeMethod = require('./routeMethod');
 
+function findOtherSideCargp(data, position){
+	var gotoList = [0, 0];
+	var cargoByPosition;
+	if(position == 'left'){
+		cargoByPosition = cargo.right;
+	} else if(position == 'right'){
+		cargoByPosition = cargo.left;
+	} else {
+		return null;
+	}
+	//如果此位置還有貨物，直接取得此位置的座標
+    if(cargoByPosition[data.nowY].length > 0){
+    	gotoList[0] = (position == 'left') ? mapXLength - 1 : 0;
+    	gotoList[1] = data.nowY;
+    	return gotoList;
+    } 
+    //若此位置沒有貨物，則去附近尋找貨物
+    else {
+    	var offset = 1; //相鄰格數
+    	var turn = 1; //上方或下方
+    	var times = 0; //迴圈執行次數
+    	var cargoIndex; //貨物位置
+    	while(true){
+        	cargoIndex = data.nowY + offset * turn;
+        	if(cargoIndex >= 0 && cargoIndex < mapYLength){
+        		if(cargoByPosition[cargoIndex].length > 0){
+            		gotoList[0] = (position == 'left') ? mapXLength - 1 : 0;
+            		gotoList[1] = cargoIndex; //前往有貨物的位置
+            		return gotoList;
+          		}
+        	}
+        	if(times % 2 == 1){
+          		offset = offset + 1;
+        	}
+        	turn = turn * -1;
+        	times++;
+        	if((data.nowY + offset) > mapYLength - 1 && (data.nowY - offset) < 0){
+          		return null;
+        	}
+      	}
+    }
+}
+
+function findCargo(data, position){
+	var gotoList = [0, 0];
+	var cargoByPosition;
+	if(position == 'left'){
+		cargoByPosition = cargo.left;
+	} else if(position == 'right'){
+		cargoByPosition = cargo.right;
+	} else {
+		return null;
+	}
+	//如果此位置還有貨物，直接取得此貨物的終點座標
+    if(cargoByPosition[data.nowY].length > 0){
+    	gotoList[0] = (position == 'left') ? mapXLength - 1 : 0;
+    	gotoList[1] = cargoByPosition[data.nowY][0];
+    	return gotoList;
+    } 
+    //若此位置沒有貨物，則去附近尋找貨物
+    else {
+    	var offset = 1; //相鄰格數
+    	var turn = 1; //上方或下方
+    	var times = 0; //迴圈執行次數
+    	var cargoIndex; //貨物位置
+    	while(true){
+        	cargoIndex = data.nowY + offset * turn;
+        	if(cargoIndex >= 0 && cargoIndex < mapYLength){
+        		if(cargoByPosition[cargoIndex].length > 0){
+            		gotoList[0] = (position == 'left') ? 0 : mapXLength - 1;
+            		gotoList[1] = cargoIndex; //前往有貨物的位置
+            		return gotoList;
+          		}
+        	}
+        	if(times % 2 == 1){
+          		offset = offset + 1;
+        	}
+        	turn = turn * -1;
+        	times++;
+        	if((data.nowY + offset) > mapYLength - 1 && (data.nowY - offset) < 0){
+          		return findOtherSideCargp(data, position);
+        	}
+      	}
+    }
+}
+
 exports.onSetAddress = function(data){
 	point[data.index] = {
 		x : data.nowX,
@@ -63,6 +149,32 @@ exports.onStart = function(data, socket){
   		routeMethod.findRoute(data.nowX, data.nowY, data.gotoX, data.gotoY, data.id, index);
   		routeMethod.next(data.id, index, socket);
 	}
+}
+
+exports.ongetCargoEndPoint = function(data, socket){
+	console.log(cargo);
+  	var success = true;
+  	var gotoList;
+  	if(data.nowX == 0){
+		gotoList = findCargo(data, 'left');
+	} else if(data.nowX == mapXLength - 1){
+	    gotoList = findCargo(data, 'right');
+	} else {
+	    gotoList = null;
+	}
+  	if(gotoList != null){
+    	if(data.nowX == 0){
+      		cargo.left[data.nowY].shift();
+    	} else {
+      		cargo.right[data.nowY].shift();
+    	}
+    	socket.emit('returnCargoEndPoint',
+      		{
+        		gotoX : gotoList[0],
+        		gotoY : gotoList[1]
+      		}
+    	)
+  	}
 }
 
 exports.onWalk = function(data, socket){
