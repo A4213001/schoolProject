@@ -22,7 +22,9 @@
 		var id = parseInt(getQueryVariable("id"));
 		if(!id)
 			id = 0;
-		var nowX = id % 2 == 0 ? 0 : 13;
+		var mapXLength = 14;
+		var mapYLength = 10;
+		var nowX = id % 2 == 0 ? 0 : mapXLength - 1;
         var nowY = id;
 		var gotoX = 0;
 		var gotoY = 0;
@@ -30,8 +32,6 @@
 		var index = null;
 		var previousX = null;
 		var previousY = null;
-		var mapXLength = 14;
-		var mapYLength = 10;
 	</script>
 </head>
 <body>
