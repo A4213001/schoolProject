@@ -1,19 +1,21 @@
 <% include template/header.ejs %>
-
-		<canvas id="cvs" height="500" width="602">抱歉，您的瀏覽器不支持canvas</canvas>
+		<div class='inline'>
+			<canvas id="cvs" height="510	" width="602">抱歉，您的瀏覽器不支持canvas</canvas>
+		</div>
 		<script>
 			var socket = io.connect('http://localhost');
 			var cvs=document.getElementById("cvs");
 			var ctx=cvs.getContext("2d");
 			Square(ctx);	//畫出方格 function在JS/method.js
+			init(cvs);
+			var now,next;
 			$(document).ready(function(){
-				init(cvs);
 				socket.on('draw',function(data){
 					let XYlenght=10, //位置
 						nowX=0,nowY=51; //陣列畫到的位置(nowY初始位置是第二排)
-					var now = data.point;
-					var next = data.nextPoint;
-					document.getElementById("Qua").innerHTML=now.length;
+					now = data.point;
+					next = data.nextPoint;
+					document.getElementById("Qua").innerHTML="當前機器人數量"+now.length;
 					for(lastLenght;lastLenght>=0;lastLenght--){
 						ctx.clearRect(clearY[lastLenght], clearX[lastLenght], size, size);
 					}
@@ -28,6 +30,7 @@
 									ctx.fillStyle="white";
 									ctx.fillText(now[data].id,nowY+32.5,nowX+35);	//顯示的文字和位置
 									ctx.fillStyle="black";
+									status(now[data].id,now[data].x,now[data].y);
 								} else {
 									ctx.strokeRect(nowY,nowX,size,size);
 								}
@@ -40,13 +43,11 @@
 						nowX=0;
 					}
 					lastLenght=now.length;
-////////
 				});
 			});
 		</script>
-		<div class='select'>
-			<h1>當前機器人數量</h1>
+		<div id='select' class='inline'>
 			<h1 nowrap id='Qua'></h1>
-			<p id=ppp></p>
+			<p id=ppp></p> <!-- 得到座標 -->
 		</div>
 <% include template/footer.ejs %>

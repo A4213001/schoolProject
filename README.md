@@ -1,8 +1,4 @@
-# 專案說明-測試報告版本
-
-## 差異
-* 檔案讀取
-* cargo.json
+# 專案說明
 
 ## 開發環境
 * Node.js-v10.14.0(https://nodejs.org/en/)
@@ -25,6 +21,22 @@
 + jquery-3.3.1(https://jquery.com/)
 + bootstrap-3.3.6(https://getbootstrap.com/)
 + socket.io-6.3.0(https://socket.io/)
+
+## socket.io事件說明
++ ```socket.emit('message', "this is a test"); //sending to sender-client only```
++ ```socket.broadcast.emit('message', "this is a test"); //sending to all clients except sender```
++ ```socket.broadcast.to('game').emit('message', 'nice game'); //sending to all clients in 'game' room(channel) except sender```
++ ```socket.to('game').emit('message', 'enjoy the game'); //sending to sender client, only if they are in 'game' room(channel)```
++ ```socket.broadcast.to(socketid).emit('message', 'for your eyes only'); //sending to individual socketid```
++ ```io.emit('message', "this is a test"); //sending to all clients, include sender```
++ ```io.in('game').emit('message', 'cool game'); //sending to all clients in 'game' room(channel), include sender```
++ ```io.of('myNamespace').emit('message', 'gg'); //sending to all clients in namespace 'myNamespace', include sender```
++ ```socket.emit(); //send to all connected clients```
++ ```socket.broadcast.emit(); //send to all connected clients except the one that sent the message```
++ ```socket.on(); //event listener, can be called on client to execute on server```
++ ```io.sockets.socket(); //for emiting to specific clients```
++ ```io.sockets.emit(); //send to all connected clients (same as socket.emit)```
++ ```io.sockets.on() ; //initial connection from a client.```
 
 ## 先旻的git簡易教學
 ### 連接雲端專案
@@ -62,8 +74,8 @@
 
 ### 芷涵(前端)
 1. 顯示機器人狀態(選擇單一、整體、輪播(可考慮))
-2. 顯示單一機器人路徑
-3. 顯示單一機器人累積步數
+2. 顯示單一機器人累積步數
+3. 顯示單一機器人路徑
 4. 顯示號碼牌(單一格子、單一機器人、整體)
 5. 區別單行道
 6. 顯示當前機器人數量	OK
