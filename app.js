@@ -30,6 +30,10 @@ app.get('/search', function (req, res) {
 app.get('/button', function (req, res) {
     res.render('button.ejs');
 });
+
+app.get('/demo', function (req, res) {
+    res.render('demo.ejs');
+});
 //webroute end
 
 //socket connect start
