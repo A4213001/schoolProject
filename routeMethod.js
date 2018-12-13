@@ -666,6 +666,52 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 	}
 };
 
+exports.findRestRoute = function(nowX, nowY, index){
+	var graphLine = gotoRestGraph;
+	var gotoX = null;
+	var gotoY = mapYLength - 1;
+	var start = graphLine.grid[nowX][nowY];
+	for(let i = 0; i < mapXLength; i++){
+		var restExist = false;
+		for(let j = 0; j < point.length; j++){
+			if(point[j].x == i && point[j].y == mapYLength - 1){
+				restExist = true;
+				break;
+			}
+		}
+		if(!restExist){
+			gotoX = i;
+		}
+	}
+	var end = graphLine.grid[gotoX][gotoY];
+	var result = astar.astar.search(graphLine, start, end);
+	var routePoint = [];
+	result.forEach(function(element) {
+		routePoint.push(
+			{
+				x : element.x,
+				y : element.y
+			}
+		);
+	});
+	var exist = false;
+	for(let i = 0 ; i < route.length; i++){
+	  	if(route[i].id == robotId){
+	  	    route[i].routePoint = routePoint;
+	  	    exist = true;
+	  	    break;
+	  	}
+	}
+	if(!exist){
+	  	route.push(
+	  		{
+	  			id : robotId,
+	  			routePoint : routePoint
+	  		}
+	  	);
+	}
+}
+
 /*
   使用號碼牌
   params index robot的index

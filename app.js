@@ -37,28 +37,27 @@ io.on('connection', function (socket) {
     console.log("connect connectCount : " + io.engine.clientsCount);
 
     socket.on('setAddress', function (data){
-		  serverRobotEvent.onSetAddress(data);
+		serverRobotEvent.onSetAddress(data);
   	});
 
   	socket.on('start', function (data) {
   		serverRobotEvent.onStart(data, socket);
   	});
 
-    //connectionEvent getCargoEndPoint
     socket.on('getCargoEndPoint', function (data) {
-      serverRobotEvent.ongetCargoEndPoint(data, socket);
+        serverRobotEvent.ongetCargoEndPoint(data, socket);
     });
 
   	socket.on('walk', function (data) {
-		  serverRobotEvent.onWalk(data, socket);
+		serverRobotEvent.onWalk(data, socket);
   	});
 
   	socket.on('XXXXX', function (data) {
-		  serverRobotEvent.onXXXXX(data);
+		serverRobotEvent.onXXXXX(data);
   	});
 
   	socket.on('allAutoStart', function () {
-		  serverRobotEvent.onAllAutoStart();
+		serverRobotEvent.onAllAutoStart();
   	});
 
   	socket.on('disconnect', function() {
