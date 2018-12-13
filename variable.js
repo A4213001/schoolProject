@@ -13,12 +13,41 @@ global.stopCount = []; //停止次數
 global.robotStatus = []; //robot狀態
 
 global.mapXLength = 14;
-global.mapYLength = 10;
+global.mapYLength = 11;
 
 //---graphInit---
 global.map = new Array(mapXLength);
 for(var i = 0; i < mapXLength; i++){
 	map[i] = Array(mapYLength).fill(1);
 }
-global.graph = new astar.Graph(map);
+
+//前往右側的地圖
+global.gotoRightGraph = new astar.Graph(map);
+for(let i = 4; i < mapXLength - 5; i++){
+	for(let j = 1; j < mapYLength - 1; j+=2){
+		gotoRightGraph.grid[i][j].weight = 0;
+	}
+}
+for(let i = 0 ; i < mapXLength - 1; i++){
+	gotoRightGraph.grid[i][mapYLength - 1].weight = 0;
+}
+
+//前往左側的地圖
+global.gotoLeftGraph = new astar.Graph(map);
+for(let i = 4; i < mapXLength - 5; i++){
+	for(let j = 0; j < mapYLength - 1; j+=2){
+		gotoLeftGraph.grid[i][j].weight = 0;
+	}
+}
+for(let i = 0 ; i < mapXLength - 1; i++){
+	gotoLeftGraph.grid[i][mapYLength - 1].weight = 0;
+}
+
+//前往休息站的地圖
+global.gotoRestGraph = new astar.Graph(map);
+for(let i = 4; i < mapXLength - 5; i++){
+	for(let j = 1; j < mapYLength - 1; j+=2){
+		gotoRestGraph.grid[i][j].weight = 0;
+	}
+}
 //
