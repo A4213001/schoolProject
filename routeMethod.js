@@ -636,6 +636,7 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 	} else if(gotoX == mapXLength - 1){
 		graphLine = gotoRightGraph;
 	} else {
+		console.log("graphXXX");
 		return;
 	}
 	var start = graphLine.grid[nowX][nowY];

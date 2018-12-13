@@ -36,6 +36,7 @@ function findOtherSideCargp(data, position){
     		    return gotoList;
       		}
       	}
+      	return null;
     }
 }
 
@@ -74,6 +75,7 @@ function findCargo(data, position){
     		    return gotoList;
       		}
       	}
+      	return findOtherSideCargp(data, position);
     }
 }
 
