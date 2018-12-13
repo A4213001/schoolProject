@@ -103,6 +103,8 @@ function reFindRoute(nowX, nowY, gotoX, gotoY, index, lock) {
 	});
 	if(routePoint.length > 0){
 		route[index].routePoint = routePoint;
+	} else {
+		console.log("re" + nowX + " " + nowY + " " + gotoX + " " + gotoY + " " + index);
 	}
 };
 
@@ -571,11 +573,11 @@ function stopOverReFindRoute(index){
 */
 function crowdedReFindRoute(index){
 	//若不在單行道則進行避開擁擠區的重新規劃路徑
-	if(point[index].x < 3 && point[index].x >= mapXLength - 3){
+	if(point[index].x < 4 && point[index].x >= mapXLength - 4){
 		throwNumberPlate(index, point[index].x, point[index].y);
 		reFindRoute(point[index].x, point[index].y, route[index].routePoint[route[index].routePoint.length - 1].x, route[index].routePoint[route[index].routePoint.length - 1].y, index, lock)
 		return false
-	} else if (point[index].x == 3 || point[index].x == 6){
+	} else if (point[index].x == 4 || point[index].x == mapXLength - 5){
 		throwNumberPlate(index, point[index].x, point[index].y);
 		robotStatus[index].crowded = true;//前方擁擠
 		return true;
@@ -648,6 +650,9 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 			}
 		);
 	});
+	if(!(routePoint.length > 0)) {
+		console.log(nowX + " " + nowY + " " + gotoX + " " + gotoY + " " + index);
+	}
 	var exist = false;
 	for(let i = 0 ; i < route.length; i++){
 	  	if(route[i].id == robotId){
@@ -680,19 +685,16 @@ exports.findRestRoute = function(nowX, nowY, robotId, index){
 	var gotoX = null;
 	var gotoY = mapYLength;
 	var start = graphLine.grid[nowX][nowY];
-	for(let i = 0; i < mapXLength; i++){
-		var restExist = false;
-		for(let j = 0; j < point.length; j++){
-			if(point[j].x == i && point[j].y == mapYLength){
-				restExist = true;
-				break;
-			}
-		}
-		if(!restExist){
+	for(let i = mapXLength - 1; i >= 0; i--){
+		if(!restStation[i]){
+			restStation[i] = true;
 			gotoX = i;
+			if(i < 5){
+				console.log(startTime + " " + (new Date()));
+			}
+			break;
 		}
 	}
-	console.log(gotoX + " " + gotoY);
 	var end = graphLine.grid[gotoX][gotoY];
 	var result = astar.astar.search(graphLine, start, end);
 	var routePoint = [];
@@ -704,7 +706,6 @@ exports.findRestRoute = function(nowX, nowY, robotId, index){
 			}
 		);
 	});
-	console.log(routePoint);
 	var exist = false;
 	for(let i = 0 ; i < route.length; i++){
 	  	if(route[i].id == robotId){

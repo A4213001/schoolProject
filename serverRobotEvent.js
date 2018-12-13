@@ -23,23 +23,18 @@ function findOtherSideCargp(data, position){
     	var turn = 1; //上方或下方
 	 	var times = 0; //迴圈執行次數
     	var cargoIndex; //貨物位置
-    	while(true){
-        	cargoIndex = data.nowY + offset * turn;
-        	if(cargoIndex >= 0 && cargoIndex < mapYLength - 1){
-    		    if(cargoByPosition[cargoIndex].length > 0){
-        		    gotoList[0] = (position == 'left') ? mapXLength - 1 : 0;
-        		    gotoList[1] = cargoIndex; //前往有貨物的位置
-        		    return gotoList;
-          		}
+    	var rnd = Math.floor(Math.random() * 2);
+    	for(let i = 0; i < mapYLength ; i++){
+        	if(i % 2 == rnd){
+        		cargoIndex = i / 2;
+        	} else {
+        		cargoIndex = mapYLength - 1 - (i / 2);
         	}
-        	if(times % 2 == 1){
-          		offset = offset + 1;
-        	}
-        	turn = turn * -1;
-        	times++;
-        	if((data.nowY + offset) > mapYLength - 1 && (data.nowY - offset) < 0){
-          		return null;
-        	}
+		    if(cargoByPosition[cargoIndex].length > 0){
+    		    gotoList[0] = (position == 'left') ? mapXLength - 1 : 0;
+    		    gotoList[1] = cargoIndex; //前往有貨物的位置
+    		    return gotoList;
+      		}
       	}
     }
 }
@@ -60,29 +55,24 @@ function findCargo(data, position){
     	gotoList[1] = cargoByPosition[data.nowY][0];
     	return gotoList;
     } 
-    //若此位置沒有貨物，則去附近尋找貨物
+    //若此位置沒有貨物，則去從外往內尋找貨物
     else {
     	var offset = 1; //相鄰格數
     	var turn = 1; //上方或下方
     	var times = 0; //迴圈執行次數
     	var cargoIndex; //貨物位置
-    	while(true){
-        	cargoIndex = data.nowY + offset * turn;
-        	if(cargoIndex >= 0 && cargoIndex < mapYLength - 1){
-        		if(cargoByPosition[cargoIndex].length > 0){
-            		gotoList[0] = (position == 'left') ? 0 : mapXLength - 1;
-            		gotoList[1] = cargoIndex; //前往有貨物的位置
-            		return gotoList;
-          		}
+    	var rnd = Math.floor(Math.random() * 2);
+    	for(let i = 0; i < mapYLength ; i++){
+        	if(i % 2 == rnd){
+        		cargoIndex = Math.floor(i / 2);
+        	} else {
+        		cargoIndex = mapYLength - 1 - Math.floor(i / 2);
         	}
-        	if(times % 2 == 1){
-          		offset = offset + 1;
-        	}
-        	turn = turn * -1;
-        	times++;
-        	if((data.nowY + offset) > mapYLength - 2 && (data.nowY - offset) < 0){
-          		return findOtherSideCargp(data, position);
-        	}
+		    if(cargoByPosition[cargoIndex].length > 0){
+    		    gotoList[0] = (position == 'left') ? 0 : mapXLength - 1;
+    		    gotoList[1] = cargoIndex; //前往有貨物的位置
+    		    return gotoList;
+      		}
       	}
     }
 }
@@ -143,15 +133,32 @@ exports.onStart = function(data, socket){
   		io.emit('draw',{ point : point, nextPoint : nextPoint });
   		var index = routeMethod.findIndex(data.id, socket);
   		endPoint[index] = {
-				x : data.gotoX,
-				y : data.gotoY,
-				id : data.id
-			}
-			if(isNaN(stepCount[index])){
-				stepCount[index] = 0
-			}
-  		routeMethod.findRoute(data.nowX, data.nowY, data.gotoX, data.gotoY, data.id, index);
-  		routeMethod.next(data.id, index, socket);
+			x : data.gotoX,
+			y : data.gotoY,
+			id : data.id
+		}
+		if(isNaN(stepCount[index])){
+			stepCount[index] = 0
+		}
+        if(data.gotoY < mapYLength){
+  	      	routeMethod.findRoute(data.nowX, data.nowY, data.gotoX, data.gotoY, data.id, index);
+  		} else if(data.gotoY == mapYLength){
+          	routeMethod.findRestRoute(data.nowX, data.nowY, data.id, index);
+      	}
+      	routeMethod.next(data.id, index, socket);
+	}
+}
+
+exports.onWalk = function(data, socket){
+	if(point[data.index].x == route[data.index].routePoint[0].x && point[data.index].y == route[data.index].routePoint[0].y){
+		route[data.index].routePoint.shift();
+		routeMethod.next(data.id, data.index, socket);
+	}
+	else{
+		routeMethod.next(data.id, data.index, socket);
+	}
+	if(!data.isStop){
+		stepCount[data.index]++;
 	}
 }
 
@@ -182,7 +189,7 @@ exports.ongetCargoEndPoint = function(data, socket){
         socket.emit('returnCargoEndPoint',
             {
                 gotoX : 0,
-                gotoY : mapYLength - 1
+                gotoY : mapYLength
             }
         )
     }
@@ -211,6 +218,7 @@ exports.onXXXXX = function(data){
 
 exports.onAllAutoStart = function(){
 	io.emit('autoStart');
+	startTime = new Date();
 }
 
 exports.onDisconnect = function(){

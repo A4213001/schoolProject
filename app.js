@@ -4,7 +4,6 @@ var variable = require('./variable');
 var server = require('http').Server(app);
 global.io = require('socket.io')(server);
 var serverRobotEvent = require('./serverRobotEvent');
-
 server.listen(80);
 console.log('Server running at port 80');
 

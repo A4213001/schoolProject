@@ -18,9 +18,11 @@ global.cargo = JSON.parse(fs.readFileSync("cargo.json"));
 global.mapXLength = 14; //地圖X長度
 global.mapYLength = 10; //地圖Y長度
 
+global.restStation = Array(mapXLength).fill(false); //休息站
+
 //---graphInit---
 global.map = new Array(mapXLength);
-for(var i = 0; i < mapXLength; i++){
+for(let i = 0; i < mapXLength; i++){
 	//mapYLength + 1 是因為有休息站
 	map[i] = Array(mapYLength + 1).fill(1);
 }
@@ -28,7 +30,7 @@ for(var i = 0; i < mapXLength; i++){
 //前往右側的地圖
 global.gotoRightGraph = new astar.Graph(map);
 //禁止通行逆向車道
-for(let i = 4; i < mapXLength - 5; i++){
+for(let i = 4; i < mapXLength - 4; i++){
 	for(let j = 1; j < mapYLength; j+=2){
 		gotoRightGraph.grid[i][j].weight = 0;
 	}
@@ -41,7 +43,7 @@ for(let i = 0 ; i < mapXLength; i++){
 //前往左側的地圖
 global.gotoLeftGraph = new astar.Graph(map);
 //禁止通行逆向車道
-for(let i = 4; i < mapXLength - 5; i++){
+for(let i = 4; i < mapXLength - 4; i++){
 	for(let j = 0; j < mapYLength; j+=2){
 		gotoLeftGraph.grid[i][j].weight = 0;
 	}
