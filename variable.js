@@ -12,41 +12,47 @@ global.changeRoute = []; //更換路徑
 global.stopCount = []; //停止次數
 global.robotStatus = []; //robot狀態
 
-global.mapXLength = 14;
-global.mapYLength = 11;
+global.mapXLength = 14; //地圖X長度
+global.mapYLength = 10; //地圖Y長度
 
 //---graphInit---
 global.map = new Array(mapXLength);
 for(var i = 0; i < mapXLength; i++){
-	map[i] = Array(mapYLength).fill(1);
+	//mapYLength + 1 是因為有休息站
+	map[i] = Array(mapYLength + 1).fill(1);
 }
 
 //前往右側的地圖
 global.gotoRightGraph = new astar.Graph(map);
+//禁止通行逆向車道
 for(let i = 4; i < mapXLength - 5; i++){
-	for(let j = 1; j < mapYLength - 1; j+=2){
+	for(let j = 1; j < mapYLength; j+=2){
 		gotoRightGraph.grid[i][j].weight = 0;
 	}
 }
-for(let i = 0 ; i < mapXLength - 1; i++){
-	gotoRightGraph.grid[i][mapYLength - 1].weight = 0;
+//禁止通行休息站區域
+for(let i = 0 ; i < mapXLength; i++){
+	gotoRightGraph.grid[i][mapYLength].weight = 0;
 }
 
 //前往左側的地圖
 global.gotoLeftGraph = new astar.Graph(map);
+//禁止通行逆向車道
 for(let i = 4; i < mapXLength - 5; i++){
-	for(let j = 0; j < mapYLength - 1; j+=2){
+	for(let j = 0; j < mapYLength; j+=2){
 		gotoLeftGraph.grid[i][j].weight = 0;
 	}
 }
-for(let i = 0 ; i < mapXLength - 1; i++){
-	gotoLeftGraph.grid[i][mapYLength - 1].weight = 0;
+//禁止通行休息站區域
+for(let i = 0 ; i < mapXLength; i++){
+	gotoLeftGraph.grid[i][mapYLength].weight = 0;
 }
 
 //前往休息站的地圖
 global.gotoRestGraph = new astar.Graph(map);
+//禁止通行逆向車道
 for(let i = 4; i < mapXLength - 5; i++){
-	for(let j = 1; j < mapYLength - 1; j+=2){
+	for(let j = 1; j < mapYLength; j+=2){
 		gotoRestGraph.grid[i][j].weight = 0;
 	}
 }

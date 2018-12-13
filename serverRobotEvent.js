@@ -1,6 +1,10 @@
 var server = require('./app');
 var routeMethod = require('./routeMethod');
 
+exports.onConnection = function(io){
+	console.log("connect connectCount : " + io.engine.clientsCount);
+}
+
 exports.onSetAddress = function(data){
 	point[data.index] = {
 		x : data.nowX,
