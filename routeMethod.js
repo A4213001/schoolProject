@@ -443,7 +443,7 @@ function frontAreaCount(index, lock){
 					}
 				}
 			}
-			//當位置在最左時，且上方還>=2格
+			//當位置在最上時，且左方還>=2格
 			else if(frontAreaX > 1 && frontAreaY == 0){
 				for(let i = frontAreaX - 1; i >= frontAreaX - 2; i--){
 					for(let j = frontAreaY; j <= frontAreaY + 1; j++){
@@ -461,8 +461,8 @@ function frontAreaCount(index, lock){
 					}
 				}
 			}
-			//當位置在最右時，且上方還>=2格
-			else if(frontAreaX > 1 && frontAreaY < mapYLength - 1){
+			//當位置在最下時，且左方還>=2格
+			else if(frontAreaX > 1 && frontAreaY == mapYLength - 1){
 				for(let i = frontAreaX - 1; i >= frontAreaX - 2; i--){
 					for(let j = frontAreaY; j >= frontAreaY - 1; j--){
 						lock.push(
