@@ -309,8 +309,8 @@ function frontAreaCount(index, lock){
 	switch(direction[index]){
 		//向下前進時
 		case "down":
-			//當位置不在最左或最右，且下方還>=3格
-			if(frontAreaX > 0 && frontAreaX < mapXLength - 1 && frontAreaY < mapYLength - 3){
+			//當位置不在最左或最右，且下方還>=2格
+			if(frontAreaX > 0 && frontAreaX < mapXLength - 1 && frontAreaY < mapYLength - 2){
 				for(let i = frontAreaX - 1; i <= frontAreaX + 1; i++){
 					for(let j = frontAreaY + 1; j <= frontAreaY + 2; j++){
 						lock.push(
@@ -327,8 +327,8 @@ function frontAreaCount(index, lock){
 					}
 				}
 			}
-			//當位置在最左時，且下方還>=3格
-			else if(frontAreaX == 0 && frontAreaY < mapYLength - 3){
+			//當位置在最左時，且下方還>=2格
+			else if(frontAreaX == 0 && frontAreaY < mapYLength - 2){
 				for(let i = frontAreaX; i <= frontAreaX + 1; i++){
 					for(let j = frontAreaY + 1; j <= frontAreaY + 2; j++){
 						lock.push(
@@ -345,8 +345,8 @@ function frontAreaCount(index, lock){
 					}
 				}
 			}
-			//當位置在最右時，且下方還>=3格
-			else if(frontAreaX == mapXLength - 1 && frontAreaY < mapYLength - 3){
+			//當位置在最右時，且下方還>=2格
+			else if(frontAreaX == mapXLength - 1 && frontAreaY < mapYLength - 2){
 				for(let i = frontAreaX; i >= frontAreaX - 1; i--){
 					for(let j = frontAreaY + 1; j <= frontAreaY + 2; j++){
 						lock.push(
@@ -426,7 +426,7 @@ function frontAreaCount(index, lock){
 		//向左前進時
 		case "left":
 			//當位置不在最上或最下時，且左方還>=2格
-			if(frontAreaX > 1 && frontAreaY > 0 && frontAreaY < mapYLength - 2){
+			if(frontAreaX > 1 && frontAreaY > 0 && frontAreaY < mapYLength - 1){
 				for(let i = frontAreaX - 1; i >= frontAreaX - 2; i--){
 					for(let j = frontAreaY - 1; j <= frontAreaY + 1; j++){
 						lock.push(
@@ -443,7 +443,7 @@ function frontAreaCount(index, lock){
 					}
 				}
 			}
-			//當位置在最左時，且上方還>=2格
+			//當位置在最上時，且左方還>=2格
 			else if(frontAreaX > 1 && frontAreaY == 0){
 				for(let i = frontAreaX - 1; i >= frontAreaX - 2; i--){
 					for(let j = frontAreaY; j <= frontAreaY + 1; j++){
@@ -461,8 +461,8 @@ function frontAreaCount(index, lock){
 					}
 				}
 			}
-			//當位置在最右時，且上方還>=2格
-			else if(frontAreaX > 1 && frontAreaY < mapYLength - 2){
+			//當位置在最下時，且左方還>=2格
+			else if(frontAreaX > 1 && frontAreaY == mapYLength - 1){
 				for(let i = frontAreaX - 1; i >= frontAreaX - 2; i--){
 					for(let j = frontAreaY; j >= frontAreaY - 1; j--){
 						lock.push(
@@ -484,7 +484,7 @@ function frontAreaCount(index, lock){
 		//向右前進時
 		case "right":
 			//當位置不在最上或最下時，且右方還>=2格
-			if(frontAreaX < mapXLength - 2 && frontAreaY > 0 && frontAreaY < mapYLength - 2){
+			if(frontAreaX < mapXLength - 2 && frontAreaY > 0 && frontAreaY < mapYLength - 1){
 				for(let i = frontAreaX + 1; i <= frontAreaX + 2; i++){
 					for(let j = frontAreaY - 1; j <= frontAreaY + 1; j++){
 						lock.push(
@@ -520,7 +520,7 @@ function frontAreaCount(index, lock){
 				}
 			}
 			//當位置在最下時，且右方還>=2格
-			else if(frontAreaX < mapXLength - 2 && frontAreaY == mapYLength - 2){
+			else if(frontAreaX < mapXLength - 2 && frontAreaY == mapYLength - 1){
 				for(let i = frontAreaX + 1; i <= frontAreaX + 2; i++){
 					for(let j = frontAreaY; j >= frontAreaY - 1; j--){
 						lock.push(
