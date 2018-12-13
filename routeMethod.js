@@ -77,20 +77,13 @@ function drawNumberPlate(index){
   會將尋找好的路徑存進route Array中
 */
 function reFindRoute(nowX, nowY, gotoX, gotoY, index, lock) {
-	var graphLine = new astar.Graph(map);
+	var graphLine;
 	if(gotoX == 0){
-		for(let i = 4; i < mapYLength - 5; i++){
-			for(let j = 0; j < mapXLength; j+=2){
-				graphLine.grid[i][j].weight = 0;
-			}
-		}
-	}
-	if(gotoX == mapXLength - 1){
-		for(let i = 4; i < mapXLength - 5; i++){
-			for(let j = 1; j < mapYLength; j+=2){
-				graphLine.grid[i][j].weight = 0;
-			}
-		}
+		graphLine = gotoLeftGraph;
+	} else if(gotoX == mapXLength - 1){
+		graphLine = gotoRightGraph;
+	} else {
+		return;
 	}
 	for(let i = 0; i < lock.length; i++){
 		graphLine.grid[lock[i].x][lock[i].y] = 0;
@@ -635,20 +628,13 @@ exports.findIndex = function(robotId, socket){
   會將尋找好的路徑存進route Array中
 */
 exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
-	var graphLine = new astar.Graph(map);
+	var graphLine;
 	if(gotoX == 0){
-		for(let i = 4; i < mapXLength - 5; i++){
-			for(let j = 0; j < mapYLength; j+=2){
-				graphLine.grid[i][j].weight = 0;
-			}
-		}
-	}
-	if(gotoX == mapXLength - 1){
-		for(let i = 4; i < mapXLength - 5; i++){
-			for(let j = 1; j < mapYLength; j+=2){
-				graphLine.grid[i][j].weight = 0;
-			}
-		}
+		graphLine = gotoLeftGraph;
+	} else if(gotoX == mapXLength - 1){
+		graphLine = gotoRightGraph;
+	} else {
+		return;
 	}
 	var start = graphLine.grid[nowX][nowY];
 	var end = graphLine.grid[gotoX][gotoY];
