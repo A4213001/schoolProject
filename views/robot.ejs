@@ -71,7 +71,6 @@
 	        	}
 	        );
 	    };
-
 	    function start(){
 	    	auto = false;
 	    	nowX = parseInt($("#nowX").val());
@@ -88,34 +87,17 @@
 		    	}
 		    );
         };
-
         function autoStart(){
         	auto = true;
-        	if(nowX == 0){
-        		gotoX = mapXLength - 1;
-        		gotoY = Math.floor(Math.random() * 10);
+        	if(nowY != mapYLength){
+	        	socket.emit('getCargoEndPoint',
+	        		{
+	        			nowX : nowX,
+			    		nowY : nowY 
+	        		}
+	        	);
         	}
-        	else if(nowX == mapXLength - 1){
-        		gotoX = 0;
-        		gotoY = Math.floor(Math.random() * 10);
-        	}
-        	else{
-        		gotoX = 0;
-        		gotoY = 0;
-        		console.log("!!!!!!!!!!!! : " + nowX);
-        	}
-        	socket.emit('start',
-	        	{
-	        		id : id,
-		    		nowX : nowX,
-		    		nowY : nowY,
-		    		gotoX : gotoX,
-		    		gotoY : gotoY
-	        	}
-	        );
-	        $("#goto").html("<b>gotoX : " + gotoX + " gotoY : " + gotoY);
         };
-
         function openRobot(){
 			var newwin1 = window.open();
  			newwin1.location = "http://localhost:80?id=1";
@@ -136,15 +118,26 @@
  			var newwin9 = window.open();
  			newwin9.location = "http://localhost:80?id=9";
         }
-
         function allAutoStart(){
 			socket.emit('allAutoStart');
         }
-
 		socket.on('returnIndex', function (data) {
         	index = data.index;   
 		});
-
+		socket.on('returnCargoEndPoint', function (data) {
+			gotoX = data.gotoX;
+			gotoY = data.gotoY;
+			socket.emit('start',
+	        	{
+	        		id : id,
+		    		nowX : nowX,
+		    		nowY : nowY,
+		    		gotoX : data.gotoX,
+		    		gotoY : data.gotoY
+	        	}
+	        );
+	        $("#goto").html("<b>gotoX : " + data.gotoX + " gotoY : " + data.gotoY);
+		});
 		socket.on('stop', function (data) {
         	setTimeout(function(){
         		socket.emit('walk',
@@ -156,7 +149,6 @@
 		  		);
         	}, 1000);
 		});
-
 		socket.on('go', function (data) {
 		  	previousX = nowX;
 		  	previousY = nowY;
@@ -164,7 +156,7 @@
 		  	nowY = data.y;
 		  	setTimeout(function(){
 		  		setAddress();
-			  	if(nowX != gotoX || nowY != gotoY){
+			  	if(!(nowX == gotoX && nowY == gotoY) && nowY != mapYLength){
 			  		socket.emit('walk',
 				  		{
 				  			id : id,
@@ -174,13 +166,12 @@
 			  		);
 			  	}
 			  	else{
-			  		if(auto){
+			  		if(auto && nowY != mapYLength){
 			  			autoStart();
 			  		}
 			  	}
 		  	}, 1000);		  	
 		});
-
 		socket.on('autoStart', function (data) {
         	autoStart();   
 		});

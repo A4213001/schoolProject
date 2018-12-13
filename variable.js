@@ -13,7 +13,7 @@ global.changeRoute = []; //更換路徑
 global.stopCount = []; //停止次數
 global.robotStatus = []; //robot狀態
 global.startTime; //開始時間
-global.cargo = JSON.parse(fs.readFileSync("smallCargo.json"));
+global.cargo = JSON.parse(fs.readFileSync("cargo.json"));
 
 global.mapXLength = 14; //地圖X長度
 global.mapYLength = 10; //地圖Y長度
