@@ -46,9 +46,9 @@
                 asNavFor: null,
                 prevArrow: '<button class="slick-prev" aria-label="Previous" type="button">Previous</button>',
                 nextArrow: '<button class="slick-next" aria-label="Next" type="button">Next</button>',
-                autoplay: false,
+                autoplay: true,
                 autoplaySpeed: 3000,
-                centerMode: false,
+                centerMode: true,
                 centerPadding: '50px',
                 cssEase: 'ease',
                 customPaging: function(slider, i) {

@@ -91,14 +91,29 @@
 
         function autoStart(){
         	auto = true;
-        	if(nowY != mapYLength - 1){
-	        	socket.emit('getCargoEndPoint',
-	        		{
-	        			nowX : nowX,
-			    		nowY : nowY 
-	        		}
-	        	);
+        	if(nowX == 0){
+        		gotoX = mapXLength - 1;
+        		gotoY = Math.floor(Math.random() * 10);
         	}
+        	else if(nowX == mapXLength - 1){
+        		gotoX = 0;
+        		gotoY = Math.floor(Math.random() * 10);
+        	}
+        	else{
+        		gotoX = 0;
+        		gotoY = 0;
+        		console.log("!!!!!!!!!!!! : " + nowX);
+        	}
+        	socket.emit('start',
+	        	{
+	        		id : id,
+		    		nowX : nowX,
+		    		nowY : nowY,
+		    		gotoX : gotoX,
+		    		gotoY : gotoY
+	        	}
+	        );
+	        $("#goto").html("<b>gotoX : " + gotoX + " gotoY : " + gotoY);
         };
 
         function openRobot(){
@@ -130,21 +145,6 @@
         	index = data.index;   
 		});
 
-		socket.on('returnCargoEndPoint', function (data) {
-			gotoX = data.gotoX;
-			gotoY = data.gotoY;
-			socket.emit('start',
-	        	{
-	        		id : id,
-		    		nowX : nowX,
-		    		nowY : nowY,
-		    		gotoX : data.gotoX,
-		    		gotoY : data.gotoY
-	        	}
-	        );
-	        $("#goto").html("<b>gotoX : " + data.gotoX + " gotoY : " + data.gotoY);
-		});
-
 		socket.on('stop', function (data) {
         	setTimeout(function(){
         		socket.emit('walk',
@@ -164,7 +164,7 @@
 		  	nowY = data.y;
 		  	setTimeout(function(){
 		  		setAddress();
-			  	if(!(nowX == gotoX && nowY == gotoY) && nowY != mapYLength - 1){
+			  	if(nowX != gotoX || nowY != gotoY){
 			  		socket.emit('walk',
 				  		{
 				  			id : id,
@@ -174,7 +174,7 @@
 			  		);
 			  	}
 			  	else{
-			  		if(auto && nowY != mapYLength - 1){
+			  		if(auto){
 			  			autoStart();
 			  		}
 			  	}

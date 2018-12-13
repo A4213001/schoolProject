@@ -10,7 +10,7 @@ console.log('Server running at port 80');
 
 app.use(express.static('views'));
 
-//webroute start
+//webRoute start
 app.get('/', function (req, res) {
     res.render('robot.ejs');
 });
@@ -30,11 +30,15 @@ app.get('/search', function (req, res) {
 app.get('/button', function (req, res) {
     res.render('button.ejs');
 });
-//webroute end
+
+app.get('/demo', function (req, res) {
+    res.render('demo.ejs');
+});
+//webRoute end
 
 //socket connect start
 io.on('connection', function (socket) {
-    console.log("connect connectCount : " + io.engine.clientsCount);
+    serverRobotEvent.onConnection(io);
 
     socket.on('setAddress', function (data){
 		    serverRobotEvent.onSetAddress(data);
