@@ -15,7 +15,7 @@ global.robotStatus = []; //robot狀態
 global.cargo = JSON.parse(fs.readFileSync("cargo.json"));
 
 global.mapXLength = 14;
-global.mapYLength = 10;
+global.mapYLength = 11;
 
 //---graphInit---
 global.map = new Array(mapXLength);
@@ -30,7 +30,7 @@ for(let i = 4; i < mapXLength - 5; i++){
 		gotoRightGraph.grid[i][j].weight = 0;
 	}
 }
-for(let i = 0 ; i < mapXLength - 1; i++){
+for(let i = 0 ; i < mapXLength; i++){
 	gotoRightGraph.grid[i][mapYLength - 1].weight = 0;
 }
 
@@ -41,7 +41,7 @@ for(let i = 4; i < mapXLength - 5; i++){
 		gotoLeftGraph.grid[i][j].weight = 0;
 	}
 }
-for(let i = 0 ; i < mapXLength - 1; i++){
+for(let i = 0 ; i < mapXLength; i++){
 	gotoLeftGraph.grid[i][mapYLength - 1].weight = 0;
 }
 

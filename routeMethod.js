@@ -309,8 +309,8 @@ function frontAreaCount(index, lock){
 	switch(direction[index]){
 		//向下前進時
 		case "down":
-			//當位置不在最左或最右，且下方還>=2格
-			if(frontAreaX > 0 && frontAreaX < mapXLength - 1 && frontAreaY < mapYLength - 2){
+			//當位置不在最左或最右，且下方還>=3格
+			if(frontAreaX > 0 && frontAreaX < mapXLength - 1 && frontAreaY < mapYLength - 3){
 				for(let i = frontAreaX - 1; i <= frontAreaX + 1; i++){
 					for(let j = frontAreaY + 1; j <= frontAreaY + 2; j++){
 						lock.push(
@@ -327,8 +327,8 @@ function frontAreaCount(index, lock){
 					}
 				}
 			}
-			//當位置在最左時，且下方還>=2格
-			else if(frontAreaX == 0 && frontAreaY < mapYLength - 2){
+			//當位置在最左時，且下方還>=3格
+			else if(frontAreaX == 0 && frontAreaY < mapYLength - 3){
 				for(let i = frontAreaX; i <= frontAreaX + 1; i++){
 					for(let j = frontAreaY + 1; j <= frontAreaY + 2; j++){
 						lock.push(
@@ -345,8 +345,8 @@ function frontAreaCount(index, lock){
 					}
 				}
 			}
-			//當位置在最右時，且下方還>=2格
-			else if(frontAreaX == mapXLength - 1 && frontAreaY < mapYLength - 2){
+			//當位置在最右時，且下方還>=3格
+			else if(frontAreaX == mapXLength - 1 && frontAreaY < mapYLength - 3){
 				for(let i = frontAreaX; i >= frontAreaX - 1; i--){
 					for(let j = frontAreaY + 1; j <= frontAreaY + 2; j++){
 						lock.push(
@@ -426,7 +426,7 @@ function frontAreaCount(index, lock){
 		//向左前進時
 		case "left":
 			//當位置不在最上或最下時，且左方還>=2格
-			if(frontAreaX > 1 && frontAreaY > 0 && frontAreaY < mapYLength - 1){
+			if(frontAreaX > 1 && frontAreaY > 0 && frontAreaY < mapYLength - 2){
 				for(let i = frontAreaX - 1; i >= frontAreaX - 2; i--){
 					for(let j = frontAreaY - 1; j <= frontAreaY + 1; j++){
 						lock.push(
@@ -462,7 +462,7 @@ function frontAreaCount(index, lock){
 				}
 			}
 			//當位置在最右時，且上方還>=2格
-			else if(frontAreaX > 1 && frontAreaY < mapYLength - 1){
+			else if(frontAreaX > 1 && frontAreaY < mapYLength - 2){
 				for(let i = frontAreaX - 1; i >= frontAreaX - 2; i--){
 					for(let j = frontAreaY; j >= frontAreaY - 1; j--){
 						lock.push(
@@ -484,7 +484,7 @@ function frontAreaCount(index, lock){
 		//向右前進時
 		case "right":
 			//當位置不在最上或最下時，且右方還>=2格
-			if(frontAreaX < mapXLength - 2 && frontAreaY > 0 && frontAreaY < mapYLength - 1){
+			if(frontAreaX < mapXLength - 2 && frontAreaY > 0 && frontAreaY < mapYLength - 2){
 				for(let i = frontAreaX + 1; i <= frontAreaX + 2; i++){
 					for(let j = frontAreaY - 1; j <= frontAreaY + 1; j++){
 						lock.push(
@@ -520,7 +520,7 @@ function frontAreaCount(index, lock){
 				}
 			}
 			//當位置在最下時，且右方還>=2格
-			else if(frontAreaX < mapXLength - 2 && frontAreaY == mapYLength - 1){
+			else if(frontAreaX < mapXLength - 2 && frontAreaY == mapYLength - 2){
 				for(let i = frontAreaX + 1; i <= frontAreaX + 2; i++){
 					for(let j = frontAreaY; j >= frontAreaY - 1; j--){
 						lock.push(
@@ -666,7 +666,16 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 	}
 };
 
-exports.findRestRoute = function(nowX, nowY, index){
+/*
+  尋找前往休息站路徑
+  params nowX 當前X座標
+         nowY 當前Y座標
+         robotId robot編號
+         index robot的index
+  return 無
+  會將尋找好的路徑存進route Array中
+*/
+exports.findRestRoute = function(nowX, nowY, robotId, index){
 	var graphLine = gotoRestGraph;
 	var gotoX = null;
 	var gotoY = mapYLength - 1;
@@ -683,6 +692,7 @@ exports.findRestRoute = function(nowX, nowY, index){
 			gotoX = i;
 		}
 	}
+	console.log(gotoX + " " + gotoY);
 	var end = graphLine.grid[gotoX][gotoY];
 	var result = astar.astar.search(graphLine, start, end);
 	var routePoint = [];
@@ -694,6 +704,7 @@ exports.findRestRoute = function(nowX, nowY, index){
 			}
 		);
 	});
+	console.log(routePoint);
 	var exist = false;
 	for(let i = 0 ; i < route.length; i++){
 	  	if(route[i].id == robotId){

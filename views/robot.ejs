@@ -91,12 +91,14 @@
 
         function autoStart(){
         	auto = true;
-        	socket.emit('getCargoEndPoint',
-        		{
-        			nowX : nowX,
-		    		nowY : nowY 
-        		}
-        	);
+        	if(nowY != mapYLength - 1){
+	        	socket.emit('getCargoEndPoint',
+	        		{
+	        			nowX : nowX,
+			    		nowY : nowY 
+	        		}
+	        	);
+        	}
         };
 
         function openRobot(){
@@ -162,7 +164,7 @@
 		  	nowY = data.y;
 		  	setTimeout(function(){
 		  		setAddress();
-			  	if(nowX != gotoX || nowY != gotoY){
+			  	if(!(nowX == gotoX && nowY == gotoY) && nowY != mapYLength - 1){
 			  		socket.emit('walk',
 				  		{
 				  			id : id,
@@ -172,7 +174,7 @@
 			  		);
 			  	}
 			  	else{
-			  		if(auto){
+			  		if(auto && nowY != mapYLength - 1){
 			  			autoStart();
 			  		}
 			  	}

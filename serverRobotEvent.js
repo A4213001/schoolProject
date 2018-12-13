@@ -25,7 +25,7 @@ function findOtherSideCargp(data, position){
     	  var cargoIndex; //貨物位置
     	  while(true){
         	  cargoIndex = data.nowY + offset * turn;
-        	  if(cargoIndex >= 0 && cargoIndex < mapYLength){
+        	  if(cargoIndex >= 0 && cargoIndex < mapYLength - 1){
         		    if(cargoByPosition[cargoIndex].length > 0){
             		    gotoList[0] = (position == 'left') ? mapXLength - 1 : 0;
             		    gotoList[1] = cargoIndex; //前往有貨物的位置
@@ -68,7 +68,7 @@ function findCargo(data, position){
     	var cargoIndex; //貨物位置
     	while(true){
         	cargoIndex = data.nowY + offset * turn;
-        	if(cargoIndex >= 0 && cargoIndex < mapYLength){
+        	if(cargoIndex >= 0 && cargoIndex < mapYLength - 1){
         		if(cargoByPosition[cargoIndex].length > 0){
             		gotoList[0] = (position == 'left') ? 0 : mapXLength - 1;
             		gotoList[1] = cargoIndex; //前往有貨物的位置
@@ -80,7 +80,7 @@ function findCargo(data, position){
         	}
         	turn = turn * -1;
         	times++;
-        	if((data.nowY + offset) > mapYLength - 1 && (data.nowY - offset) < 0){
+        	if((data.nowY + offset) > mapYLength - 2 && (data.nowY - offset) < 0){
           		return findOtherSideCargp(data, position);
         	}
       	}
@@ -139,19 +139,19 @@ exports.onStart = function(data, socket){
   		io.emit('draw',{ point : point, nextPoint : nextPoint });
   		var index = routeMethod.findIndex(data.id, socket);
   		endPoint[index] = {
-				x : data.gotoX,
-				y : data.gotoY,
-				id : data.id
-			}
-			if(isNaN(stepCount[index])){
-				  stepCount[index] = 0
-			}
-      if(data.gotoY < mapYLength - 1){
-  	      routeMethod.findRoute(data.nowX, data.nowY, data.gotoX, data.gotoY, data.id, index);
-  		} else if(data.gotoY == mapYLength -1){
-          routeMethod.findRestRoute(data.nowX, data.nowY, index);
-      }
-      routeMethod.next(data.id, index, socket);
+			x : data.gotoX,
+			y : data.gotoY,
+			id : data.id
+		}
+		if(isNaN(stepCount[index])){
+			  stepCount[index] = 0
+		}
+        if(data.gotoY < mapYLength - 1){
+  	      	routeMethod.findRoute(data.nowX, data.nowY, data.gotoX, data.gotoY, data.id, index);
+  		} else if(data.gotoY == mapYLength - 1){
+          	routeMethod.findRestRoute(data.nowX, data.nowY, data.id, index);
+      	}
+      	routeMethod.next(data.id, index, socket);
 	}
 }
 
