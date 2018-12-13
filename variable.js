@@ -25,7 +25,7 @@ for(var i = 0; i < mapXLength; i++){
 //前往右側的地圖
 global.gotoRightGraph = new astar.Graph(map);
 //禁止通行逆向車道
-for(let i = 4; i < mapXLength - 5; i++){
+for(let i = 4; i < mapXLength - 4; i++){
 	for(let j = 1; j < mapYLength; j+=2){
 		gotoRightGraph.grid[i][j].weight = 0;
 	}
@@ -38,7 +38,7 @@ for(let i = 0 ; i < mapXLength; i++){
 //前往左側的地圖
 global.gotoLeftGraph = new astar.Graph(map);
 //禁止通行逆向車道
-for(let i = 4; i < mapXLength - 5; i++){
+for(let i = 4; i < mapXLength - 4; i++){
 	for(let j = 0; j < mapYLength; j+=2){
 		gotoLeftGraph.grid[i][j].weight = 0;
 	}
