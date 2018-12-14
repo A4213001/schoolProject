@@ -1,26 +1,28 @@
 <% include template/header.ejs %>
 <body>
-	<h1 align=center id='quaDemo'>當前機器人數量0</h1>
-	<canvas id="cvsDemo" class="canvas" height="501" width="806">抱歉，您的瀏覽器不支持canvas</canvas>
+	<h1 align=center id='Qua'>當前機器人數量0</h1>
+	<div id="asas">
+		<canvas id="cvs" class='canvas' height="501" width="806" title="">抱歉，您的瀏覽器不支持canvas</canvas>
+	</div>
 	<script>
 		var socket = io.connect('http://localhost');
-		var cvsDemo=document.getElementById("cvsDemo");
-		var ctxDemo=cvsDemo.getContext("2d");
-		Square(ctxDemo,14,10);	//畫出方格 function在JS/method.js
-		init(cvsDemo);
-		var now,next;
+		var cvs=document.getElementById("cvs");
+		var ctx=cvs.getContext("2d");
+		Square(ctx,14,10);	//畫出方格 function在JS/method.js
+		initMouse(cvs);
+		var now,next,Xlenght,Ylenght;
 		$(document).ready(function(){
 			socket.on('draw',function(data){
-				let XYlenght=10, //位置
-					nowX=0,nowY=51; //陣列畫到的位置(nowY初始位置是第二排)
+				Xlenght=14,Ylenght=10; //位置
+				var	nowX=0,nowY=51; //陣列畫到的位置(nowY初始位置是第二排)
 				now = data.point;
 				next = data.nextPoint;
-				document.getElementById("QuaDemo").innerHTML="當前機器人數量"+now.length;
+				document.getElementById("Qua").innerHTML="當前機器人數量"+now.length;
 				for(lastLenght;lastLenght>=0;lastLenght--){
 					ctx.clearRect(clearY[lastLenght], clearX[lastLenght], size, size);
 				}
-				for (var locationX = 0; locationX < 14; locationX++) {	//走訪x
-					for (var locationY = 0; locationY < 10; locationY++) {	//走訪y
+				for (var locationX = 0; locationX < Xlenght; locationX++) {	//走訪x
+					for (var locationY = 0; locationY < Ylenght; locationY++) {	//走訪y
 							for (var data = 0; data < now.length; data++) {	//走訪現在位置的data
 							if (locationX==now[data].x && locationY==now[data].y) {	//位置 vs data
 								ctx.fillRect(nowY,nowX,size,size);
