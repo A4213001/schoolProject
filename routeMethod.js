@@ -1,4 +1,6 @@
 var astar = require('./astar');
+var variable = require('./variable');
+var _ = require('lodash');
 
 /*
   位置相等判斷
@@ -79,11 +81,11 @@ function drawNumberPlate(index){
 function reFindRoute(nowX, nowY, gotoX, gotoY, index, lock) {
 	var graphLine;
 	if(gotoX == 0){
-		graphLine = gotoLeftGraph;
+		graphLine = _.cloneDeep(variable.gotoLeftGraph);
 	} else if(gotoX == mapXLength - 1){
-		graphLine = gotoRightGraph;
+		graphLine = _.cloneDeep(variable.gotoRightGraph);
 	} else {
-		return;
+		graphLine = _.cloneDeep(variable.fullGraph);
 	}
 	for(let i = 0; i < lock.length; i++){
 		graphLine.grid[lock[i].x][lock[i].y] = 0;
@@ -580,10 +582,16 @@ function crowdedReFindRoute(index){
 		throwNumberPlate(index, point[index].x, point[index].y);
 		reFindRoute(point[index].x, point[index].y, route[index].routePoint[route[index].routePoint.length - 1].x, route[index].routePoint[route[index].routePoint.length - 1].y, index, lock)
 		return false
-	} else if (point[index].x == 4 || point[index].x == mapXLength - 5){
+	}
+	//若即將離開單行道時發現前方壅擠，則在原地等待
+	else if ((direction[index] == 'left' && point[index].x == 4) || (direction[index] == 'right' && point[index].x == mapXLength - 5)){
 		throwNumberPlate(index, point[index].x, point[index].y);
 		robotStatus[index].crowded = true;//前方擁擠
 		return true;
+	}
+	//若在單行道上則繼續前進
+	else {
+		return false;
 	}
 }
 
@@ -635,11 +643,11 @@ exports.findIndex = function(robotId, socket){
 exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 	var graphLine;
 	if(gotoX == 0){
-		graphLine = gotoLeftGraph;
+		graphLine = _.cloneDeep(variable.gotoLeftGraph);
 	} else if(gotoX == mapXLength - 1){
-		graphLine = gotoRightGraph;
+		graphLine = _.cloneDeep(variable.gotoRightGraph);
 	} else {
-		return;
+		graphLine = _.cloneDeep(variable.fullGraph);
 	}
 	var start = graphLine.grid[nowX][nowY];
 	var end = graphLine.grid[gotoX][gotoY];
@@ -653,7 +661,6 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 			}
 		);
 	});
-	console.log(nowX + " " + nowY + " " + gotoX + " " + gotoY);
 	var exist = false;
 	for(let i = 0 ; i < route.length; i++){
 	  	if(route[i].id == robotId){
