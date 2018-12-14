@@ -1,4 +1,4 @@
-# 專案說明 456
+# 專案說明
 
 ## 開發環境
 * Node.js-v10.14.0(https://nodejs.org/en/)

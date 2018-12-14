@@ -26,6 +26,17 @@
   padding-right: 0;
   z-index : -1;
 }
+title{
+  position: absolute;
+  z-index: 1000;
+  max-width: 260px;
+  width: auto !important;
+  width: 220px;
+  background: #000;
+  text-align: left;
+  padding: 5px;
+  min-height: 1em;
+}
 #topImage{
 	padding-left: 0;
   padding-right: 0;
@@ -99,4 +110,5 @@ html, body {
     .slick-current {
       opacity: 1;
     }
+   
 /* ////////////////////////////////////////// */
