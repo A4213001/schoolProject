@@ -1,4 +1,6 @@
 var astar = require('./astar');
+var variable = require('./variable');
+var _ = require('lodash');
 
 /*
   位置相等判斷
@@ -79,11 +81,11 @@ function drawNumberPlate(index){
 function reFindRoute(nowX, nowY, gotoX, gotoY, index, lock) {
 	var graphLine;
 	if(gotoX == 0){
-		graphLine = gotoLeftGraph;
+		graphLine = _.cloneDeep(variable.gotoLeftGraph);
 	} else if(gotoX == mapXLength - 1){
-		graphLine = gotoRightGraph;
+		graphLine = _.cloneDeep(variable.gotoRightGraph);
 	} else {
-		return;
+		graphLine = _.cloneDeep(variable.fullGraph);
 	}
 	for(let i = 0; i < lock.length; i++){
 		graphLine.grid[lock[i].x][lock[i].y] = 0;
@@ -166,11 +168,11 @@ function collision(index){
 		if(i != index){
 			//判斷對撞
 			if(point[index].x == route[i].routePoint[0].x && point[index].y == route[i].routePoint[0].y && point[i].x == route[index].routePoint[0].x && point[i].y == route[index].routePoint[0].y && (point[index].x < 4 || point[index].x >= mapXLength - 5)){
-				changeRoute[index] = true;
-				//上下準備對撞時，判斷上邊的robot位置，位置在前2行或倒數第3行，往右方繞路
-				if(point[index].x == route[index].routePoint[0].x && point[index].x <= 1 && point[index].y < point[i].y || point[index].x == route[index].routePoint[0].x && point[index].x == mapXLength - 3 && point[index].y < point[i].y){
+				//上下準備對撞時，判斷上邊的robot位置，位置在前2行或倒數第3、4行，往右方繞路
+				if(point[index].x == route[index].routePoint[0].x && point[index].x <= 1 && point[index].y < point[i].y || point[index].x == route[index].routePoint[0].x && (point[index].x == mapXLength - 3 || point[index].x == mapXLength - 4) && point[index].y < point[i].y){
 					//判斷上方robot的右方是否有障礙物
 					if(!haveBarrier(index, 'right')){
+						changeRoute[index] = true;
 						throwNumberPlate(index, point[index].x, point[index].y);
 						if(route[index].routePoint.length > 1 && route[index].routePoint[1].x == point[index].x + 1 && route[index].routePoint[1].y == point[index].y + 1){
 							route[index].routePoint.shift();
@@ -193,6 +195,7 @@ function collision(index){
 						);
 					//若上邊robot的右方有阻礙，則由下方robot往右方繞路
 					} else {
+						changeRoute[i] = true;
 						throwNumberPlate(i, point[i].x, point[i].y);
 						if(route[i].routePoint.length > 1 && route[i].routePoint[1].x == point[i].x + 1 && route[i].routePoint[1].y == point[i].y - 1){
 							route[i].routePoint.shift();
@@ -212,9 +215,10 @@ function collision(index){
 						);
 					}
 				}
-				//上下準備對撞時，判斷下邊的robot位置，位置在第3行或倒數前2行，往左方繞路
-				else if(point[index].x == route[index].routePoint[0].x && point[index].x == 2 && point[index].y > point[i].y || point[index].x == route[index].routePoint[0].x && point[index].x >= mapXLength - 2 && point[index].y > point[i].y){
+				//上下準備對撞時，判斷下邊的robot位置，位置在第3、4行或倒數前2行，往左方繞路
+				else if(point[index].x == route[index].routePoint[0].x && (point[index].x == 2 || point[index].x == 3) && point[index].y > point[i].y || point[index].x == route[index].routePoint[0].x && point[index].x >= mapXLength - 2 && point[index].y > point[i].y){
 					if(!haveBarrier(index, 'left')){
+						changeRoute[index] = true;
 						throwNumberPlate(index, point[index].x, point[index].y);
 						if(route[index].routePoint.length > 1 && route[index].routePoint[1].x == point[index].x - 1 && route[index].routePoint[1].y == point[index].y - 1){
 							route[index].routePoint.shift();
@@ -234,6 +238,7 @@ function collision(index){
 						);
 					//若下方robot的左方有阻礙，則由上方robot往左方繞路
 					} else {
+						changeRoute[i] = true;
 						throwNumberPlate(i, point[i].x, point[i].y);
 						if(route[i].routePoint.length > 1 && route[i].routePoint[1].x == point[i].x - 1 && route[i].routePoint[1].y == point[i].y + 1){
 							route[i].routePoint.shift();
@@ -255,6 +260,7 @@ function collision(index){
 				}
 				//左右準備對撞時，判斷左邊的robot位置，位置在前5列時，往下方繞路
 				else if(point[index].y == route[index].routePoint[0].y && point[index].y <= 4 && point[index].x < point[i].x){
+					changeRoute[index] = true;
 					throwNumberPlate(index, point[index].x, point[index].y);
 					if(route[index].routePoint.length > 1 && route[index].routePoint[1].x == point[index].x + 1 && route[index].routePoint[1].y == point[index].y + 1){
 						route[index].routePoint.shift();
@@ -275,6 +281,7 @@ function collision(index){
 				}
 				//左右準備對撞時，判斷右邊的robot位置，位置在後5列時，往上方繞路
 				else if(point[index].y == route[index].routePoint[0].y && point[index].y >= 5 && point[index].x > point[i].x){
+					changeRoute[index] = true;
 					throwNumberPlate(index, point[index].x, point[index].y);
 					if(route[index].routePoint.length > 1 && route[index].routePoint[1].x == point[index].x - 1 && route[index].routePoint[1].y == point[index].y - 1){
 						route[index].routePoint.shift();
@@ -577,10 +584,16 @@ function crowdedReFindRoute(index){
 		throwNumberPlate(index, point[index].x, point[index].y);
 		reFindRoute(point[index].x, point[index].y, route[index].routePoint[route[index].routePoint.length - 1].x, route[index].routePoint[route[index].routePoint.length - 1].y, index, lock)
 		return false
-	} else if (point[index].x == 4 || point[index].x == mapXLength - 5){
+	}
+	//若即將離開單行道時發現前方壅擠，則在原地等待
+	else if ((direction[index] == 'left' && point[index].x == 4) || (direction[index] == 'right' && point[index].x == mapXLength - 5)){
 		throwNumberPlate(index, point[index].x, point[index].y);
 		robotStatus[index].crowded = true;//前方擁擠
 		return true;
+	}
+	//若在單行道上則繼續前進
+	else {
+		return false;
 	}
 }
 
@@ -632,12 +645,11 @@ exports.findIndex = function(robotId, socket){
 exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 	var graphLine;
 	if(gotoX == 0){
-		graphLine = gotoLeftGraph;
+		graphLine = _.cloneDeep(variable.gotoLeftGraph);
 	} else if(gotoX == mapXLength - 1){
-		graphLine = gotoRightGraph;
+		graphLine = _.cloneDeep(variable.gotoRightGraph);
 	} else {
-		console.log("graphXXX");
-		return;
+		graphLine = _.cloneDeep(variable.fullGraph);
 	}
 	var start = graphLine.grid[nowX][nowY];
 	var end = graphLine.grid[gotoX][gotoY];
@@ -653,6 +665,12 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 	});
 	if(!(routePoint.length > 0)) {
 		console.log(nowX + " " + nowY + " " + gotoX + " " + gotoY + " " + index);
+		for(let i = 0; i < graphLine.grid[0].length; i++){
+		    for(let j = 0; j < graphLine.grid.length; j++){
+		        process.stdout.write(graphLine.grid[j][i].weight.toString());
+		    }
+		    console.log("");
+		}
 	}
 	var exist = false;
 	for(let i = 0 ; i < route.length; i++){
