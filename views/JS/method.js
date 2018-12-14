@@ -115,8 +115,8 @@ function svgArrow(direction){
 //         	 status(data.id)		////////////////////////////////////////////////////////////
 // 	    });
 
-function init(cvs){
-	cvs.addEventListener('mousedown', mouseMoveHandler);
+function initMouse(cvs){
+	cvs.addEventListener('mousemove', mouseMoveHandler);
 }
 
    	var coordinateX,
@@ -131,17 +131,17 @@ function mouseMoveHandler(event) {
    		coordinateX=Math.floor(x/lattice); //Math.floor去小數點
    		coordinateY=Math.floor(y/lattice);
    		msg = "座標: " +coordinateY+ "," +coordinateX;
-   		if(coordinateX>10||coordinateX<1||coordinateY>10||coordinateY<1) msg=null;
+   		if(coordinateX>Xlenght||coordinateX<1||coordinateY>Ylenght||coordinateY<1) msg="";
    	}else{
-   		msg = null;
+   		msg = "";
    	}
-    for (var data = 0; data < now.length; data++) {
-		if ((now[data].x==(coordinateX-1))&&(now[data].y==(coordinateY-1))) {
-			msg="id:"+data+"<br/>座標:"+coordinateY+ "," +	coordinateX;
-			data=now.length;
-		}
-	}
-   	document.getElementById("ppp").innerHTML=msg;
+ //    for (var data = 0; data < now.length; data++) {
+	// 	if ((now[data].x==(coordinateX-1))&&(now[data].y==(coordinateY-1))) {
+	// 		msg="id:"+data+"<br/>座標:"+coordinateY+ "," +	coordinateX;
+	// 		data=now.length;
+	// 	}
+	// }
+   	document.getElementById("cvs").title=msg;
 }
 
 function status(id,x,y){

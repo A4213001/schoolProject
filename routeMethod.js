@@ -700,7 +700,7 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
   會將尋找好的路徑存進route Array中
 */
 exports.findRestRoute = function(nowX, nowY, robotId, index){
-	var graphLine = gotoRestGraph;
+	var graphLine = _.cloneDeep(variable.gotoLeftGraph);
 	var gotoX = null;
 	var gotoY = mapYLength;
 	var start = graphLine.grid[nowX][nowY];
@@ -708,6 +708,7 @@ exports.findRestRoute = function(nowX, nowY, robotId, index){
 		if(!restStation[i]){
 			restStation[i] = true;
 			gotoX = i;
+			graphLine.grid[i][mapYLength].weight = 1;
 			if(i < 5){
 				console.log(startTime + " " + (new Date()));
 			}

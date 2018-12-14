@@ -62,14 +62,4 @@ for(let i = 0 ; i < mapXLength; i++){
 	gotoLeftGraph.grid[i][mapYLength].weight = 0;
 }
 exports.gotoLeftGraph = gotoLeftGraph;
-
-//前往休息站的地圖
-var gotoRestGraph = new astar.Graph(map);
-//禁止通行逆向車道
-for(let i = 4; i < mapXLength - 5; i++){
-	for(let j = 1; j < mapYLength; j+=2){
-		gotoRestGraph.grid[i][j].weight = 0;
-	}
-}
-exports.gotoRestGraph = gotoRestGraph;
 //

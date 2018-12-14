@@ -1,13 +1,15 @@
 <% include template/header.ejs %>
 <body>
 	<h1 align=center id='Qua'>當前機器人數量0</h1>
-	<canvas id="cvs" class='canvas' height="510" width="602">抱歉，您的瀏覽器不支持canvas</canvas>
+	<div id="asas">
+		<canvas id="cvs" class='canvas' height="510" width="602" data-toggle="tooltip" title="">抱歉，您的瀏覽器不支持canvas</canvas>
+	</div>
 	<script>
 		var socket = io.connect('http://localhost');
 		var cvs=document.getElementById("cvs");
 		var ctx=cvs.getContext("2d");
 		Square(ctx,10,10);	//畫出方格 function在JS/method.js
-		init(cvs);
+		initMouse(cvs);
 		var now,next;
 		$(document).ready(function(){
 			socket.on('draw',function(data){
@@ -46,6 +48,6 @@
 			});
 		});
 	</script>
-	<p id=ppp></p> <!-- 得到座標 -->
+	
 </body>
 <% include template/footer.ejs %>

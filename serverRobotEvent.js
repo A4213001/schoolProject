@@ -19,16 +19,13 @@ function findOtherSideCargp(data, position){
     } 
     //若此位置沒有貨物，則去附近尋找貨物
     else {
-        var offset = 1; //相鄰格數
-    	var turn = 1; //上方或下方
-	 	var times = 0; //迴圈執行次數
     	var cargoIndex; //貨物位置
     	var rnd = Math.floor(Math.random() * 2);
     	for(let i = 0; i < mapYLength ; i++){
         	if(i % 2 == rnd){
-        		cargoIndex = i / 2;
+        		cargoIndex = Math.floor(i / 2);
         	} else {
-        		cargoIndex = mapYLength - 1 - (i / 2);
+        		cargoIndex = mapYLength - 1 - Math.floor(i / 2);
         	}
 		    if(cargoByPosition[cargoIndex].length > 0){
     		    gotoList[0] = (position == 'left') ? mapXLength - 1 : 0;
@@ -58,9 +55,6 @@ function findCargo(data, position){
     } 
     //若此位置沒有貨物，則去從外往內尋找貨物
     else {
-    	var offset = 1; //相鄰格數
-    	var turn = 1; //上方或下方
-    	var times = 0; //迴圈執行次數
     	var cargoIndex; //貨物位置
     	var rnd = Math.floor(Math.random() * 2);
     	for(let i = 0; i < mapYLength ; i++){
