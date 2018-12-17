@@ -623,7 +623,6 @@ function checkNumberPlate(index){
 exports.findIndex = function(robotId, socket){
 	for(let i = 0; i < point.length; i++){
 		if(robotId == point[i].id){
-			socket.emit('returnIndex', { index : i });
 			return i;
 		}
 	}

@@ -15,7 +15,7 @@ exports.onSetAddress = function(data){
 	io.emit('draw',{ point : point, nextPoint : nextPoint });
 }
 
-exports.onStart = function(data, socket){
+exports.onSignUp = function(data, socket){
 	if (io.sockets.connected[socket.id]) {
   		var exist = false; //此robot是否存在於當前point Array
   		for(let i = 0; i < point.length; i++){
@@ -57,16 +57,20 @@ exports.onStart = function(data, socket){
   		io.emit('draw',{ point : point, nextPoint : nextPoint });
   		var index = routeMethod.findIndex(data.id, socket);
   		endPoint[index] = {
-				x : data.gotoX,
-				y : data.gotoY,
-				id : data.id
-			}
-			if(isNaN(stepCount[index])){
-				stepCount[index] = 0
-			}
-  		routeMethod.findRoute(data.nowX, data.nowY, data.gotoX, data.gotoY, data.id, index);
-  		routeMethod.next(data.id, index, socket);
+			x : data.gotoX,
+			y : data.gotoY,
+			id : data.id
+		}
+		if(isNaN(stepCount[index])){
+			stepCount[index] = 0;
+		}
+		socket.emit('returnIndex', { index : index });
 	}
+}
+
+exports.onStart = function(data, socket){
+	routeMethod.findRoute(data.nowX, data.nowY, data.gotoX, data.gotoY, data.id, data.index);
+	routeMethod.next(data.id, data.index, socket);
 }
 
 exports.onWalk = function(data, socket){

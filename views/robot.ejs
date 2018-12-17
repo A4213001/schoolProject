@@ -58,6 +58,7 @@
 		<button onclick="allAutoStart()">全部開啟自動模式</button>
 	</p>
 	<div id="goto"></div>
+	<div id="index"></div>
     <script>
 	    function setAddress(){
 	        socket.emit('setAddress',
@@ -104,16 +105,17 @@
         		gotoY = 0;
         		console.log("!!!!!!!!!!!! : " + nowX);
         	}
-        	socket.emit('start',
+        	socket.emit('signUp',
 	        	{
 	        		id : id,
+	        		index : index,
 		    		nowX : nowX,
 		    		nowY : nowY,
 		    		gotoX : gotoX,
 		    		gotoY : gotoY
 	        	}
 	        );
-	        $("#goto").html("<b>gotoX : " + gotoX + " gotoY : " + gotoY);
+	        $("#goto").html("<b>gotoX : " + gotoX + " gotoY : " + gotoY + "</b>");
         };
 
         function openRobot(){
@@ -142,7 +144,18 @@
         }
 
 		socket.on('returnIndex', function (data) {
-        	index = data.index;   
+        	index = data.index;
+        	$("#index").html("<b>index : " + index + "</b>");
+        	socket.emit('start',
+	        	{
+	        		id : id,
+	        		index : index,
+		    		nowX : nowX,
+		    		nowY : nowY,
+		    		gotoX : gotoX,
+		    		gotoY : gotoY
+	        	}
+	        );
 		});
 
 		socket.on('stop', function (data) {
