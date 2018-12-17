@@ -58,6 +58,7 @@
 		<button onclick="allAutoStart()">全部開啟自動模式</button>
 	</p>
 	<div id="goto"></div>
+	<div id="index"></div>
     <script>
 	    function setAddress(){
 	        socket.emit('setAddress',
@@ -71,15 +72,18 @@
 	        	}
 	        );
 	    };
-	    function start(){
-	    	auto = false;
-	    	nowX = parseInt($("#nowX").val());
-	    	nowY = parseInt($("#nowY").val());
-	    	gotoX = parseInt($("#gotoX").val());
-	    	gotoY = parseInt($("#gotoY").val());
+
+	    function start(auto){
+	    	if(!auto){
+		    	nowX = parseInt($("#nowX").val());
+		    	nowY = parseInt($("#nowY").val());
+		    	gotoX = parseInt($("#gotoX").val());
+		    	gotoY = parseInt($("#gotoY").val());
+	    	}
 		    socket.emit('start',
 		    	{
 		    		id : id,
+		    		index : index,
 		    		nowX : nowX,
 		    		nowY : nowY,
 		    		gotoX : gotoX,
@@ -87,17 +91,18 @@
 		    	}
 		    );
         };
+
         function autoStart(){
         	auto = true;
-        	if(nowY != mapYLength){
-	        	socket.emit('getCargoEndPoint',
-	        		{
-	        			nowX : nowX,
-			    		nowY : nowY 
-	        		}
-	        	);
-        	}
+        	socket.emit('signUp',
+	        	{
+	        		id : id,
+		    		nowX : nowX,
+		    		nowY : nowY,
+	        	}
+	        );
         };
+
         function openRobot(){
 			var newwin1 = window.open();
  			newwin1.location = "http://localhost:80?id=1";
@@ -118,18 +123,29 @@
  			var newwin9 = window.open();
  			newwin9.location = "http://localhost:80?id=9";
         }
+
         function allAutoStart(){
 			socket.emit('allAutoStart');
         }
+
 		socket.on('returnIndex', function (data) {
-        	index = data.index;   
+        	index = data.index;
+        	$("#index").html("<b>index : " + index + "</b>");
+        	socket.emit('getCargoEndPoint',
+        		{
+        			nowX : nowX,
+		    		nowY : nowY 
+        		}
+        	);
 		});
+
 		socket.on('returnCargoEndPoint', function (data) {
 			gotoX = data.gotoX;
 			gotoY = data.gotoY;
 			socket.emit('start',
 	        	{
 	        		id : id,
+	        		index : index,
 		    		nowX : nowX,
 		    		nowY : nowY,
 		    		gotoX : data.gotoX,
@@ -138,6 +154,7 @@
 	        );
 	        $("#goto").html("<b>gotoX : " + data.gotoX + " gotoY : " + data.gotoY);
 		});
+
 		socket.on('stop', function (data) {
         	setTimeout(function(){
         		socket.emit('walk',
@@ -149,6 +166,7 @@
 		  		);
         	}, 1000);
 		});
+
 		socket.on('go', function (data) {
 		  	previousX = nowX;
 		  	previousY = nowY;
@@ -164,14 +182,19 @@
 				  			isStop : false
 				  		}
 			  		);
-			  	}
-			  	else{
+			  	} else {
 			  		if(auto && nowY != mapYLength){
-			  			autoStart();
+			  			socket.emit('getCargoEndPoint',
+			        		{
+			        			nowX : nowX,
+					    		nowY : nowY 
+			        		}
+			        	);
 			  		}
 			  	}
 		  	}, 1000);		  	
 		});
+
 		socket.on('autoStart', function (data) {
         	autoStart();   
 		});

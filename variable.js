@@ -1,7 +1,6 @@
 var astar = require('./astar');
 var fs = require('fs');
 
-global.robotCount = 0; //機器人數量
 global.point = []; //當前位置
 global.nextPoint = []; //下個位置
 global.route = []; //預定路線
