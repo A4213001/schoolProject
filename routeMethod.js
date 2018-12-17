@@ -26,12 +26,12 @@ function haveBarrier(index, direction){
 	var b = {
 		x : 0,
 		y : 0
-	}
+	};
 	switch(direction){
-		case 'up': b.y = -1; break;
-		case 'down': b.y = 1; break;
-		case 'left': b.x = -1; break;
-		case 'right': b.x = 1; break;
+		case 'up' : b.y = -1; break;
+		case 'down' : b.y = 1; break;
+		case 'left' : b.x = -1; break;
+		case 'right' : b.x = 1; break;
 		default: console.log("haveBarrier function direction error"); return false;
 	}
 	for(let i = 0; i < point.length; i++){
