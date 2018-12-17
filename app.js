@@ -40,6 +40,10 @@ app.get('/demo', function (req, res) {
 io.on('connection', function (socket) {
     serverRobotEvent.onConnection(io);
 
+    socket.on('signUp', function (data) {
+        serverRobotEvent.onSignUp(data, socket);
+    });
+
     socket.on('setAddress', function (data){
 		    serverRobotEvent.onSetAddress(data);
   	});

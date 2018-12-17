@@ -15,58 +15,37 @@ exports.onSetAddress = function(data){
 	io.emit('draw',{ point : point, nextPoint : nextPoint });
 }
 
-exports.onStart = function(data, socket){
-	if (io.sockets.connected[socket.id]) {
-  		var exist = false; //此robot是否存在於當前point Array
-  		for(let i = 0; i < point.length; i++){
-  			if(point[i].id == data.id){
-  	  			point[i] = {
-  	  				x : data.nowX,
-  	  				y : data.nowY,
-  	  				id : data.id
-  	  			};
-  	 			exist = true;
-  	  			break;
-  			}
-  		}
-  		//當robot不存在時，新增資料進point Array
-  		if(!exist){
-  			robotCount++;
-  			point.push(
-  				{
-  					x : data.nowX,
-  					y : data.nowY,
-  					id : data.id
-  				}
-  			);
-  			changeRoute.push(
-	  			{
-	  				changeRouteStatus : false,
-	  				id : data.id
-	  			}
-	  		);
-	  		robotStatus.push(
-	  			{
-	  				crowded : false,
-	  				stopOver : false,
-	  				numberPlateIsNotPreferred : false
-	  			}
-	  		)
-	  		stopCount.push(0);	
-  		}
-  		io.emit('draw',{ point : point, nextPoint : nextPoint });
-  		var index = routeMethod.findIndex(data.id, socket);
-  		endPoint[index] = {
-			x : data.gotoX,
-			y : data.gotoY,
+exports.onSignUp = function(data, socket){
+	point.push(
+		{
+			x : data.nowX,
+			y : data.nowY,
 			id : data.id
 		}
-		if(isNaN(stepCount[index])){
-			stepCount[index] = 0;
-		}
-  		routeMethod.findRoute(data.nowX, data.nowY, data.gotoX, data.gotoY, data.id, index);
-  		routeMethod.next(data.id, index, socket);
-	}
+	);
+	var index = routeMethod.findIndex(data.id, socket);
+	changeRoute[index] = {
+		changeRouteStatus : false,
+		id : data.id
+	};
+	robotStatus[index] = {
+		crowded : false,
+		stopOver : false,
+		numberPlateIsNotPreferred : false
+	};
+	stopCount[index] = 0;
+	io.emit('draw',{ point : point, nextPoint : nextPoint });
+	socket.emit('returnIndex', { index : index });
+}
+
+exports.onStart = function(data, socket){
+	endPoint[data.index] = {
+		x : data.gotoX,
+		y : data.gotoY,
+		id : data.id
+	};
+	routeMethod.findRoute(data.nowX, data.nowY, data.gotoX, data.gotoY, data.id, data.index);
+	routeMethod.next(data.id, data.index, socket);
 }
 
 exports.onWalk = function(data, socket){
