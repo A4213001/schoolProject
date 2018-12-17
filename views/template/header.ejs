@@ -5,48 +5,62 @@
 		<title>LOGISTICS ROBOT</title>
 		<link rel="stylesheet" href="CSS/layout.css">
 		<link rel="stylesheet"  type="text/css"  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-
+		<link rel="stylesheet" type="text/css" href="../CSS/slick.css">	<!-- //// -->
+		<link rel="stylesheet" type="text/css" href="../CSS/slick-theme.css">	<!-- //// -->
+		<script src="../JS/method.js"></script>
 		<script src="JS/jquery-3.3.1.min.js"></script>
 		<script src="/socket.io/socket.io.js"></script>
-	</head>
+		<script src="../JS/slick.js" type="text/javascript" charset="utf-8"></script> <!-- //// -->
 	   	<script type="text/javascript">
 			$(function() {
 			  $(window).scroll(function() {
 			    if ($(this).scrollTop() > 495)  {          /* 要滑動到選單的距離 */
-			       $('.row').addClass('navFixed');   /* 幫選單加上固定效果 */
+			       $('.menu').addClass('navFixed');   /* 幫選單加上固定效果 */
 			    } else {
-			      $('.row').removeClass('navFixed'); /* 移除選單固定效果 */
+			      $('.menu').removeClass('navFixed'); /* 移除選單固定效果 */
 			    }
 			  });
 			});
 		</script>
-
 		<style>
 			.navFixed {
 			  z-index: 10;          
-			  position: fixed;      
+			  position: fixed;
 			  top: 0;
-			  left: 0;
+			  left: 0px;
 			  margin-top: 0;
-			  /* min-width: 100%; */
 			  opacity: 0.70;
 			  transition: opacity .5s ease-out;
+			  background-color: #fff
 
 			}
 		</style> 
+		<section class="regular slider" id="sli">
+			<script>
+				document.getElementById("sli").innerHTML=null;
+				for(let i=0;i<10;i++){
+					document.getElementById("sli").innerHTML+='<div id="'+i+'" class="status">id='+i+'<br/>休息中</div>';
+				}
+			</script>
+	  	</section>
 		<div>  
-			<img src="../images/top2.0.png" alt="" width="1280" id="topImage">
-			<nav class="row">
-		   	<ul class="nav nav-tabs navbar navbar-light" >
-		      	<li><a href="../home"><img src="../images/home.svg" width="25
-
-		      		"></a></li>
-		        <li><a data-toggle="tab" href="/Asia">全場機器</a></li>
-		        <li><a data-toggle="tab" href="/Europe">設置動機</a></li>
-		        <li><a data-toggle="tab" href="/America">機器查詢</a></li>
-		    </ul>
-	   	</nav>
+		  	<script>
+			    $(document).ready(function() {
+			      $(".regular").slick({
+			        dots: true,
+			        infinite: true,
+			        slidesToShow: 3,
+			        slidesToScroll: 1
+			      });
+			    });
+			</script>
+			<!-- <img src="../images/top2.0.png" alt="" width="1280" id="topImage"> -->
+			<nav class="menu">
+			   	<ul class="nav nav-tabs navbar navbar-light">
+			      	<li><a href="../home">10*10<!-- <img src="../images/home.svg" width="25"> --></a></li>
+			        <li><a href="../demo">10*14</a></li>
+			    </ul>
+		   	</nav>
 		</div>	   
-
 		<hr/>
-		
+	</head>

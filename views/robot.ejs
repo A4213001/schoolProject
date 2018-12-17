@@ -1,18 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+<html lang="zh-TW">
+<script src="JS/jquery-3.3.1.min.js"></script>
 <script>
-	function sleep(d){
-	  for(var t = Date.now(); Date.now() - t <= d;);
-	}
-
-	var go_x_size = 4, go_y_size = 4;
-
 	function getQueryVariable(variable)
 	{
 	    var query = window.location.search.substring(1);
 	    var vars = query.split("&");
-	    for (var i=0;i<vars.length;i++) {
+	    for (var i = 0;i < vars.length;i++) {
 	            var pair = vars[i].split("=");
 	            if(pair[0] == variable){return pair[1];}
         }
@@ -22,27 +16,24 @@
 <head>
     <meta charset="UTF-8">
     <title>robot</title>
-    <style>
-    </style>
     <script src="/socket.io/socket.io.js"></script><!--webSocket-->
 	<script>
 		var socket = io.connect('http://localhost');//webSocket
 		var id = parseInt(getQueryVariable("id"));
-		var now_x = 0;//初始位置x = 0
-        var now_y = Math.floor(Math.random() * 10);//初始位置y = 0~9隨機一個
-		var goto_x = 0;//目標位置x
-		var goto_y = 0;//目標位置y
-		var auto = false;//是否開始自動測試模式
-		var index = null;//robot於server中的index
-		var previous_x = null;//前一個位置x
-		var previous_y = null;//前一個位置y
-		var mapLength = 10;//場地大小為10*10
-		var stop_signal = true;//停止訊號
+		if(!id)
+			id = 0;
+		var mapXLength = 14;
+		var mapYLength = 10;
+		var nowX = id % 2 == 0 ? 0 : mapXLength - 1;
+        var nowY = id;
+		var gotoX = 0;
+		var gotoY = 0;
+		var auto = false;
+		var index = null;
+		var previousX = null;
+		var previousY = null;
 		var route_point = new Array();//路徑
 		var now_step = 0;//接收到路徑後已走步數
-		if(!id){
-			id = 0;
-		}
 	</script>
 </head>
 <body>
@@ -53,19 +44,20 @@
 		</script>
 	</h1>
 	<p align="center">
-	    <label>now_x</label>
-	    <input type="number" id="now_x">
-	    <label>now_y</label>
-	    <input type="number" id="now_y">
+	    <label>nowX</label>
+	    <input type="number" id="nowX">
+	    <label>nowY</label>
+	    <input type="number" id="nowY">
 	    <br>
-	    <label>goto_x</label>
-	    <input type="number" id="goto_x">
-	    <label>goto_y</label>
-	    <input type="number" id="goto_y">
+	    <label>gotoX</label>
+	    <input type="number" id="gotoX">
+	    <label>gotoY</label>
+	    <input type="number" id="gotoY">
 	    <br>
 	    <button onclick="start()">開始</button>
 	    <button onclick="autoStart()">自動模式</button>
-	    <button onclick="running()">發動</button>
+		<button onclick="openRobot()">多開9個</button>
+		<button onclick="allAutoStart()">全部開啟自動模式</button>
 	</p>
 	<div id="goto"></div>
     <script>
@@ -101,103 +93,132 @@
 			  	}
 		    }, 1000);
     	}
-
+    	
 	    function setAddress(){
 	        socket.emit('setAddress',
 	        	{
 	        		id : id,
 	        	 	index : index,
-	        		now_x : now_x,
-	        	 	now_y : now_y,
-	        	 	previous_x : previous_x,
-	        	 	previous_y : previous_y
+	        		nowX : nowX,
+	        	 	nowY : nowY,
+	        	 	previousX : previousX,
+	        	 	previousY : previousY
 	        	}
 	        );
 	    };
 
 	    function start(){
 	    	auto = false;
-	    	now_x = parseInt($("#now_x").val());
-	    	now_y = parseInt($("#now_y").val());
-	    	goto_x = parseInt($("#goto_x").val());
-	    	goto_y = parseInt($("#goto_y").val());
+	    	nowX = parseInt($("#nowX").val());
+	    	nowY = parseInt($("#nowY").val());
+	    	gotoX = parseInt($("#gotoX").val());
+	    	gotoY = parseInt($("#gotoY").val());
 		    socket.emit('start',
 		    	{
 		    		id : id,
-		    		now_x : now_x,
-		    		now_y : now_y,
-		    		goto_x : goto_x,
-		    		goto_y : goto_y
+		    		nowX : nowX,
+		    		nowY : nowY,
+		    		gotoX : gotoX,
+		    		gotoY : gotoY
 		    	}
 		    );
         };
 
         function autoStart(){
         	auto = true;
-        	if(now_x == 0){
-        		goto_x = mapLength - 1;
-        		goto_y = Math.floor(Math.random() * 10);
+        	if(nowX == 0){
+        		gotoX = mapXLength - 1;
+        		gotoY = Math.floor(Math.random() * 10);
         	}
-        	else if(now_x == mapLength - 1){
-        		goto_x = 0;
-        		goto_y = Math.floor(Math.random() * 10);
+        	else if(nowX == mapXLength - 1){
+        		gotoX = 0;
+        		gotoY = Math.floor(Math.random() * 10);
         	}
         	else{
-        		goto_x = 0;
-        		goto_y = 0;
-        		console.log("!!!!!!!!!!!! : " + now_x);
+        		gotoX = 0;
+        		gotoY = 0;
+        		console.log("!!!!!!!!!!!! : " + nowX);
         	}
         	socket.emit('start',
 	        	{
 	        		id : id,
-		    		now_x : now_x,
-		    		now_y : now_y,
-		    		goto_x : goto_x,
-		    		goto_y : goto_y
+		    		nowX : nowX,
+		    		nowY : nowY,
+		    		gotoX : gotoX,
+		    		gotoY : gotoY
 	        	}
 	        );
-	        $("#goto").html("<b>goto_x : " + goto_x + " goto_y : " + goto_y);
-	        // sleep(1000);。
+	        $("#goto").html("<b>gotoX : " + gotoX + " gotoY : " + gotoY);
         };
 
-		socket.on('return_index', function (data) {
+        function openRobot(){
+			var newwin1 = window.open();
+ 			newwin1.location = "http://localhost:80?id=1";
+ 			var newwin2 = window.open();
+ 			newwin2.location = "http://localhost:80?id=2";
+ 			var newwin3 = window.open();
+ 			newwin3.location = "http://localhost:80?id=3";
+ 			var newwin4 = window.open();
+ 			newwin4.location = "http://localhost:80?id=4";
+ 			var newwin5 = window.open();
+ 			newwin5.location = "http://localhost:80?id=5";
+ 			var newwin6 = window.open();
+ 			newwin6.location = "http://localhost:80?id=6";
+ 			var newwin7 = window.open();
+ 			newwin7.location = "http://localhost:80?id=7";
+ 			var newwin8 = window.open();
+ 			newwin8.location = "http://localhost:80?id=8";
+ 			var newwin9 = window.open();
+ 			newwin9.location = "http://localhost:80?id=9";
+        }
+
+        function allAutoStart(){
+			socket.emit('allAutoStart');
+        }
+
+		socket.on('returnIndex', function (data) {
         	index = data.index;   
 		});
 
 		socket.on('stop', function (data) {
-			stop_signal = true;
-     //    	sleep(1000);
-     //    	socket.emit('walk',
-		  	// 	{
-		  	// 		id : id,
-		  	// 		index : index,
-		  	// 		isStop : true
-		  	// 	}
-	  		// );
+        	setTimeout(function(){
+        		socket.emit('walk',
+			  		{
+			  			id : id,
+			  			index : index,
+			  			isStop : true
+			  		}
+		  		);
+        	}, 1000);
 		});
+
 		socket.on('go', function (data) {
-			if(Math.floor(Math.random() * 10) < 3){
-				t1 = Date.now();
-				setTimeout(function(){
-					route_point = {
-				  		x : data.x,
-				  		y : data.y
-				  	};
-				  	stop_signal = false;
-				  	console.log(route_point);
-					console.log(t1 + "delay");
-			    }, 500);
-			} else {
-			    route_point = {
-			  		x : data.x,
-			  		y : data.y
-			  	};
-			  	stop_signal = false;
-			  	console.log(route_point);
-			  	t = Date.now();
-				console.log(t);
-			}
-		});  
+		  	previousX = nowX;
+		  	previousY = nowY;
+		  	nowX = data.x;
+		  	nowY = data.y;
+		  	setTimeout(function(){
+		  		setAddress();
+			  	if(nowX != gotoX || nowY != gotoY){
+			  		socket.emit('walk',
+				  		{
+				  			id : id,
+				  			index : index,
+				  			isStop : false
+				  		}
+			  		);
+			  	}
+			  	else{
+			  		if(auto){
+			  			autoStart();
+			  		}
+			  	}
+		  	}, 1000);		  	
+		});
+
+		socket.on('autoStart', function (data) {
+        	autoStart();   
+		});
 	</script>
 </body>
 </html>
