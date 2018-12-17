@@ -162,7 +162,7 @@ function trunWhere(index){
   首先會判斷是否自己前方是否有對向來車，若有的話將其中一方繞路
 */
 function collision(index){
-	for(let i = 0; i < point.length; i++){
+	for(let i = 0; i < route.length; i++){
 		if(i != index){
 			//判斷對撞
 			if(point[index].x == route[i].routePoint[0].x && point[index].y == route[i].routePoint[0].y && point[i].x == route[index].routePoint[0].x && point[i].y == route[index].routePoint[0].y && (point[index].x < 4 || point[index].x >= mapXLength - 5)){

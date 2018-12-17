@@ -73,15 +73,17 @@
 	        );
 	    };
 
-	    function start(){
-	    	auto = false;
-	    	nowX = parseInt($("#nowX").val());
-	    	nowY = parseInt($("#nowY").val());
-	    	gotoX = parseInt($("#gotoX").val());
-	    	gotoY = parseInt($("#gotoY").val());
+	    function start(auto){
+	    	if(!auto){
+		    	nowX = parseInt($("#nowX").val());
+		    	nowY = parseInt($("#nowY").val());
+		    	gotoX = parseInt($("#gotoX").val());
+		    	gotoY = parseInt($("#gotoY").val());
+	    	}
 		    socket.emit('start',
 		    	{
 		    		id : id,
+		    		index : index,
 		    		nowX : nowX,
 		    		nowY : nowY,
 		    		gotoX : gotoX,
@@ -108,7 +110,6 @@
         	socket.emit('signUp',
 	        	{
 	        		id : id,
-	        		index : index,
 		    		nowX : nowX,
 		    		nowY : nowY,
 		    		gotoX : gotoX,
@@ -188,7 +189,20 @@
 			  	}
 			  	else{
 			  		if(auto){
-			  			autoStart();
+			  			if(nowX == 0){
+			        		gotoX = mapXLength - 1;
+			        		gotoY = Math.floor(Math.random() * 10);
+			        	}
+			        	else if(nowX == mapXLength - 1){
+			        		gotoX = 0;
+			        		gotoY = Math.floor(Math.random() * 10);
+			        	}
+			        	else{
+			        		gotoX = 0;
+			        		gotoY = 0;
+			        		console.log("!!!!!!!!!!!! : " + nowX);
+			        	}
+			  			start(auto);
 			  		}
 			  	}
 		  	}, 1000);		  	
