@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <script src="JS/jquery-3.3.1.min.js"></script>
 <script>
 	function getQueryVariable(variable)
@@ -94,29 +94,13 @@
 
         function autoStart(){
         	auto = true;
-        	if(nowX == 0){
-        		gotoX = mapXLength - 1;
-        		gotoY = Math.floor(Math.random() * 10);
-        	}
-        	else if(nowX == mapXLength - 1){
-        		gotoX = 0;
-        		gotoY = Math.floor(Math.random() * 10);
-        	}
-        	else{
-        		gotoX = 0;
-        		gotoY = 0;
-        		console.log("!!!!!!!!!!!! : " + nowX);
-        	}
         	socket.emit('signUp',
 	        	{
 	        		id : id,
 		    		nowX : nowX,
 		    		nowY : nowY,
-		    		gotoX : gotoX,
-		    		gotoY : gotoY
 	        	}
 	        );
-	        $("#goto").html("<b>gotoX : " + gotoX + " gotoY : " + gotoY + "</b>");
         };
 
         function openRobot(){
@@ -147,6 +131,20 @@
 		socket.on('returnIndex', function (data) {
         	index = data.index;
         	$("#index").html("<b>index : " + index + "</b>");
+        	if(nowX == 0){
+        		gotoX = mapXLength - 1;
+        		gotoY = Math.floor(Math.random() * 10);
+        	}
+        	else if(nowX == mapXLength - 1){
+        		gotoX = 0;
+        		gotoY = Math.floor(Math.random() * 10);
+        	}
+        	else{
+        		gotoX = 0;
+        		gotoY = 0;
+        		console.log("!!!!!!!!!!!! : " + nowX);
+        	}
+        	$("#goto").html("<b>gotoX : " + gotoX + " gotoY : " + gotoY + "</b>");
         	socket.emit('start',
 	        	{
 	        		id : id,
@@ -186,8 +184,7 @@
 				  			isStop : false
 				  		}
 			  		);
-			  	}
-			  	else{
+			  	} else {
 			  		if(auto){
 			  			if(nowX == 0){
 			        		gotoX = mapXLength - 1;
@@ -202,6 +199,7 @@
 			        		gotoY = 0;
 			        		console.log("!!!!!!!!!!!! : " + nowX);
 			        	}
+			        	$("#goto").html("<b>gotoX : " + gotoX + " gotoY : " + gotoY + "</b>");
 			  			start(auto);
 			  		}
 			  	}

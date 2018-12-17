@@ -34,16 +34,16 @@ exports.onSignUp = function(data, socket){
 		numberPlateIsNotPreferred : false
 	};
 	stopCount[index] = 0;
-	endPoint[index] = {
-		x : data.gotoX,
-		y : data.gotoY,
-		id : data.id
-	};
 	io.emit('draw',{ point : point, nextPoint : nextPoint });
 	socket.emit('returnIndex', { index : index });
 }
 
 exports.onStart = function(data, socket){
+	endPoint[data.index] = {
+		x : data.gotoX,
+		y : data.gotoY,
+		id : data.id
+	};
 	routeMethod.findRoute(data.nowX, data.nowY, data.gotoX, data.gotoY, data.id, data.index);
 	routeMethod.next(data.id, data.index, socket);
 }
