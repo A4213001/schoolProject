@@ -134,7 +134,7 @@ exports.onStart = function(data, socket){
 			id : data.id
 		}
 		if(isNaN(stepCount[index])){
-			stepCount[index] = 0
+			stepCount[index] = 0;
 		}
         if(data.gotoY < mapYLength){
   	      	routeMethod.findRoute(data.nowX, data.nowY, data.gotoX, data.gotoY, data.id, index);
