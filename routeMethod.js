@@ -26,12 +26,12 @@ function haveBarrier(index, direction){
 	var b = {
 		x : 0,
 		y : 0
-	}
+	};
 	switch(direction){
-		case 'up': b.y = -1; break;
-		case 'down': b.y = 1; break;
-		case 'left': b.x = -1; break;
-		case 'right': b.x = 1; break;
+		case 'up' : b.y = -1; break;
+		case 'down' : b.y = 1; break;
+		case 'left' : b.x = -1; break;
+		case 'right' : b.x = 1; break;
 		default: console.log("haveBarrier function direction error"); return false;
 	}
 	for(let i = 0; i < point.length; i++){
@@ -614,6 +614,41 @@ function checkNumberPlate(index){
 	return valid;
 }
 
+function getCmd(index){
+	//fblr = front、behind、left、right 前後左右
+	var fblr = new Array(4);
+	for(var i = 0; i < fblr.length; i++){
+		fblr[i] = {
+			x : 0,
+			y : 0
+		};
+	}
+	switch(lastDirection[index]){
+		case 'up' : fblr[0].y = -1; fblr[1].y = 1; fblr[2].x = -1; fblr[3].x = 1; break;
+		case 'down' : fblr[0].y = 1; fblr[1].y = -1; fblr[2].x = 1; fblr[3].x = -1; break;
+		case 'left' : fblr[0].x = -1; fblr[1].x = 1; fblr[2].y = 1; fblr[3].y = -1; break;
+		case 'right' : fblr[0].x = 1; fblr[1].x = -1; fblr[2].y = -1; fblr[3].y = 1; break;
+	}
+	var next = {
+		x : route[index].routePoint[0].x - point[index].x,
+		y : route[index].routePoint[0].y - point[index].y	
+	};
+	var cmd;
+	for(var i = 0; i < fblr.length; i++){
+		if(next.x == fblr[i].x && next.y == fblr[i].y){
+			cmd = i;
+			break;
+		}
+	}
+	switch(cmd){
+		case 0 : cmd = 'go'; break;
+		case 1 : cmd = 'b'; break;
+		case 2 : cmd = 'cww'; break;
+		case 3 : cmd = 'cw'; break;
+	}
+	return cmd;
+}
+
 /*
   尋找robot index
   params robotId robot編號
@@ -746,6 +781,7 @@ exports.next = function(robotId, index, socket) {
 	} else {
 		stopCount[index] = 0;
 		changeRoute[index].changeRouteStatus = false;
+		getCmd(index);
 	    socket.emit('go',
 	    	{
 	    		x : route[index].routePoint[0].x,

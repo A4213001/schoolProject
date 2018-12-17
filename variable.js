@@ -6,6 +6,7 @@ global.nextPoint = []; //下個位置
 global.route = []; //預定路線
 global.endPoint = []; //終點位置
 global.direction = []; //前進方向
+global.lastDirection = []; //前一次的前進方向
 global.numberPlate = []; //號碼牌
 global.stepCount = []; //步數
 global.changeRoute = []; //更換路徑
