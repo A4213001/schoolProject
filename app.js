@@ -53,7 +53,7 @@ io.on('connection', function (socket) {
   	});
 
     socket.on('getCargoEndPoint', function (data) {
-        serverRobotEvent.ongetCargoEndPoint(data, socket);
+        serverRobotEvent.onGetCargoEndPoint(data, socket);
     });
 
   	socket.on('walk', function (data) {

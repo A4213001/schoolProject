@@ -10,9 +10,10 @@ global.numberPlate = []; //號碼牌
 global.stepCount = []; //步數
 global.changeRoute = []; //更換路徑
 global.stopCount = []; //停止次數
+global.totalStopCount = 0; //總停止次數
 global.robotStatus = []; //robot狀態
 global.startTime; //開始時間
-global.cargo = JSON.parse(fs.readFileSync("cargo.json"));
+global.cargo = JSON.parse(fs.readFileSync("halfCargo.json"));
 
 global.mapXLength = 14; //地圖X長度
 global.mapYLength = 10; //地圖Y長度

@@ -17,16 +17,16 @@ function findOtherSideCargp(data, position){
 	  	gotoList[1] = data.nowY;
 	  	return gotoList;
     } 
-    //若此位置沒有貨物，則去附近尋找貨物
+    //若此位置沒有貨物，則隨機一個位置去尋找有沒有貨物
     else {
-    	var cargoIndex; //貨物位置
-    	var rnd = Math.floor(Math.random() * 2);
-    	for(let i = 0; i < mapYLength ; i++){
-        	if(i % 2 == rnd){
-        		cargoIndex = Math.floor(i / 2);
-        	} else {
-        		cargoIndex = mapYLength - 1 - Math.floor(i / 2);
-        	}
+        var indexArray = new Array(mapYLength);
+        for(let i = 0; i < indexArray.length; i++){
+            indexArray[i] = i;
+        }
+    	for(let i = 0; i < mapYLength; i++){
+        	var rnd = Math.floor(Math.random() * indexArray.length);
+            var cargoIndex = indexArray[rnd]; //貨物位置
+            indexArray.splice(rnd, 1);
 		    if(cargoByPosition[cargoIndex].length > 0){
     		    gotoList[0] = (position == 'left') ? mapXLength - 1 : 0;
     		    gotoList[1] = cargoIndex; //前往有貨物的位置
@@ -53,16 +53,16 @@ function findCargo(data, position){
     	gotoList[1] = cargoByPosition[data.nowY][0];
     	return gotoList;
     } 
-    //若此位置沒有貨物，則去從外往內尋找貨物
+    //若此位置沒有貨物，則隨機一個位置去尋找有沒有貨物
     else {
-    	var cargoIndex; //貨物位置
-    	var rnd = Math.floor(Math.random() * 2);
-    	for(let i = 0; i < mapYLength ; i++){
-        	if(i % 2 == rnd){
-        		cargoIndex = Math.floor(i / 2);
-        	} else {
-        		cargoIndex = mapYLength - 1 - Math.floor(i / 2);
-        	}
+        var indexArray = new Array(mapYLength);
+        for(let i = 0; i < indexArray.length; i++){
+            indexArray[i] = i;
+        }
+    	for(let i = 0; i < mapYLength; i++){
+            var rnd = Math.floor(Math.random() * indexArray.length);
+            var cargoIndex = indexArray[rnd]; //貨物位置
+            indexArray.splice(rnd, 1);
 		    if(cargoByPosition[cargoIndex].length > 0){
     		    gotoList[0] = (position == 'left') ? 0 : mapXLength - 1;
     		    gotoList[1] = cargoIndex; //前往有貨物的位置
@@ -111,16 +111,20 @@ exports.onSignUp = function(data, socket){
 }
 
 exports.onStart = function(data, socket){
-    endPoint[data.index] = {
-        x : data.gotoX,
-        y : data.gotoY,
-        id : data.id
-    };
-    routeMethod.findRoute(data.nowX, data.nowY, data.gotoX, data.gotoY, data.id, data.index);
+    if(data.gotoY < mapYLength){
+        routeMethod.findRoute(data.nowX, data.nowY, data.gotoX, data.gotoY, data.id, data.index);
+        endPoint[data.index] = {
+            x : data.gotoX,
+            y : data.gotoY,
+            id : data.id
+        };
+    } else if(data.gotoY == mapYLength){
+        routeMethod.findRestRoute(data.nowX, data.nowY, data.id, data.index);
+    }
     routeMethod.next(data.id, data.index, socket);
 }
 
-exports.ongetCargoEndPoint = function(data, socket){
+exports.onGetCargoEndPoint = function(data, socket){
     console.log(cargo);
   	var success = true;
   	var gotoList;

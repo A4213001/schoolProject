@@ -680,7 +680,7 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
   return 無
   會將尋找好的路徑存進route Array中
 */
-exports.findRestRoute = function(nowX, nowY, robotId, index){
+exports.findRestRoute = function(nowX, nowY, robotId, index, lock){
 	var graphLine = _.cloneDeep(variable.gotoLeftGraph);
 	var gotoX = null;
 	var gotoY = mapYLength;
@@ -692,10 +692,16 @@ exports.findRestRoute = function(nowX, nowY, robotId, index){
 			graphLine.grid[i][mapYLength].weight = 1;
 			if(i < 5){
 				console.log(startTime + " " + (new Date()));
+				console.log(totalStopCount);
 			}
 			break;
 		}
 	}
+	endPoint[index] = {
+        x : gotoX,
+        y : gotoY,
+        id : robotId
+    };
 	var end = graphLine.grid[gotoX][gotoY];
 	var result = astar.astar.search(graphLine, start, end);
 	var routePoint = [];
@@ -707,22 +713,10 @@ exports.findRestRoute = function(nowX, nowY, robotId, index){
 			}
 		);
 	});
-	var exist = false;
-	for(let i = 0 ; i < route.length; i++){
-	  	if(route[i].id == robotId){
-	  	    route[i].routePoint = routePoint;
-	  	    exist = true;
-	  	    break;
-	  	}
-	}
-	if(!exist){
-	  	route.push(
-	  		{
-	  			id : robotId,
-	  			routePoint : routePoint
-	  		}
-	  	);
-	}
+	route[index] = {
+		id : robotId,
+		routePoint : routePoint
+	};
 }
 
 /*
@@ -789,6 +783,7 @@ exports.next = function(robotId, index, socket) {
 	if(stop){
 		socket.emit('stop');
 		stopCount[index]++;
+		totalStopCount++;
 	} else {
 		stopCount[index] = 0;
 		changeRoute[index].changeRouteStatus = false;
