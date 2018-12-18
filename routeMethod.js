@@ -146,13 +146,18 @@ function throwAllNumberPlate(index){
   return 前進方向
 */
 function trunWhere(index){
-	if(point[index].x == route[index].routePoint[0].x){
-		if(point[index].y - route[index].routePoint[0].y == 0)
-			return "stop";
-		return point[index].y - route[index].routePoint[0].y > 0 ? "up" : "down";
-	}
-	else if(point[index].y == route[index].routePoint[0].y){
-		return point[index].x - route[index].routePoint[0].x > 0 ? "left" : "right";
+	var xChange = route[index].routePoint[0].x - point[index].x;
+	var yChange = route[index].routePoint[0].y - point[index].y;
+	if(xChange == 1){
+		return "right";
+	} else if(xChange == -1){
+		return "left";
+	} else if(yChange == 1){
+		return "down";
+	} else if(yChange == -1){
+		return "up";
+	} else {
+		return "stop";
 	}
 }
 
@@ -165,7 +170,7 @@ function collision(index){
 	for(let i = 0; i < route.length; i++){
 		if(i != index){
 			//判斷對撞
-			if(point[index].x == route[i].routePoint[0].x && point[index].y == route[i].routePoint[0].y && point[i].x == route[index].routePoint[0].x && point[i].y == route[index].routePoint[0].y && (point[index].x < 4 || point[index].x >= mapXLength - 5)){
+			if(route[i] != null && point[index].x == route[i].routePoint[0].x && point[index].y == route[i].routePoint[0].y && point[i].x == route[index].routePoint[0].x && point[i].y == route[index].routePoint[0].y && (point[index].x < 4 || point[index].x >= mapXLength - 5)){
 				//上下準備對撞時，判斷上邊的robot位置，位置在前2行或倒數第3、4行，往右方繞路
 				if(point[index].x == route[index].routePoint[0].x && point[index].x <= 1 && point[index].y < point[i].y || point[index].x == route[index].routePoint[0].x && (point[index].x == mapXLength - 3 || point[index].x == mapXLength - 4) && point[index].y < point[i].y){
 					//判斷上方robot的右方是否有障礙物
@@ -615,38 +620,21 @@ function checkNumberPlate(index){
 }
 
 function getCmd(index){
-	//fblr = front、behind、left、right 前後左右
-	var fblr = new Array(4);
-	for(var i = 0; i < fblr.length; i++){
-		fblr[i] = {
-			x : 0,
-			y : 0
-		};
-	}
-	switch(lastDirection[index]){
-		case 'up' : fblr[0].y = -1; fblr[1].y = 1; fblr[2].x = -1; fblr[3].x = 1; break;
-		case 'down' : fblr[0].y = 1; fblr[1].y = -1; fblr[2].x = 1; fblr[3].x = -1; break;
-		case 'left' : fblr[0].x = -1; fblr[1].x = 1; fblr[2].y = 1; fblr[3].y = -1; break;
-		case 'right' : fblr[0].x = 1; fblr[1].x = -1; fblr[2].y = -1; fblr[3].y = 1; break;
-	}
 	var next = {
 		x : route[index].routePoint[0].x - point[index].x,
 		y : route[index].routePoint[0].y - point[index].y	
 	};
-	var cmd;
-	for(var i = 0; i < fblr.length; i++){
-		if(next.x == fblr[i].x && next.y == fblr[i].y){
-			cmd = i;
-			break;
-		}
+	if(next.x == 1){
+		return "+x";
+	} else if(next.x == -1){
+		return "-x"
+	} else if(next.y == 1){
+		return "+y";
+	} else if(next.y == -1){
+		return "-y";
+	} else {
+		return "stop";
 	}
-	switch(cmd){
-		case 0 : cmd = 'go'; break;
-		case 1 : cmd = 'b'; break;
-		case 2 : cmd = 'cww'; break;
-		case 3 : cmd = 'cw'; break;
-	}
-	return cmd;
 }
 
 /*
@@ -695,22 +683,10 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 			}
 		);
 	});
-	var exist = false;
-	for(let i = 0 ; i < route.length; i++){
-	  	if(route[i].id == robotId){
-	  	    route[i].routePoint = routePoint;
-	  	    exist = true;
-	  	    break;
-	  	}
-	}
-	if(!exist){
-	  	route.push(
-	  		{
-	  			id : robotId,
-	  			routePoint : routePoint
-	  		}
-	  	);
-	}
+	route[index] = {
+		id : robotId,
+		routePoint : routePoint
+	};
 };
 
 /*
@@ -751,7 +727,7 @@ exports.next = function(robotId, index, socket) {
 
 	var count = 0;
 	var lock = [];
-	direction[index] = trunWhere(index)
+	direction[index] = trunWhere(index);
 	if(!changeRoute[index].changeRouteStatus && stopCount[index] < 3){
 		count = frontAreaCount(index, lock);
 	}
@@ -780,11 +756,9 @@ exports.next = function(robotId, index, socket) {
 	} else {
 		stopCount[index] = 0;
 		changeRoute[index].changeRouteStatus = false;
-		getCmd(index);
 	    socket.emit('go',
 	    	{
-	    		x : route[index].routePoint[0].x,
-	    		y : route[index].routePoint[0].y
+	    		cmd : getCmd(index)
 	    	}
 	    );
 	    nextPoint[index] = {

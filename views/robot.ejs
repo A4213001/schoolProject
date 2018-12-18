@@ -208,10 +208,16 @@
 		});
 
 		socket.on('go', function (data) {
+			var stop = false;
 		  	previousX = nowX;
 		  	previousY = nowY;
-		  	nowX = data.x;
-		  	nowY = data.y;
+		  	switch(data.cmd){
+		  		case "+x" : nowX++; break;
+		  		case "-x" : nowX--; break;
+		  		case "+y" : nowY++; break;
+		  		case "-y" : nowY--; break;
+		  		case "stop" : stop = true; break;
+		  	}
 		  	setTimeout(function(){
 		  		setAddress();
 			  	if(nowX != gotoX || nowY != gotoY){
