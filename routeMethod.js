@@ -680,7 +680,7 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
   return 無
   會將尋找好的路徑存進route Array中
 */
-exports.findRestRoute = function(nowX, nowY, robotId, index, lock){
+exports.findRestRoute = function(nowX, nowY, robotId, index){
 	var graphLine = _.cloneDeep(variable.gotoLeftGraph);
 	var gotoX = null;
 	var gotoY = mapYLength;
