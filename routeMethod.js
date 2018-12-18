@@ -693,6 +693,8 @@ exports.findRestRoute = function(nowX, nowY, robotId, index){
 			if(i < 5){
 				console.log(startTime + " " + (new Date()));
 				console.log(totalStopCount);
+				console.log(stepCount);
+				console.log(changeDirectionCount);
 			}
 			break;
 		}
@@ -757,7 +759,11 @@ exports.next = function(robotId, index, socket) {
 
 	var count = 0;
 	var lock = [];
+	var lastDirection = direction[index];
 	direction[index] = trunWhere(index);
+	if(lastDirection != direction[index]){
+		changeDirectionCount++;
+	}
 	if(!changeRoute[index].changeRouteStatus && stopCount[index] < 3){
 		count = frontAreaCount(index, lock);
 	}

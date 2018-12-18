@@ -105,6 +105,7 @@ exports.onSignUp = function(data, socket){
         stopOver : false,
         numberPlateIsNotPreferred : false
     };
+    stepCount[index] = 0;
     stopCount[index] = 0;
     io.emit('draw',{ point : point, nextPoint : nextPoint });
     socket.emit('returnIndex', { index : index });
@@ -161,8 +162,7 @@ exports.onWalk = function(data, socket){
 	if(point[data.index].x == route[data.index].routePoint[0].x && point[data.index].y == route[data.index].routePoint[0].y){
 		route[data.index].routePoint.shift();
 		routeMethod.next(data.id, data.index, socket);
-	}
-	else{
+	} else {
 		routeMethod.next(data.id, data.index, socket);
 	}
 	if(!data.isStop){
