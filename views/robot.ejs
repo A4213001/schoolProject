@@ -55,7 +55,7 @@
 	    <br>
 	    <button onclick="start()">開始</button>
 	    <button onclick="autoStart()">自動模式</button>
-		<button onclick="openRobot()">多開9個</button>
+		<button onclick="openRobot()">多開3個</button>
 		<button onclick="allAutoStart()">全部開啟自動模式</button>
 	</p>
 	<div id="goto"></div>
@@ -82,18 +82,18 @@
 				  		{
 				  			id : id,
 				  			index : index,
-				  			isStop : false
+				  			isStop : stop
 				  		}
 			  		);
 			  	} else {
 			  		if(auto){
 			  			if(nowX == 0){
 			        		gotoX = mapXLength - 1;
-			        		gotoY = Math.floor(Math.random() * 10);
+			        		gotoY = Math.floor(Math.random() * 4);
 			        	}
 			        	else if(nowX == mapXLength - 1){
 			        		gotoX = 0;
-			        		gotoY = Math.floor(Math.random() * 10);
+			        		gotoY = Math.floor(Math.random() * 4);
 			        	}
 			        	else{
 			        		gotoX = 0;
@@ -158,18 +158,6 @@
  			newwin2.location = "http://localhost:80?id=2";
  			var newwin3 = window.open();
  			newwin3.location = "http://localhost:80?id=3";
- 			var newwin4 = window.open();
- 			newwin4.location = "http://localhost:80?id=4";
- 			var newwin5 = window.open();
- 			newwin5.location = "http://localhost:80?id=5";
- 			var newwin6 = window.open();
- 			newwin6.location = "http://localhost:80?id=6";
- 			var newwin7 = window.open();
- 			newwin7.location = "http://localhost:80?id=7";
- 			var newwin8 = window.open();
- 			newwin8.location = "http://localhost:80?id=8";
- 			var newwin9 = window.open();
- 			newwin9.location = "http://localhost:80?id=9";
         }
 
         function allAutoStart(){
@@ -182,11 +170,11 @@
         	if(auto){
         		if(nowX == 0){
 	        		gotoX = mapXLength - 1;
-	        		gotoY = Math.floor(Math.random() * 10);
+	        		gotoY = Math.floor(Math.random() * 4);
 	        	}
 	        	else if(nowX == mapXLength - 1){
 	        		gotoX = 0;
-	        		gotoY = Math.floor(Math.random() * 10);
+	        		gotoY = Math.floor(Math.random() * 4);
 	        	}
 	        	else{
 	        		gotoX = 0;
@@ -207,21 +195,8 @@
 	        );
 		});
 
-
-		socket.on('stop', function (data) {
-        	setTimeout(function(){
-        		socket.emit('walk',
-			  		{
-			  			id : id,
-			  			index : index,
-			  			isStop : true
-			  		}
-		  		);
-        	}, 1000);
-		});
-
 		socket.on('go', function (data) {
-			cmdList = [data.cmd];
+			cmdList = data.cmd;
 		});
 
 		socket.on('autoStart', function (data) {

@@ -48,23 +48,41 @@ function haveBarrier(index, direction){
   return 無
   會將抽出的號碼牌存進numberPlate Array中
 */
-function drawNumberPlate(index){
-	var exist = true;
-	//已抽過號碼牌不再抽取
-	for(let i = 0; i < numberPlate.length; i++){
-		if(pointEqual(numberPlate[i], route[index].routePoint[0]) && numberPlate[i].index == index){
-			exist = false;
-		}
-	}
-	if(exist){
-		numberPlate.push(
-			{
-				x : route[index].routePoint[0].x,
-				y : route[index].routePoint[0].y,
-				index : index
+function drawNumberPlate(index, step){
+	var exist = false;
+	if(step == 1){
+		//已抽過號碼牌不再抽取
+		for(let i = 0; i < numberPlate.length; i++){
+			if(pointEqual(numberPlate[i], route[index].routePoint[0]) && numberPlate[i].index == index){
+				exist = true;
 			}
-		);
-	}
+		}
+		if(!exist){
+			numberPlate.push(
+				{
+					x : route[index].routePoint[0].x,
+					y : route[index].routePoint[0].y,
+					index : index
+				}
+			);
+		}
+	} else if(step == 2 && route[index].routePoint.length > 1){
+		//已抽過號碼牌不再抽取
+		for(let i = 0; i < numberPlate.length; i++){
+			if(pointEqual(numberPlate[i], route[index].routePoint[1]) && numberPlate[i].index == index){
+				exist = true;
+			}
+		}
+		if(!exist){
+			numberPlate.push(
+				{
+					x : route[index].routePoint[1].x,
+					y : route[index].routePoint[1].y,
+					index : index
+				}
+			);
+		}
+	} 
 };
 
 /*
@@ -261,8 +279,8 @@ function collision(index){
 						);
 					}
 				}
-				//左右準備對撞時，判斷左邊的robot位置，位置在前5列時，往下方繞路
-				else if(point[index].y == route[index].routePoint[0].y && point[index].y <= 4 && point[index].x < point[i].x){
+				//左右準備對撞時，判斷左邊的robot位置，位置在前2列時，往下方繞路
+				else if(point[index].y == route[index].routePoint[0].y && point[index].y <= 1 && point[index].x < point[i].x){
 					changeRoute[index] = true;
 					throwNumberPlate(index, point[index].x, point[index].y);
 					if(route[index].routePoint.length > 1 && route[index].routePoint[1].x == point[index].x + 1 && route[index].routePoint[1].y == point[index].y + 1){
@@ -282,8 +300,8 @@ function collision(index){
 						}
 					);
 				}
-				//左右準備對撞時，判斷右邊的robot位置，位置在後5列時，往上方繞路
-				else if(point[index].y == route[index].routePoint[0].y && point[index].y >= 5 && point[index].x > point[i].x){
+				//左右準備對撞時，判斷右邊的robot位置，位置在後2列時，往上方繞路
+				else if(point[index].y == route[index].routePoint[0].y && point[index].y >= 2 && point[index].x > point[i].x){
 					changeRoute[index] = true;
 					throwNumberPlate(index, point[index].x, point[index].y);
 					if(route[index].routePoint.length > 1 && route[index].routePoint[1].x == point[index].x - 1 && route[index].routePoint[1].y == point[index].y - 1){
@@ -581,7 +599,7 @@ function stopOverReFindRoute(index){
   params index robot的index
   return 是否停留
 */
-function crowdedReFindRoute(index){
+function crowdedReFindRoute(index, lock){
 	//若不在單行道則進行避開擁擠區的重新規劃路徑
 	if(point[index].x < 4 && point[index].x >= mapXLength - 4){
 		throwNumberPlate(index, point[index].x, point[index].y);
@@ -605,25 +623,52 @@ function crowdedReFindRoute(index){
   params index robot的index
   return 號碼牌是否優先
 */
-function checkNumberPlate(index){
-	var valid = true;
-	for(let i = 0; i < numberPlate.length; i++){
-		if(route[index].routePoint[0].x == numberPlate[i].x && route[index].routePoint[0].y == numberPlate[i].y){
-			if(numberPlate[i].index != index){
-				valid = false;
-				robotStatus[index].numberPlateIsNotPreferred = true; //號碼牌不優先
+function checkNumberPlate(index, step){
+	if(step == 1){
+		for(let i = 0; i < numberPlate.length; i++){
+			if(route[index].routePoint[0].x == numberPlate[i].x && route[index].routePoint[0].y == numberPlate[i].y){
+				if(numberPlate[i].index != index){
+					return false;
+					robotStatus[index].numberPlateIsNotPreferred = true; //號碼牌不優先
+				} else {
+					return true;
+				}
 			}
-			break;
 		}
+	} else if(step == 2 && route[index].routePoint.length > 1){
+		for(let i = 0; i < numberPlate.length; i++){
+			if(route[index].routePoint[1].x == numberPlate[i].x && route[index].routePoint[1].y == numberPlate[i].y){
+				if(numberPlate[i].index != index){
+					return false;
+					robotStatus[index].numberPlateIsNotPreferred = true; //號碼牌不優先
+				} else {
+					return true;
+				}
+			}
+		}
+	} else {
+		return false;
 	}
-	return valid;
 }
 
-function getCmd(index){
-	var next = {
-		x : route[index].routePoint[0].x - point[index].x,
-		y : route[index].routePoint[0].y - point[index].y	
-	};
+function getCmd(index, step){
+	var next;
+	if(step == 1){
+		next = {
+			x : route[index].routePoint[0].x - point[index].x,
+			y : route[index].routePoint[0].y - point[index].y	
+		};
+	} else if(step == 2 && route[index].routePoint.length > 1){
+		next = {
+			x : route[index].routePoint[1].x - route[index].routePoint[0].x,
+			y : route[index].routePoint[1].y - route[index].routePoint[0].y	
+		};
+	} else {
+		next = {
+			x : 0,
+			y : 0
+		};
+	}
 	if(next.x == 1){
 		return "+x";
 	} else if(next.x == -1){
@@ -700,8 +745,9 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 exports.useNumberPlate = function(index, x, y){
 	if(point[index].x != x || point[index].y != y){
 		for(let i = 0; i < numberPlate.length; i++){
-			if(numberPlate[i].index == index && numberPlate[i].x == x && numberPlate[i].y == y)
+			if(numberPlate[i].index == index && numberPlate[i].x == x && numberPlate[i].y == y){
 				numberPlate.splice(i, 1);
+			}
 		}
 	}
 }
@@ -721,6 +767,8 @@ exports.next = function(robotId, index, socket) {
 		// console.log(stepCount);
 	}
 	var stop = false;
+	var step1, step2;
+	var returnTwoCmd = false;
 	if(!stop){
 		collision(index);
 	}
@@ -733,7 +781,7 @@ exports.next = function(robotId, index, socket) {
 	}
 
 	if(count > 2){
-		stop = crowdedReFindRoute(index);
+		stop = crowdedReFindRoute(index, lock);
 	}
 
 	if(stopCount[index] > 4){
@@ -744,23 +792,51 @@ exports.next = function(robotId, index, socket) {
 	}
 	
 	if(!stop){
-		drawNumberPlate(index);
-		if(!checkNumberPlate(index)){
+		step1 = getCmd(index, 1);
+		step2 = getCmd(index, 2);
+		if(step1 == step2 && step1 != "stop"){
+			drawNumberPlate(index, 1);
+			if(!checkNumberPlate(index, 1)){
+				stop = true;
+			} else {
+				drawNumberPlate(index, 2);
+				if(checkNumberPlate(index, 2)){
+					returnTwoCmd = true;
+				}
+			}
+		} else if(step1 != "stop"){
+			drawNumberPlate(index, 1);
+			if(!checkNumberPlate(index, 1)){
+				stop = true;
+			}
+		} else {
 			stop = true;
 		}
 	}
 
 	if(stop){
-		socket.emit('stop');
+		socket.emit('go',
+	    	{
+	    		cmd : ["stop"]
+	    	}
+	    );
 		stopCount[index]++;
 	} else {
 		stopCount[index] = 0;
 		changeRoute[index].changeRouteStatus = false;
-	    socket.emit('go',
-	    	{
-	    		cmd : getCmd(index)
-	    	}
-	    );
+		if(returnTwoCmd){
+			socket.emit('go',
+		    	{
+		    		cmd : [step1, step2]
+		    	}
+		    );
+		} else {
+			socket.emit('go',
+		    	{
+		    		cmd : [step1]
+		    	}
+		    );
+		}
 	    nextPoint[index] = {
 	    	x : route[index].routePoint[0].x,
 	    	y : route[index].routePoint[0].y,
