@@ -761,11 +761,12 @@ exports.useNumberPlate = function(index, x, y){
   判斷此robot是否需要停下、改道，若不需要就讓robot繼續前進
 */
 exports.next = function(robotId, index, socket) {
-	if(robotId == 0){
+	// if(robotId == 0){
 		// console.log(numberPlate);
 		// console.log(direction);
 		// console.log(stepCount);
-	}
+		// console.log(route[index].routePoint);
+	// }
 	var stop = false;
 	var step1, step2;
 	var returnTwoCmd = false;
