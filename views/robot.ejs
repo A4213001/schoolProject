@@ -32,8 +32,7 @@
 		var index = null;
 		var previousX = null;
 		var previousY = null;
-		var route_point = new Array();//路徑
-		var now_step = 0;//接收到路徑後已走步數
+		var cmdList = []; //命令列
 	</script>
 </head>
 <body>
@@ -64,22 +63,21 @@
     <script>
     	function running(){
 		    setInterval(function(){
-		    	if(!stop_signal){
-			    	previous_x = now_x;
-			  		previous_y = now_y;
-			  		if(route_point.x.length > 0 && route_point.y.length > 0){
-			  			if(now_x == route_point.x[0] && now_y == route_point.y[0]){
-			  				route_point.x.shift();
-			  				route_point.y.shift();
-			  			}
-			  			if(route_point.x.length > 0 && route_point.y.length > 0){
-			    			now_x = route_point.x.shift();
-						  	now_y = route_point.y.shift();
-					    }
+		    	var stop = false;
+			  	previousX = nowX;
+			  	previousY = nowY;
+			  	console.log(cmdList);
+		  		if(cmdList.length > 0){
+		  			switch(cmdList.shift()){
+				  		case "+x" : nowX++; break;
+				  		case "-x" : nowX--; break;
+				  		case "+y" : nowY++; break;
+				  		case "-y" : nowY--; break;
+				  		case "stop" : stop = true; break;
 				  	}
-				  	setAddress();
 			  	}
-			  	if(now_x != goto_x || now_y != goto_y){
+			  	setAddress();
+			  	if(nowX != gotoX || nowY != gotoY){
 			  		socket.emit('walk',
 				  		{
 				  			id : id,
@@ -89,7 +87,21 @@
 			  		);
 			  	} else {
 			  		if(auto){
-			  			autoStart();
+			  			if(nowX == 0){
+			        		gotoX = mapXLength - 1;
+			        		gotoY = Math.floor(Math.random() * 10);
+			        	}
+			        	else if(nowX == mapXLength - 1){
+			        		gotoX = 0;
+			        		gotoY = Math.floor(Math.random() * 10);
+			        	}
+			        	else{
+			        		gotoX = 0;
+			        		gotoY = 0;
+			        		console.log("!!!!!!!!!!!! : " + nowX);
+			        	}
+			        	$("#goto").html("<b>gotoX : " + gotoX + " gotoY : " + gotoY + "</b>");
+			  			start(auto);
 			  		}
 			  	}
 		    }, 1000);
@@ -136,6 +148,7 @@
 		    		nowY : nowY,
 	        	}
 	        );
+	        running();
         };
 
         function openRobot(){
@@ -208,46 +221,7 @@
 		});
 
 		socket.on('go', function (data) {
-			var stop = false;
-		  	previousX = nowX;
-		  	previousY = nowY;
-		  	switch(data.cmd){
-		  		case "+x" : nowX++; break;
-		  		case "-x" : nowX--; break;
-		  		case "+y" : nowY++; break;
-		  		case "-y" : nowY--; break;
-		  		case "stop" : stop = true; break;
-		  	}
-		  	setTimeout(function(){
-		  		setAddress();
-			  	if(nowX != gotoX || nowY != gotoY){
-			  		socket.emit('walk',
-				  		{
-				  			id : id,
-				  			index : index,
-				  			isStop : false
-				  		}
-			  		);
-			  	} else {
-			  		if(auto){
-			  			if(nowX == 0){
-			        		gotoX = mapXLength - 1;
-			        		gotoY = Math.floor(Math.random() * 10);
-			        	}
-			        	else if(nowX == mapXLength - 1){
-			        		gotoX = 0;
-			        		gotoY = Math.floor(Math.random() * 10);
-			        	}
-			        	else{
-			        		gotoX = 0;
-			        		gotoY = 0;
-			        		console.log("!!!!!!!!!!!! : " + nowX);
-			        	}
-			        	$("#goto").html("<b>gotoX : " + gotoX + " gotoY : " + gotoY + "</b>");
-			  			start(auto);
-			  		}
-			  	}
-		  	}, 1000);		  	
+			cmdList = [data.cmd];
 		});
 
 		socket.on('autoStart', function (data) {
