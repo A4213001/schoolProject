@@ -581,7 +581,7 @@ function stopOverReFindRoute(index){
   params index robot的index
   return 是否停留
 */
-function crowdedReFindRoute(index){
+function crowdedReFindRoute(index, lock){
 	//若不在單行道則進行避開擁擠區的重新規劃路徑
 	if(point[index].x < 4 && point[index].x >= mapXLength - 4){
 		throwNumberPlate(index, point[index].x, point[index].y);
@@ -769,7 +769,7 @@ exports.next = function(robotId, index, socket) {
 	}
 
 	if(count > 2){
-		stop = crowdedReFindRoute(index);
+		stop = crowdedReFindRoute(index, lock);
 	}
 
 	if(stopCount[index] > 4){
