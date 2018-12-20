@@ -1,0 +1,33 @@
+<% include template/header.ejs %>
+<div id='renum'>選擇id<input type="number" id='num' min="0" max="9"></div>
+	<script> 
+		onload=function button(){ 
+			for(var i=1;i<=10;i++){
+				for(var j=1;j<=10;j++){
+					document.getElementById("button").innerHTML = document.getElementById("button").innerHTML+'<input type="button" value="" id="d'+i+'-'+j+'" class="look"> '; 
+				}
+				document.getElementById("button").innerHTML = document.getElementById("button").innerHTML+'<br/>'; 
+			}
+		} 
+		$(document).ready(function(){
+			var len=10; //長度
+			var now = data.point;
+			var next = data.nextPoint;
+			var a=document.input;
+			a.IDname='arrow';
+			// document.getElementById('d7-7').style.background-color="blue";
+			socket.on('draw',function(data){
+					for(var i=1;i<=len;i++){
+						for(var j=1;j<=len;j++){
+							for(var data=0;data<len;data++){
+								if(i==now[data].x && j==now[data].y){
+									
+								}
+							}
+						}
+					}
+			})	;
+		});
+	</script>
+	<center><div id="button"></div></center>
+<% include template/footer.ejs %>
