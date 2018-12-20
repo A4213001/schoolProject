@@ -722,6 +722,22 @@ exports.findRestRoute = function(nowX, nowY, robotId, index){
 }
 
 /*
+  註冊時抽號碼牌
+  params index robot的index
+  return 無
+  會將抽出的號碼牌存進numberPlate Array中
+*/
+exports.signUpdrawNumberPlate = function(index){
+	numberPlate.push(
+		{
+			x : point[index].x,
+			y : point[index].y,
+			index : index
+		}
+	);
+}
+
+/*
   使用號碼牌
   params index robot的index
   		 x 此號碼牌的X座標

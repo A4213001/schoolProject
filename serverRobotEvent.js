@@ -96,6 +96,7 @@ exports.onSignUp = function(data, socket){
         }
     );
     var index = routeMethod.findIndex(data.id, socket);
+    routeMethod.signUpdrawNumberPlate(index);
     changeRoute[index] = {
         changeRouteStatus : false,
         id : data.id

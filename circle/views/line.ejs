@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+	<html>
+	<head>
+		<title>路線圖</title>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+			var socket = io.connect('http://localhost');
+		</script>
+	</head>
+	<body>
+	<p align="center">
+	  <canvas id="can" width="200" height="200" style="background-color: black"></canvas>
+	  <% for(var i = 0; i < 10; i++) { %>
+	    <div id="row<%= i %>"></div>
+	  <% } %>
+	</p>
+    	<script>
+    		var mapLength = 10;
+	        var node = 0;
+	            box = document.getElementById('can').getContext('2d');
+	                                    //0到99表示box[0~9]*[0~9]的所有節点，每40px一个節点
+	        function draw(seat, color) {
+	            box.fillStyle = color;
+	            box.fillRect(seat % mapLength * 40 + 1, ~~(seat / mapLength) * 40 + 1, 36, 36);
+	                                    //用color填充一个矩形，以前两个参数为x，y坐标，后两个参数为宽和高。
+	        }
+
+	        $(document).ready(function(){
+	        	socket.on('draw',function(data){
+	        		box.clearRect(0, 0, mapLength * 40, mapLength * 40);//清空圖
+	        		var allPoint = data.point;
+	        		for(let point of allPoint){
+	        			node = point.x * mapLength + point.y;
+	        			draw(node, "lime");
+	        		}
+	        	});
+
+	        	socket.on('console',function(data){
+	        		var map = new Array(mapLength);
+					for (var i = 0; i < mapLength; i++) {
+					  map[i] = new Array(mapLength);
+					  for(var j = 0; j < mapLength; j++)
+					  	map[i][j] = data.graph.grid[i][j].weight;
+					}
+					for(var i = 0; i < mapLength; i++){
+						var name = "#row" + i;
+		        		$(name).text(map[i]);
+	        		}
+	        	});
+	        });
+    	</script>
+	</body>
+	</html>	

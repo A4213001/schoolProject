@@ -1,0 +1,50 @@
+<% include template/header.ejs %>
+	<h1 align=center>尋找機器</h1>
+	<form class="input">
+		id：<input type="number" id="search_id">
+	</form>
+	<br/>
+	<canvas id="single" height="500" width="602">抱歉，您的瀏覽器不支持canvas</canvas>
+	<script>
+		var socket = io.connect('http://localhost');
+		var single=document.getElementById("single");     
+		var sin=single.getContext("2d");
+		Square(sin);
+		var id=getElementById('search_id');
+		$(document).ready(function(){
+				socket.on('draw',function(data){
+					let XYlenght=10, //位置
+						nowX=0,nowY=51; //陣列畫到的位置(nowY初始位置是第二排)
+					var now = data.point;
+					var next = data.nextPoint;
+					// for(lastLenght;lastLenght>=0;lastLenght--){
+					// 	ctx.clearRect(clearY[lastLenght], clearX[lastLenght], size, size);
+					// }
+					for (var locationX = 0; locationX < XYlenght; locationX++) {	//走訪x
+						for (var locationY = 0; locationY < XYlenght; locationY++) {	//走訪y
+							// for (var data = 0; data < now.length; data++) {	//走訪現在位置的data
+								if (locationX==now[data].x && locationY==now[data].y) {	//位置 vs data
+									ctx.fillRect(nowY,nowX,size,size);
+									// clearY[data]=nowY;//儲存此次的
+									// clearX[data]=nowX;
+									Arrow(ctx,nowX,nowY,now[data].x,now[data].y,next[data].x,next[data].y);
+									ctx.fillStyle="white";
+									ctx.fillText(now[data].id,nowY+32.5,nowX+35);	//顯示的文字和位置
+									ctx.fillStyle="black";
+								} else {
+									ctx.strokeRect(nowY,nowX,size,size);
+								}
+							// }
+							nowX+=distance;
+							nowX+=size;
+						}
+						nowY+=distance;
+						nowY+=size;
+						nowX=0;
+					}
+					lastLenght=now.length;
+////////
+				});
+			});
+	</script>
+<% include template/footer.ejs %>
