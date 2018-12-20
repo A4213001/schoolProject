@@ -161,10 +161,8 @@ exports.onGetCargoEndPoint = function(data, socket){
 exports.onWalk = function(data, socket){
 	if(point[data.index].x == route[data.index].routePoint[0].x && point[data.index].y == route[data.index].routePoint[0].y){
 		route[data.index].routePoint.shift();
-		routeMethod.next(data.id, data.index, socket);
-	} else {
-		routeMethod.next(data.id, data.index, socket);
-	}
+    }
+	routeMethod.next(data.id, data.index, socket);
 	if(!data.isStop){
 		stepCount[data.index]++;
 	}
