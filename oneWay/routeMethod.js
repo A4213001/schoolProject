@@ -206,7 +206,7 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 					y : mapY
 				};
 			}
-			for(let i = mapY + 1; i >= gotoY; i++){
+			for(let i = mapY + 1; i <= gotoY; i++){
 				routePoint[routeIndex++] = {
 					x : 0,
 					y : i
@@ -271,68 +271,53 @@ exports.findRestRoute = function(nowX, nowY, robotId, index){
         id : robotId
     };
 	var routePoint = [];
+	var routeIndex = 0;
 	if(nowX == 0){
 		for(let i = nowY + 1; i < mapYLength; i++){
-			routePoint.push(
-				{
-					x : 0,
-					y : i		
-				}
-			)
+			routePoint[routeIndex++] = {
+				x : 0,
+				y : i		
+			}
 		}
 		for(let i = 1; i <= gotoX; i++){
-			routePoint.push(
-				{
-					x : i,
-					y : mapYLength - 1
-				}
-			)
-		}
-		routePoint.push(
-			{
-				x : gotoX,
-				y : mapYLength
+			routePoint[routeIndex++] = {
+				x : i,
+				y : mapYLength - 1
 			}
-		)
+		}
+		routePoint[routeIndex++] = {
+			x : gotoX,
+			y : mapYLength
+		}
 	} else if(nowX == mapXLength - 1){
-		for(let i = nowY - 1; i >= 0; i--){
-			routePoint.push(
-				{
-					x : mapXLength - 1,
-					y : i		
-				}
-			)
+		if(nowY % 2 == 1){
+			routePoint[routeIndex++] = {
+				x : mapXLength - 1,
+				y : nowY - 1		
+			}
 		}
 		for(let i = mapXLength - 2; i >= 0; i--){
-			routePoint.push(
-				{
-					x : i,
-					y : 0
-				}
-			)
+			routePoint[routeIndex++] = {
+				x : i,
+				y : 0
+			}
 		}
 		for(let i = 1; i < mapYLength; i++){
-			routePoint.push(
-				{
-					x : 0,
-					y : i
-				}
-			)
+			routePoint[routeIndex++] = {
+				x : 0,
+				y : i
+			}
 		}
 		for(let i = 1; i <= gotoX; i++){
-			routePoint.push(
-				{
-					x : i,
-					y : mapYLength - 1
-				}
-			)
-		}
-		routePoint.push(
-			{
-				x : gotoX,
-				y : mapYLength
+			routePoint[routeIndex++] = {
+				x : i,
+				y : mapYLength - 1
 			}
-		)
+		}
+		routePoint[routeIndex++] = {
+			x : gotoX,
+			y : mapYLength
+		}
 	}
 	route[index] = {
 		id : robotId,

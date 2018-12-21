@@ -18,3 +18,5 @@ global.cargo = JSON.parse(fs.readFileSync("halfCargo.json"));
 
 global.mapXLength = 14; //地圖X長度
 global.mapYLength = 10; //地圖Y長度
+
+global.restStation = Array(mapXLength).fill(false); //休息站
