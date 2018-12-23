@@ -79,14 +79,7 @@ function drawNumberPlate(index){
   會將尋找好的路徑存進route Array中
 */
 function reFindRoute(nowX, nowY, gotoX, gotoY, index, lock) {
-	var graphLine;
-	if(gotoX == 0){
-		graphLine = _.cloneDeep(variable.gotoLeftGraph);
-	} else if(gotoX == mapXLength - 1){
-		graphLine = _.cloneDeep(variable.gotoRightGraph);
-	} else {
-		graphLine = _.cloneDeep(variable.fullGraph);
-	}
+	var graphLine = _.cloneDeep(variable.fullGraph);
 	for(let i = 0; i < lock.length; i++){
 		graphLine.grid[lock[i].x][lock[i].y] = 0;
 	}
@@ -171,8 +164,8 @@ function collision(index){
 		if(i != index){
 			//判斷對撞
 			if(route[i] != null && point[index].x == route[i].routePoint[0].x && point[index].y == route[i].routePoint[0].y && point[i].x == route[index].routePoint[0].x && point[i].y == route[index].routePoint[0].y && (point[index].x < 4 || point[index].x >= mapXLength - 5)){
-				//上下準備對撞時，判斷上邊的robot位置，位置在前2行或倒數第3、4行，往右方繞路
-				if(point[index].x == route[index].routePoint[0].x && point[index].x <= 1 && point[index].y < point[i].y || point[index].x == route[index].routePoint[0].x && (point[index].x == mapXLength - 3 || point[index].x == mapXLength - 4) && point[index].y < point[i].y){
+				//上下準備對撞時，判斷上邊的robot位置，位置靠左時，往右方繞路
+				if(point[index].x == route[index].routePoint[0].x && point[index].x < (mapXLength / 2) && point[index].y < point[i].y){
 					//判斷上方robot的右方是否有障礙物
 					if(!haveBarrier(index, 'right')){
 						changeRoute[index] = true;
@@ -218,8 +211,8 @@ function collision(index){
 						);
 					}
 				}
-				//上下準備對撞時，判斷下邊的robot位置，位置在第3、4行或倒數前2行，往左方繞路
-				else if(point[index].x == route[index].routePoint[0].x && (point[index].x == 2 || point[index].x == 3) && point[index].y > point[i].y || point[index].x == route[index].routePoint[0].x && point[index].x >= mapXLength - 2 && point[index].y > point[i].y){
+				//上下準備對撞時，判斷下邊的robot位置，位置靠右時，往左方繞路
+				else if(point[index].x == route[index].routePoint[0].x && point[index].x >= (mapXLength / 2) && point[index].y > point[i].y){
 					if(!haveBarrier(index, 'left')){
 						changeRoute[index] = true;
 						throwNumberPlate(index, point[index].x, point[index].y);
@@ -261,8 +254,8 @@ function collision(index){
 						);
 					}
 				}
-				//左右準備對撞時，判斷左邊的robot位置，位置在前5列時，往下方繞路
-				else if(point[index].y == route[index].routePoint[0].y && point[index].y <= 4 && point[index].x < point[i].x){
+				//左右準備對撞時，判斷左邊的robot位置，位置靠上時，往下方繞路
+				else if(point[index].y == route[index].routePoint[0].y && point[index].y < (mapYLength / 2)  && point[index].x < point[i].x){
 					changeRoute[index] = true;
 					throwNumberPlate(index, point[index].x, point[index].y);
 					if(route[index].routePoint.length > 1 && route[index].routePoint[1].x == point[index].x + 1 && route[index].routePoint[1].y == point[index].y + 1){
@@ -282,8 +275,8 @@ function collision(index){
 						}
 					);
 				}
-				//左右準備對撞時，判斷右邊的robot位置，位置在後5列時，往上方繞路
-				else if(point[index].y == route[index].routePoint[0].y && point[index].y >= 5 && point[index].x > point[i].x){
+				//左右準備對撞時，判斷右邊的robot位置，位置靠下時，往上方繞路
+				else if(point[index].y == route[index].routePoint[0].y && point[index].y >= (mapYLength / 2) && point[index].x > point[i].x){
 					changeRoute[index] = true;
 					throwNumberPlate(index, point[index].x, point[index].y);
 					if(route[index].routePoint.length > 1 && route[index].routePoint[1].x == point[index].x - 1 && route[index].routePoint[1].y == point[index].y - 1){
@@ -582,22 +575,9 @@ function stopOverReFindRoute(index){
   return 是否停留
 */
 function crowdedReFindRoute(index, lock){
-	//若不在單行道則進行避開擁擠區的重新規劃路徑
-	if(point[index].x < 4 && point[index].x >= mapXLength - 4){
-		throwNumberPlate(index, point[index].x, point[index].y);
-		reFindRoute(point[index].x, point[index].y, route[index].routePoint[route[index].routePoint.length - 1].x, route[index].routePoint[route[index].routePoint.length - 1].y, index, lock)
-		return false
-	}
-	//若即將離開單行道時發現前方壅擠，則在原地等待
-	else if ((direction[index] == 'left' && point[index].x == 4) || (direction[index] == 'right' && point[index].x == mapXLength - 5)){
-		throwNumberPlate(index, point[index].x, point[index].y);
-		robotStatus[index].crowded = true;//前方擁擠
-		return true;
-	}
-	//若在單行道上則繼續前進
-	else {
-		return false;
-	}
+	throwNumberPlate(index, point[index].x, point[index].y);
+	reFindRoute(point[index].x, point[index].y, route[index].routePoint[route[index].routePoint.length - 1].x, route[index].routePoint[route[index].routePoint.length - 1].y, index, lock)
+	return false
 }
 
 /*
@@ -645,14 +625,7 @@ exports.findIndex = function(robotId, socket){
   會將尋找好的路徑存進route Array中
 */
 exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
-	var graphLine;
-	if(gotoX == 0){
-		graphLine = _.cloneDeep(variable.gotoLeftGraph);
-	} else if(gotoX == mapXLength - 1){
-		graphLine = _.cloneDeep(variable.gotoRightGraph);
-	} else {
-		graphLine = _.cloneDeep(variable.fullGraph);
-	}
+	var graphLine = _.cloneDeep(variable.fullGraph);
 	var start = graphLine.grid[nowX][nowY];
 	var end = graphLine.grid[gotoX][gotoY];
 	var result = astar.astar.search(graphLine, start, end);
@@ -681,7 +654,7 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
   會將尋找好的路徑存進route Array中
 */
 exports.findRestRoute = function(nowX, nowY, robotId, index){
-	var graphLine = _.cloneDeep(variable.gotoLeftGraph);
+	var graphLine = _.cloneDeep(variable.fullGraph);
 	var gotoX = null;
 	var gotoY = mapYLength;
 	var start = graphLine.grid[nowX][nowY];

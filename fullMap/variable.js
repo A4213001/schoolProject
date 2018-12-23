@@ -14,7 +14,7 @@ global.stopCount = []; //停止次數
 global.totalStopCount = 0; //總停止次數
 global.robotStatus = []; //robot狀態
 global.startTime; //開始時間
-global.cargo = JSON.parse(fs.readFileSync("halfCargo.json"));
+global.cargo = JSON.parse(fs.readFileSync("cargo.json"));
 
 global.mapXLength = 14; //地圖X長度
 global.mapYLength = 10; //地圖Y長度
@@ -35,32 +35,4 @@ for(let i = 0 ; i < mapXLength; i++){
 	fullGraph.grid[i][mapYLength].weight = 0;
 }
 exports.fullGraph = fullGraph;
-
-//前往右側的地圖
-var gotoRightGraph = new astar.Graph(map);
-//禁止通行逆向車道
-for(let i = 4; i < mapXLength - 4; i++){
-	for(let j = 1; j < mapYLength; j+=2){
-		gotoRightGraph.grid[i][j].weight = 0;
-	}
-}
-//禁止通行休息站區域
-for(let i = 0 ; i < mapXLength; i++){
-	gotoRightGraph.grid[i][mapYLength].weight = 0;
-}
-exports.gotoRightGraph = gotoRightGraph;
-
-//前往左側的地圖
-var gotoLeftGraph = new astar.Graph(map);
-//禁止通行逆向車道
-for(let i = 4; i < mapXLength - 4; i++){
-	for(let j = 0; j < mapYLength; j+=2){
-		gotoLeftGraph.grid[i][j].weight = 0;
-	}
-}
-//禁止通行休息站區域
-for(let i = 0 ; i < mapXLength; i++){
-	gotoLeftGraph.grid[i][mapYLength].weight = 0;
-}
-exports.gotoLeftGraph = gotoLeftGraph;
 //

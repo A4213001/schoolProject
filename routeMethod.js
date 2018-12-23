@@ -261,8 +261,8 @@ function collision(index){
 						);
 					}
 				}
-				//左右準備對撞時，判斷左邊的robot位置，位置在前5列時，往下方繞路
-				else if(point[index].y == route[index].routePoint[0].y && point[index].y <= 4 && point[index].x < point[i].x){
+				//左右準備對撞時，判斷左邊的robot位置，位置靠上時，往下方繞路
+				else if(point[index].y == route[index].routePoint[0].y && point[index].y < (mapYLength / 2) && point[index].x < point[i].x){
 					changeRoute[index] = true;
 					throwNumberPlate(index, point[index].x, point[index].y);
 					if(route[index].routePoint.length > 1 && route[index].routePoint[1].x == point[index].x + 1 && route[index].routePoint[1].y == point[index].y + 1){
@@ -282,8 +282,8 @@ function collision(index){
 						}
 					);
 				}
-				//左右準備對撞時，判斷右邊的robot位置，位置在後5列時，往上方繞路
-				else if(point[index].y == route[index].routePoint[0].y && point[index].y >= 5 && point[index].x > point[i].x){
+				//左右準備對撞時，判斷右邊的robot位置，位置靠下時時，往上方繞路
+				else if(point[index].y == route[index].routePoint[0].y && point[index].y >= (mapYLength / 2) && point[index].x > point[i].x){
 					changeRoute[index] = true;
 					throwNumberPlate(index, point[index].x, point[index].y);
 					if(route[index].routePoint.length > 1 && route[index].routePoint[1].x == point[index].x - 1 && route[index].routePoint[1].y == point[index].y - 1){
@@ -693,7 +693,11 @@ exports.findRestRoute = function(nowX, nowY, robotId, index){
 			if(i < 5){
 				console.log(startTime + " " + (new Date()));
 				console.log(totalStopCount);
-				console.log(stepCount);
+				var stepTotal = 0;
+				for(let j = 0; j < stepCount.length; j++){
+					stepTotal = stepTotal + stepCount[j];
+				}
+				console.log(stepTotal);
 				console.log(changeDirectionCount);
 			}
 			break;
