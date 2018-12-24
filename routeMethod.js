@@ -109,7 +109,7 @@ function reFindRoute(nowX, nowY, gotoX, gotoY, index, lock) {
 };
 
 /*
-  丟棄當前位置以外的號碼牌(因路徑轉換而或前方壅擠)
+  丟棄當前位置以外的號碼牌(因路徑轉換或前方壅擠或重新規畫路徑)
   params index robot的index
   		 x 當前X座標
   		 y 當前Y座標
@@ -119,22 +119,6 @@ function reFindRoute(nowX, nowY, gotoX, gotoY, index, lock) {
 function throwNumberPlate(index, x, y){
 	for(let i = 0; i < numberPlate.length; i++){
 		if(numberPlate[i].index == index && (numberPlate[i].x != x || numberPlate[i].y != y)){
-			numberPlate.splice(i, 1);
-		}
-	}
-}
-
-/*
-  丟棄所有號碼牌(因重新規畫路徑)
-  params index robot的index
-  		 x 此號碼牌的X座標
-  		 y 此號碼牌的Y座標
-  return 無
-  會將丟棄的號碼牌從numberPlate Array中移除
-*/
-function throwAllNumberPlate(index){
-	for(let i = 0; i < numberPlate.length; i++){
-		if(numberPlate[i].index == index){
 			numberPlate.splice(i, 1);
 		}
 	}

@@ -666,7 +666,11 @@ exports.findRestRoute = function(nowX, nowY, robotId, index){
 			if(i < 5){
 				console.log(startTime + " " + (new Date()));
 				console.log(totalStopCount);
-				console.log(stepCount);
+				var stepTotal = 0;
+				for(let j = 0; j < stepCount.length; j++){
+					stepTotal = stepTotal + stepCount[j];
+				}
+				console.log(stepTotal);
 				console.log(changeDirectionCount);
 			}
 			break;

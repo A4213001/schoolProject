@@ -12,7 +12,7 @@ function findOtherSideCargp(data, position){
 	    return null;
   	}
     if(position == 'left'){
-        for(let i = data.nowY; i >= 0; i--){
+        for(let i = mapYLength - 1; i >= 0; i--){
             if(cargoByPosition[i].length > 0){
                 gotoList[0] = mapXLength - 1;;
                 gotoList[1] = i; //前往有貨物的位置
@@ -20,7 +20,7 @@ function findOtherSideCargp(data, position){
             } 
         }
     } else {
-        for(let i = data.nowY; i < mapYLength - 1; i++){
+        for(let i = 0; i < mapYLength - 1; i++){
             if(cargoByPosition[i].length > 0){
                 gotoList[0] = 0;
                 gotoList[1] = i; //前往有貨物的位置

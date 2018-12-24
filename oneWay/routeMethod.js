@@ -259,7 +259,11 @@ exports.findRestRoute = function(nowX, nowY, robotId, index){
 			if(i < 5){
 				console.log(startTime + " " + (new Date()));
 				console.log(totalStopCount);
-				console.log(stepCount);
+				var stepTotal = 0;
+				for(let j = 0; j < stepCount.length; j++){
+					stepTotal = stepTotal + stepCount[j];
+				}
+				console.log(stepTotal);
 				console.log(changeDirectionCount);
 			}
 			break;
@@ -290,16 +294,18 @@ exports.findRestRoute = function(nowX, nowY, robotId, index){
 			y : mapYLength
 		}
 	} else if(nowX == mapXLength - 1){
+		var mapY = nowY;
 		if(nowY % 2 == 1){
+			mapY--;
 			routePoint[routeIndex++] = {
 				x : mapXLength - 1,
-				y : nowY - 1		
+				y : mapY
 			}
 		}
 		for(let i = mapXLength - 2; i >= 0; i--){
 			routePoint[routeIndex++] = {
 				x : i,
-				y : 0
+				y : mapY
 			}
 		}
 		for(let i = 1; i < mapYLength; i++){
