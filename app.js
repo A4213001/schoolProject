@@ -34,6 +34,10 @@ app.get('/button', function (req, res) {
 app.get('/demo', function (req, res) {
     res.render('demo.ejs');
 });
+
+app.get('/realistic', function (req, res) {
+    res.render('realistic.ejs');
+});
 //webRoute end
 
 //socket connect start

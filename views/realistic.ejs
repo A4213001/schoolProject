@@ -2,27 +2,27 @@
 <body>
 	<h1 align=center id='Qua'>當前機器人數量0</h1>
 	<div id="asas">
-		<canvas id="cvs" class='canvas' height="510" width="602" data-toggle="tooltip" title="">抱歉，您的瀏覽器不支持canvas</canvas>
+		<canvas id="cvs" class='canvas' height="501" width="806" title="">抱歉，您的瀏覽器不支持canvas</canvas>
 	</div>
 	<script>
 		var socket = io.connect('http://localhost');
 		var cvs=document.getElementById("cvs");
 		var ctx=cvs.getContext("2d");
-		Square(ctx,10,10);	//畫出方格 function在JS/method.js
+		Square(ctx,14,4);	  //畫出方格 function在JS/method.js
 		initMouse(cvs);
-		var now,next;
+		var now,next,Xlenght,Ylenght;
 		$(document).ready(function(){
 			socket.on('draw',function(data){
-				let XYlenght=10, //位置
-					nowX=0,nowY=51; //陣列畫到的位置(nowY初始位置是第二排)
+				Xlenght=14,Ylenght=4; //位置
+				var	nowX=0,nowY=51; //陣列畫到的位置(nowY初始位置是第二排)
 				now = data.point;
 				next = data.nextPoint;
 				document.getElementById("Qua").innerHTML="當前機器人數量"+now.length;
 				for(lastLenght;lastLenght>=0;lastLenght--){
 					ctx.clearRect(clearY[lastLenght], clearX[lastLenght], size, size);
 				}
-				for (var locationX = 0; locationX < XYlenght; locationX++) {	//走訪x
-					for (var locationY = 0; locationY < XYlenght; locationY++) {	//走訪y
+				for (var locationX = 0; locationX < Xlenght; locationX++) {	//走訪x
+					for (var locationY = 0; locationY < Ylenght; locationY++) {	//走訪y
 							for (var data = 0; data < now.length; data++) {	//走訪現在位置的data
 							if (locationX==now[data].x && locationY==now[data].y) {	//位置 vs data
 								ctx.fillRect(nowY,nowX,size,size);
@@ -48,6 +48,5 @@
 			});
 		});
 	</script>
-	<hr/>
 </body>
 <% include template/footer.ejs %>

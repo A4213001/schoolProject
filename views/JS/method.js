@@ -5,7 +5,7 @@ function Square(ctx,sizeX,sizeY){		//用canvas畫出方格
 					size=41, //每格的大小
 					listNum=1,
 					listNumE=1;
-					lastLenght=0;
+					lastLenght=null;
 					clearX=new Array(),
 					clearY=new Array();
 				ctx.fillStyle="black";
