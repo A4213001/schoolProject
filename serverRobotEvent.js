@@ -45,24 +45,16 @@ exports.onStart = function(data, socket){
 		id : data.id
 	};
 	routeMethod.findRoute(data.nowX, data.nowY, data.gotoX, data.gotoY, data.id, data.index);
-	routeMethod.next(data.id, data.index, socket);
+	routeMethod.next(data.id, data.index, socket, data.time);
 }
 
 exports.onWalk = function(data, socket){
 	if(point[data.index].x == route[data.index].routePoint[0].x && point[data.index].y == route[data.index].routePoint[0].y){
 		route[data.index].routePoint.shift();
 	}
-	routeMethod.next(data.id, data.index, socket);
+	routeMethod.next(data.id, data.index, socket, data.time);
 	if(!data.isStop){
 		stepCount[data.index]++;
-	}
-}
-
-exports.onXXXXX = function(data){
-	for(let i = 0; i < point.length; i++){
-		if(data.id == point[i].id){
-			io.emit('returnEndPoint', { endPoint : endPoint[i] });
-		}
 	}
 }
 

@@ -708,26 +708,102 @@ exports.findIndex = function(robotId, socket){
   會將尋找好的路徑存進route Array中
 */
 exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
-	var graphLine;
-	if(gotoX == 0){
-		graphLine = _.cloneDeep(variable.gotoLeftGraph);
-	} else if(gotoX == mapXLength - 1){
-		graphLine = _.cloneDeep(variable.gotoRightGraph);
-	} else {
-		graphLine = _.cloneDeep(variable.fullGraph);
-	}
-	var start = graphLine.grid[nowX][nowY];
-	var end = graphLine.grid[gotoX][gotoY];
-	var result = astar.astar.search(graphLine, start, end);
 	var routePoint = [];
-	result.forEach(function(element) {
-		routePoint.push(
-			{
-				x : element.x,
-				y : element.y
+	var routeIndex = 0;
+	var mapY;
+	if(nowX == 0){
+		if(nowY <= gotoY){
+			mapY = gotoY;
+			if(gotoY % 2 == 0){
+				mapY++;
 			}
-		);
-	});
+			for(let i = nowY + 1; i <= mapY; i++){
+				routePoint[routeIndex++] = {
+					x : 0,
+					y : i
+				};
+			}
+			for(let i = 1; i < mapXLength; i++){
+				routePoint[routeIndex++] = {
+					x : i,
+					y : mapY
+				};
+			}
+			for(let i = mapY - 1; i >= gotoY; i--){
+				routePoint[routeIndex++] = {
+					x : mapXLength - 1,
+					y : i
+				};
+			}
+		} else if(nowY > gotoY){
+			mapY = nowY;
+			if(nowY % 2 == 0){
+				mapY++;
+				routePoint[routeIndex++] = {
+					x : 0,
+					y : mapY
+				};
+			}
+			for(let i = 1; i < mapXLength; i++){
+				routePoint[routeIndex++] = {
+					x : i,
+					y : mapY
+				};
+			}
+			for(let i = mapY - 1; i >= gotoY; i--){
+				routePoint[routeIndex++] = {
+					x : mapXLength - 1,
+					y : i
+				};
+			}
+		}
+	} else if(nowX == mapXLength - 1){
+		if(nowY >= gotoY){
+			mapY = gotoY;
+			if(gotoY % 2 == 1){
+				mapY--;
+			}
+			for(let i = nowY - 1; i >= mapY; i--){
+				routePoint[routeIndex++] = {
+					x : mapXLength - 1,
+					y : i
+				};
+			}
+			for(let i = mapXLength - 2; i >= 0; i--){
+				routePoint[routeIndex++] = {
+					x : i,
+					y : mapY
+				};
+			}
+			for(let i = mapY + 1; i <= gotoY; i++){
+				routePoint[routeIndex++] = {
+					x : 0,
+					y : i
+				};
+			}
+		} else if(nowY < gotoY){
+			mapY = nowY;
+			if(nowY % 2 == 1){
+				mapY--;
+				routePoint[routeIndex++] = {
+					x : mapXLength - 1,
+					y : mapY
+				};
+			}
+			for(let i = mapXLength - 2; i >= 0; i--){
+				routePoint[routeIndex++] = {
+					x : i,
+					y : mapY
+				};
+			}
+			for(let i = mapY + 1; i <= gotoY; i++){
+				routePoint[routeIndex++] = {
+					x : 0,
+					y : i
+				};
+			}
+		}
+	}
 	route[index] = {
 		id : robotId,
 		routePoint : routePoint
@@ -760,37 +836,14 @@ exports.useNumberPlate = function(index, x, y){
   return 無
   判斷此robot是否需要停下、改道，若不需要就讓robot繼續前進
 */
-exports.next = function(robotId, index, socket) {
-	// if(robotId == 0){
-		// console.log(numberPlate);
-		// console.log(direction);
-		// console.log(stepCount);
-		// console.log(route[index].routePoint);
-	// }
+exports.next = function(robotId, index, socket, time) {
 	var stop = false;
 	var step1, step2;
 	var returnTwoCmd = false;
-	if(!stop){
-		collision(index);
-	}
 
 	var count = 0;
 	var lock = [];
 	direction[index] = trunWhere(index);
-	if(!changeRoute[index].changeRouteStatus && stopCount[index] < 3){
-		count = frontAreaCount(index, lock);
-	}
-
-	if(count > 2){
-		stop = crowdedReFindRoute(index, lock);
-	}
-
-	if(stopCount[index] > 4){
-		if(stopCount[index] % 5 == 0){
-			stopOverReFindRoute(index);
-		}
-		robotStatus[index].stopOver = true;//停留次數超過4次
-	}
 	
 	if(!stop){
 		step1 = getCmd(index, 1);
@@ -818,31 +871,34 @@ exports.next = function(robotId, index, socket) {
 	if(stop){
 		socket.emit('go',
 	    	{
-	    		cmd : ["stop"]
+	    		cmd : ["stop"],
+	    		time : time
 	    	}
 	    );
 		stopCount[index]++;
 	} else {
 		stopCount[index] = 0;
-		changeRoute[index].changeRouteStatus = false;
 		if(returnTwoCmd){
 			socket.emit('go',
 		    	{
-		    		cmd : [step1, step2]
+		    		cmd : [step1, step2],
+	    			time : time
 		    	}
 		    );
+		    io.emit('draw',{ point : point, nextPoint : nextPoint });
 		} else {
 			socket.emit('go',
 		    	{
-		    		cmd : [step1]
+		    		cmd : [step1],
+	    			time : time
 		    	}
 		    );
+		    io.emit('draw',{ point : point, nextPoint : nextPoint });
 		}
 	    nextPoint[index] = {
 	    	x : route[index].routePoint[0].x,
 	    	y : route[index].routePoint[0].y,
 	    	id : robotId
 	    };
-	    io.emit('draw',{ point : point, nextPoint : nextPoint });
 	}
 };

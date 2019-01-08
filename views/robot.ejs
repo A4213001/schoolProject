@@ -33,6 +33,8 @@
 		var previousX = null;
 		var previousY = null;
 		var cmdList = []; //命令列
+		var time;
+		var stopCount = 0;
 	</script>
 </head>
 <body>
@@ -55,7 +57,7 @@
 	    <br>
 	    <button onclick="start()">開始</button>
 	    <button onclick="autoStart()">自動模式</button>
-		<button onclick="openRobot()">多開3個</button>
+		<button onclick="openRobot()">多開9個</button>
 		<button onclick="allAutoStart()">全部開啟自動模式</button>
 	</p>
 	<div id="goto"></div>
@@ -66,6 +68,7 @@
 		    	var stop = false;
 			  	previousX = nowX;
 			  	previousY = nowY;
+			  	console.log(cmdList);
 		  		if(cmdList.length > 0){
 		  			switch(cmdList.shift()){
 				  		case "+x" : nowX++; break;
@@ -74,25 +77,36 @@
 				  		case "-y" : nowY--; break;
 				  		case "stop" : stop = true; break;
 				  	}
+			  	} else {
+			  		stop = true;
+			  	}
+			  	if(stop){
+			  		stopCount++;
+			  	} else {
+			  		stopCount = 0;
 			  	}
 			  	setAddress();
 			  	if(nowX != gotoX || nowY != gotoY){
-			  		socket.emit('walk',
-				  		{
-				  			id : id,
-				  			index : index,
-				  			isStop : stop
-				  		}
-			  		);
+			  		if(previousX != nowX || previousY != nowY || stopCount > 2){
+				  		time = new Date();
+				  		socket.emit('walk',
+					  		{
+					  			id : id,
+					  			index : index,
+					  			isStop : stop,
+					  			time : time
+					  		}
+				  		);
+			  		}
 			  	} else {
 			  		if(auto){
 			  			if(nowX == 0){
 			        		gotoX = mapXLength - 1;
-			        		gotoY = Math.floor(Math.random() * 4);
+			        		gotoY = Math.floor(Math.random() * 10);
 			        	}
 			        	else if(nowX == mapXLength - 1){
 			        		gotoX = 0;
-			        		gotoY = Math.floor(Math.random() * 4);
+			        		gotoY = Math.floor(Math.random() * 10);
 			        	}
 			        	else{
 			        		gotoX = 0;
@@ -103,7 +117,7 @@
 			  			start(auto);
 			  		}
 			  	}
-		    }, 1000);
+		    }, 2000);
     	}
     	
 	    function setAddress(){
@@ -126,6 +140,7 @@
 		    	gotoX = parseInt($("#gotoX").val());
 		    	gotoY = parseInt($("#gotoY").val());
 	    	}
+	    	time = new Date();
 		    socket.emit('start',
 		    	{
 		    		id : id,
@@ -133,7 +148,8 @@
 		    		nowX : nowX,
 		    		nowY : nowY,
 		    		gotoX : gotoX,
-		    		gotoY : gotoY
+		    		gotoY : gotoY,
+		    		time : time
 		    	}
 		    );
         };
@@ -157,6 +173,18 @@
  			newwin2.location = "http://localhost:80?id=2";
  			var newwin3 = window.open();
  			newwin3.location = "http://localhost:80?id=3";
+ 			var newwin4 = window.open();
+ 			newwin4.location = "http://localhost:80?id=4";
+ 			var newwin5 = window.open();
+ 			newwin5.location = "http://localhost:80?id=5";
+ 			var newwin6 = window.open();
+ 			newwin6.location = "http://localhost:80?id=6";
+ 			var newwin7 = window.open();
+ 			newwin7.location = "http://localhost:80?id=7";
+ 			var newwin8 = window.open();
+ 			newwin8.location = "http://localhost:80?id=8";
+ 			var newwin9 = window.open();
+ 			newwin9.location = "http://localhost:80?id=9";
         }
 
         function allAutoStart(){
@@ -182,6 +210,7 @@
 	        	}
 	        	$("#goto").html("<b>gotoX : " + gotoX + " gotoY : " + gotoY + "</b>");
         	}
+        	time = new Date();
         	socket.emit('start',
 	        	{
 	        		id : id,
@@ -189,13 +218,19 @@
 		    		nowX : nowX,
 		    		nowY : nowY,
 		    		gotoX : gotoX,
-		    		gotoY : gotoY
+		    		gotoY : gotoY,
+		    		time : time
 	        	}
 	        );
 		});
 
 		socket.on('go', function (data) {
-			cmdList = data.cmd;
+			dataTime = new Date(data.time);
+			if(dataTime.toString() == time.toString()){
+				cmdList = data.cmd;
+			} else {
+				console.log("time out");
+			}
 		});
 
 		socket.on('autoStart', function (data) {
