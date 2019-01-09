@@ -836,7 +836,7 @@ exports.useNumberPlate = function(index, x, y){
   return 無
   判斷此robot是否需要停下、改道，若不需要就讓robot繼續前進
 */
-exports.next = function(robotId, index, socket, time) {
+exports.next = function(robotId, index, socket, eventId) {
 	var stop = false;
 	var step1, step2;
 	var returnTwoCmd = false;
@@ -872,33 +872,33 @@ exports.next = function(robotId, index, socket, time) {
 		socket.emit('go',
 	    	{
 	    		cmd : ["stop"],
-	    		time : time
+	    		eventId : eventId
 	    	}
 	    );
 		stopCount[index]++;
 	} else {
+		nextPoint[index] = {
+	    	x : route[index].routePoint[0].x,
+	    	y : route[index].routePoint[0].y,
+	    	id : robotId
+	    };
 		stopCount[index] = 0;
 		if(returnTwoCmd){
 			socket.emit('go',
 		    	{
 		    		cmd : [step1, step2],
-	    			time : time
+	    			eventId : eventId
 		    	}
 		    );
-		    io.emit('draw',{ point : point, nextPoint : nextPoint });
+		    io.emit('draw',{ point : point, nextPoint : nextPoint, direction : direction });
 		} else {
 			socket.emit('go',
 		    	{
 		    		cmd : [step1],
-	    			time : time
+	    			eventId : eventId
 		    	}
 		    );
-		    io.emit('draw',{ point : point, nextPoint : nextPoint });
+		    io.emit('draw',{ point : point, nextPoint : nextPoint, direction : direction });
 		}
-	    nextPoint[index] = {
-	    	x : route[index].routePoint[0].x,
-	    	y : route[index].routePoint[0].y,
-	    	id : robotId
-	    };
 	}
 };

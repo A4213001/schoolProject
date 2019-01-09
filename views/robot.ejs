@@ -33,7 +33,7 @@
 		var previousX = null;
 		var previousY = null;
 		var cmdList = []; //命令列
-		var time;
+		var eventId = 0;
 		var stopCount = 0;
 	</script>
 </head>
@@ -88,13 +88,13 @@
 			  	setAddress();
 			  	if(nowX != gotoX || nowY != gotoY){
 			  		if(previousX != nowX || previousY != nowY || stopCount > 2){
-				  		time = new Date();
+				  		eventId++;
 				  		socket.emit('walk',
 					  		{
 					  			id : id,
 					  			index : index,
 					  			isStop : stop,
-					  			time : time
+					  			eventId : eventId
 					  		}
 				  		);
 			  		}
@@ -140,7 +140,7 @@
 		    	gotoX = parseInt($("#gotoX").val());
 		    	gotoY = parseInt($("#gotoY").val());
 	    	}
-	    	time = new Date();
+	    	eventId++;
 		    socket.emit('start',
 		    	{
 		    		id : id,
@@ -149,7 +149,7 @@
 		    		nowY : nowY,
 		    		gotoX : gotoX,
 		    		gotoY : gotoY,
-		    		time : time
+		    		eventId : eventId
 		    	}
 		    );
         };
@@ -210,7 +210,7 @@
 	        	}
 	        	$("#goto").html("<b>gotoX : " + gotoX + " gotoY : " + gotoY + "</b>");
         	}
-        	time = new Date();
+        	eventId++;
         	socket.emit('start',
 	        	{
 	        		id : id,
@@ -219,14 +219,13 @@
 		    		nowY : nowY,
 		    		gotoX : gotoX,
 		    		gotoY : gotoY,
-		    		time : time
+		    		eventId : eventId
 	        	}
 	        );
 		});
 
 		socket.on('go', function (data) {
-			dataTime = new Date(data.time);
-			if(dataTime.toString() == time.toString()){
+			if(eventId == data.eventId){
 				cmdList = data.cmd;
 			} else {
 				console.log("time out");

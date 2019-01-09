@@ -73,8 +73,8 @@ function drawArrow(ctx, fromX, fromY, toX, toY,theta,headlen,width,color) {	//�
 			    ctx.restore();
 			}
 
-function Arrow(ctx,nowX,nowY,now_X,now_Y,next_X,next_Y){	//根據上下左右對應到function
-				switch(Direction(now_X,now_Y,next_X,next_Y)){
+function Arrow(ctx,nowX,nowY,now_X,now_Y,next_X,next_Y, direction){	//根據上下左右對應到function
+				switch(direction){
 					case 'left':
 						drawArrow(ctx, nowY+35 ,nowX+20.5, nowY+5, nowX+20.5,30,15,2.5,'#fff');
 						break;   
@@ -83,11 +83,11 @@ function Arrow(ctx,nowX,nowY,now_X,now_Y,next_X,next_Y){	//根據上下左右對
 						drawArrow(ctx, nowY+5, nowX+20.5, nowY+35 ,nowX+20.5,30,15,2.5,'#fff');
 						break;
 
-					case 'upper':
+					case 'up':
 						drawArrow(ctx, nowY+20.5 ,nowX+35, nowY+20.5, nowX+5,30,15,2.5,'#fff');
 						break;
 
-					case 'under':
+					case 'down':
 						drawArrow(ctx, nowY+20.5, nowX+5, nowY+20.5 ,nowX+35,30,15,2.5,'#fff');
 						break;
 				}

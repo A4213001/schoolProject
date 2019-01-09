@@ -17,6 +17,7 @@
 				var	nowX=0,nowY=51; //陣列畫到的位置(nowY初始位置是第二排)
 				now = data.point;
 				next = data.nextPoint;
+				direction = data.direction;
 				document.getElementById("Qua").innerHTML="當前機器人數量"+now.length;
 				for(lastLenght;lastLenght>=0;lastLenght--){
 					ctx.clearRect(clearY[lastLenght], clearX[lastLenght], size, size);
@@ -28,7 +29,7 @@
 								ctx.fillRect(nowY,nowX,size,size);
 								clearY[data]=nowY;//儲存此次的
 								clearX[data]=nowX;
-								Arrow(ctx,nowX,nowY,now[data].x,now[data].y,next[data].x,next[data].y);
+								Arrow(ctx,nowX,nowY,now[data].x,now[data].y,next[data].x,next[data].y, direction[data]);
 								ctx.fillStyle="white";
 								ctx.fillText(now[data].id,nowY+32.5,nowX+35);	//顯示的文字和位置
 								ctx.fillStyle="black";

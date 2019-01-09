@@ -12,7 +12,7 @@ exports.onSetAddress = function(data){
 		id : data.id
 	};
 	routeMethod.useNumberPlate(data.index, data.previousX, data.previousY);
-	io.emit('draw',{ point : point, nextPoint : nextPoint });
+	io.emit('draw',{ point : point, nextPoint : nextPoint, direction : direction });
 }
 
 exports.onSignUp = function(data, socket){
@@ -34,7 +34,7 @@ exports.onSignUp = function(data, socket){
 		numberPlateIsNotPreferred : false
 	};
 	stopCount[index] = 0;
-	io.emit('draw',{ point : point, nextPoint : nextPoint });
+	io.emit('draw',{ point : point, nextPoint : nextPoint, direction : direction });
 	socket.emit('returnIndex', { index : index });
 }
 
@@ -45,14 +45,14 @@ exports.onStart = function(data, socket){
 		id : data.id
 	};
 	routeMethod.findRoute(data.nowX, data.nowY, data.gotoX, data.gotoY, data.id, data.index);
-	routeMethod.next(data.id, data.index, socket, data.time);
+	routeMethod.next(data.id, data.index, socket, data.eventId);
 }
 
 exports.onWalk = function(data, socket){
 	if(point[data.index].x == route[data.index].routePoint[0].x && point[data.index].y == route[data.index].routePoint[0].y){
 		route[data.index].routePoint.shift();
 	}
-	routeMethod.next(data.id, data.index, socket, data.time);
+	routeMethod.next(data.id, data.index, socket, data.eventId);
 	if(!data.isStop){
 		stepCount[data.index]++;
 	}
