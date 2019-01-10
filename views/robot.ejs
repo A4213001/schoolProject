@@ -30,8 +30,8 @@
 		var gotoY = 0;
 		var auto = false;
 		var index = null;
-		var previousX = null;
-		var previousY = null;
+		var lastX = null;
+		var lastY = null;
 		var cmdList = []; //命令列
 		var eventId = 0;
 		var stopCount = 0;
@@ -66,8 +66,8 @@
     	function running(){
 		    setInterval(function(){
 		    	var stop = false;
-			  	previousX = nowX;
-			  	previousY = nowY;
+			  	lastX = nowX;
+			  	lastY = nowY;
 			  	console.log(cmdList);
 		  		if(cmdList.length > 0){
 		  			switch(cmdList.shift()){
@@ -87,13 +87,12 @@
 			  	}
 			  	setAddress();
 			  	if(nowX != gotoX || nowY != gotoY){
-			  		if(previousX != nowX || previousY != nowY || stopCount > 2){
+			  		if(lastX != nowX || lastY != nowY || stopCount > 2){
 				  		eventId++;
 				  		socket.emit('walk',
 					  		{
 					  			id : id,
 					  			index : index,
-					  			isStop : stop,
 					  			eventId : eventId
 					  		}
 				  		);
@@ -127,8 +126,8 @@
 	        	 	index : index,
 	        		nowX : nowX,
 	        	 	nowY : nowY,
-	        	 	previousX : previousX,
-	        	 	previousY : previousY
+	        	 	lastX : lastX,
+	        	 	lastY : lastY
 	        	}
 	        );
 	    };
@@ -224,7 +223,7 @@
 	        );
 		});
 
-		socket.on('go', function (data) {
+		socket.on('cmd', function (data) {
 			if(eventId == data.eventId){
 				cmdList = data.cmd;
 			} else {

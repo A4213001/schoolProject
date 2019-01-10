@@ -869,7 +869,7 @@ exports.next = function(robotId, index, socket, eventId) {
 	}
 
 	if(stop){
-		socket.emit('go',
+		socket.emit('cmd',
 	    	{
 	    		cmd : ["stop"],
 	    		eventId : eventId
@@ -884,7 +884,7 @@ exports.next = function(robotId, index, socket, eventId) {
 	    };
 		stopCount[index] = 0;
 		if(returnTwoCmd){
-			socket.emit('go',
+			socket.emit('cmd',
 		    	{
 		    		cmd : [step1, step2],
 	    			eventId : eventId
@@ -892,7 +892,7 @@ exports.next = function(robotId, index, socket, eventId) {
 		    );
 		    io.emit('draw',{ point : point, nextPoint : nextPoint, direction : direction });
 		} else {
-			socket.emit('go',
+			socket.emit('cmd',
 		    	{
 		    		cmd : [step1],
 	    			eventId : eventId

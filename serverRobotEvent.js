@@ -11,7 +11,7 @@ exports.onSetAddress = function(data){
 		y : data.nowY,
 		id : data.id
 	};
-	routeMethod.useNumberPlate(data.index, data.previousX, data.previousY);
+	routeMethod.useNumberPlate(data.index, data.lastX, data.lastY);
 	io.emit('draw',{ point : point, nextPoint : nextPoint, direction : direction });
 }
 
@@ -53,9 +53,6 @@ exports.onWalk = function(data, socket){
 		route[data.index].routePoint.shift();
 	}
 	routeMethod.next(data.id, data.index, socket, data.eventId);
-	if(!data.isStop){
-		stepCount[data.index]++;
-	}
 }
 
 exports.onAllAutoStart = function(){
