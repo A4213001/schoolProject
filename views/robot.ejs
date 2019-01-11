@@ -68,7 +68,7 @@
 		    	var stop = false;
 			  	lastX = nowX;
 			  	lastY = nowY;
-			  	// console.log(cmdList);
+			  	console.log(cmdList);
 		  		if(cmdList.length > 0){
 		  			switch(cmdList.shift()){
 				  		case "+x" : nowX++; break;
@@ -179,8 +179,6 @@
         }
 
 		socket.on('returnIndex', function (data) {
-			console.log(data);
-			console.log(socket);
         	index = data.index;
         	$("#index").html("<b>index : " + index + "</b>");
         	if(auto){
