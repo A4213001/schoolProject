@@ -3,6 +3,7 @@ var routeMethod = require('./routeMethod');
 
 exports.onConnection = function(io){
 	console.log("connect connectCount : " + io.engine.clientsCount);
+	io.emit('test', { test : ["a", "b"] });
 }
 
 exports.onSetAddress = function(data){

@@ -22,8 +22,8 @@
 		var id = parseInt(getQueryVariable("id"));
 		if(!id)
 			id = 0;
-		var mapXLength = 14;
-		var mapYLength = 10;
+		var mapXLength = 7;
+		var mapYLength = 4;
 		var nowX = id % 2 == 0 ? 0 : mapXLength - 1;
         var nowY = id;
 		var gotoX = 0;
@@ -57,7 +57,7 @@
 	    <br>
 	    <button onclick="start()">開始</button>
 	    <button onclick="autoStart()">自動模式</button>
-		<button onclick="openRobot()">多開9個</button>
+		<button onclick="openRobot()">多開3個</button>
 		<button onclick="allAutoStart()">全部開啟自動模式</button>
 	</p>
 	<div id="goto"></div>
@@ -68,7 +68,7 @@
 		    	var stop = false;
 			  	lastX = nowX;
 			  	lastY = nowY;
-			  	console.log(cmdList);
+			  	// console.log(cmdList);
 		  		if(cmdList.length > 0){
 		  			switch(cmdList.shift()){
 				  		case "+x" : nowX++; break;
@@ -101,11 +101,11 @@
 			  		if(auto){
 			  			if(nowX == 0){
 			        		gotoX = mapXLength - 1;
-			        		gotoY = Math.floor(Math.random() * 10);
+			        		gotoY = Math.floor(Math.random() * 4);
 			        	}
 			        	else if(nowX == mapXLength - 1){
 			        		gotoX = 0;
-			        		gotoY = Math.floor(Math.random() * 10);
+			        		gotoY = Math.floor(Math.random() * 4);
 			        	}
 			        	else{
 			        		gotoX = 0;
@@ -172,18 +172,6 @@
  			newwin2.location = "http://localhost:80?id=2";
  			var newwin3 = window.open();
  			newwin3.location = "http://localhost:80?id=3";
- 			var newwin4 = window.open();
- 			newwin4.location = "http://localhost:80?id=4";
- 			var newwin5 = window.open();
- 			newwin5.location = "http://localhost:80?id=5";
- 			var newwin6 = window.open();
- 			newwin6.location = "http://localhost:80?id=6";
- 			var newwin7 = window.open();
- 			newwin7.location = "http://localhost:80?id=7";
- 			var newwin8 = window.open();
- 			newwin8.location = "http://localhost:80?id=8";
- 			var newwin9 = window.open();
- 			newwin9.location = "http://localhost:80?id=9";
         }
 
         function allAutoStart(){
@@ -191,6 +179,8 @@
         }
 
 		socket.on('returnIndex', function (data) {
+			console.log(data);
+			console.log(socket);
         	index = data.index;
         	$("#index").html("<b>index : " + index + "</b>");
         	if(auto){
@@ -227,7 +217,7 @@
 			if(eventId == data.eventId){
 				cmdList = data.cmd;
 			} else {
-				console.log("time out");
+				console.log("robot eventId = " + eventId + "server eventId = " + data.eventId + "time out");
 			}
 		});
 

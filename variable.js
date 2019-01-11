@@ -11,8 +11,8 @@ global.changeRoute = []; //更換路徑
 global.stopCount = []; //停止次數
 global.robotStatus = []; //robot狀態
 
-global.mapXLength = 14; //地圖X長度
-global.mapYLength = 10; //地圖Y長度
+global.mapXLength = 7; //地圖X長度
+global.mapYLength = 4; //地圖Y長度
 
 global.restStation = Array(mapXLength).fill(false); //休息站
 
