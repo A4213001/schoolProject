@@ -12,10 +12,15 @@ exports.onSetAddress = function(data){
 		id : data.id
 	};
 	routeMethod.useNumberPlate(data.index, data.lastX, data.lastY);
-	io.emit('draw',{ point : point, nextPoint : nextPoint, direction : direction });
+	io.in('view').emit('draw',{ point : point, nextPoint : nextPoint, direction : direction });
 }
 
 exports.onSignUp = function(data, socket){
+	for(let i = 0; i < point.length; i++){
+		if(point[i].id == data.id){
+			return;
+		}
+	}
 	point.push(
 		{
 			x : data.nowX,
@@ -34,7 +39,7 @@ exports.onSignUp = function(data, socket){
 		numberPlateIsNotPreferred : false
 	};
 	stopCount[index] = 0;
-	io.emit('draw',{ point : point, nextPoint : nextPoint, direction : direction });
+	io.in('view').emit('draw',{ point : point, nextPoint : nextPoint, direction : direction });
 	socket.emit('returnIndex', { index : index });
 }
 

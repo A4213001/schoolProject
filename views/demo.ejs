@@ -6,6 +6,7 @@
 	</div>
 	<script>
 		var socket = io.connect('http://localhost');
+		socket.emit('joinView');
 		var cvs=document.getElementById("cvs");
 		var ctx=cvs.getContext("2d");
 		Square(ctx,7,4);	//畫出方格 function在JS/method.js

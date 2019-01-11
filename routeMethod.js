@@ -890,7 +890,6 @@ exports.next = function(robotId, index, socket, eventId) {
 	    			eventId : eventId
 		    	}
 		    );
-		    io.emit('draw',{ point : point, nextPoint : nextPoint, direction : direction });
 		} else {
 			socket.emit('cmd',
 		    	{
@@ -898,7 +897,7 @@ exports.next = function(robotId, index, socket, eventId) {
 	    			eventId : eventId
 		    	}
 		    );
-		    io.emit('draw',{ point : point, nextPoint : nextPoint, direction : direction });
 		}
+		io.in('view').emit('draw',{ point : point, nextPoint : nextPoint, direction : direction });
 	}
 };
