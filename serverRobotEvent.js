@@ -127,7 +127,7 @@ exports.onStart = function(data, socket){
 }
 
 exports.onGetCargoEndPoint = function(data, socket){
-    console.log(cargo);
+    // console.log(cargo);
   	var success = true;
   	var gotoList;
   	if(data.nowX == 0){
