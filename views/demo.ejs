@@ -8,12 +8,12 @@
 		var socket = io.connect('http://localhost');
 		var cvs=document.getElementById("cvs");
 		var ctx=cvs.getContext("2d");
-		Square(ctx,14,10);	//畫出方格 function在JS/method.js
+		Square(ctx,7,4);	//畫出方格 function在JS/method.js
 		initMouse(cvs);
 		var now,next,Xlenght,Ylenght;
 		$(document).ready(function(){
 			socket.on('draw',function(data){
-				Xlenght=14,Ylenght=10; //位置
+				Xlenght=7,Ylenght=4; //位置
 				var	nowX=0,nowY=51; //陣列畫到的位置(nowY初始位置是第二排)
 				now = data.point;
 				next = data.nextPoint;
