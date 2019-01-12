@@ -44,6 +44,7 @@ exports.onSignUp = function(data, socket){
 }
 
 exports.onStart = function(data, socket){
+	console.log(data);
 	endPoint[data.index] = {
 		x : data.gotoX,
 		y : data.gotoY,
