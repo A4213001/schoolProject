@@ -164,16 +164,20 @@ function throwAllNumberPlate(index){
   return 前進方向
 */
 function trunWhere(index){
-	var xChange = route[index].routePoint[0].x - point[index].x;
-	var yChange = route[index].routePoint[0].y - point[index].y;
-	if(xChange == 1){
-		return "right";
-	} else if(xChange == -1){
-		return "left";
-	} else if(yChange == 1){
-		return "down";
-	} else if(yChange == -1){
-		return "up";
+	if(route[index].routePoint[0] > 0){
+		var xChange = route[index].routePoint[0].x - point[index].x;
+		var yChange = route[index].routePoint[0].y - point[index].y;
+		if(xChange == 1){
+			return "right";
+		} else if(xChange == -1){
+			return "left";
+		} else if(yChange == 1){
+			return "down";
+		} else if(yChange == -1){
+			return "up";
+		} else {
+			return "stop";
+		}
 	} else {
 		return "stop";
 	}
@@ -653,7 +657,7 @@ function checkNumberPlate(index, step){
 
 function getCmd(index, step){
 	var next;
-	if(step == 1){
+	if(step == 1 && route[index].routePoint.length > 0){
 		next = {
 			x : route[index].routePoint[0].x - point[index].x,
 			y : route[index].routePoint[0].y - point[index].y	
