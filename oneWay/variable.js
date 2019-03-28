@@ -1,4 +1,4 @@
-var astar = require('./astar');
+// var astar = require('./astar');
 var fs = require('fs');
 
 global.point = []; //當前位置

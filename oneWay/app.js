@@ -1,5 +1,3 @@
-//路徑尋找以及貨物尋找不同
-
 var express = require('express');
 var app = require('express')();
 var variable = require('./variable');
@@ -60,10 +58,6 @@ io.on('connection', function (socket) {
 
   	socket.on('walk', function (data) {
 		serverRobotEvent.onWalk(data, socket);
-  	});
-
-  	socket.on('XXXXX', function (data) {
-		serverRobotEvent.onXXXXX(data);
   	});
 
   	socket.on('allAutoStart', function () {

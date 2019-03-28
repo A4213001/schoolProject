@@ -23,9 +23,10 @@ function pointEqual(point1, point2){
   會將抽出的號碼牌存進numberPlate Array中
 */
 function drawNumberPlate(index){
-	var exist = true;
+	let exist = true;
 	//已抽過號碼牌不再抽取
-	for(let i = 0; i < numberPlate.length; i++){
+	let numberPlateLength = numberPlate.length;
+	for(let i = 0; i < numberPlateLength; ++i){
 		if(pointEqual(numberPlate[i], route[index].routePoint[0]) && numberPlate[i].index == index){
 			exist = false;
 		}
@@ -50,7 +51,7 @@ function drawNumberPlate(index){
   會將丟棄的號碼牌從numberPlate Array中移除
 */
 function throwNumberPlate(index, x, y){
-	for(let i = 0; i < numberPlate.length; i++){
+	for(let i = 0; i < numberPlate.length; ++i){
 		if(numberPlate[i].index == index && (numberPlate[i].x != x || numberPlate[i].y != y)){
 			numberPlate.splice(i, 1);
 		}
@@ -66,7 +67,7 @@ function throwNumberPlate(index, x, y){
   會將丟棄的號碼牌從numberPlate Array中移除
 */
 function throwAllNumberPlate(index){
-	for(let i = 0; i < numberPlate.length; i++){
+	for(let i = 0; i < numberPlate.length; ++i){
 		if(numberPlate[i].index == index){
 			numberPlate.splice(i, 1);
 		}
@@ -101,7 +102,8 @@ function trunWhere(index){
 */
 function checkNumberPlate(index){
 	var valid = true;
-	for(let i = 0; i < numberPlate.length; i++){
+	numberPlateLength = numberPlate.length
+	for(let i = 0; i < numberPlateLength; ++i){
 		if(route[index].routePoint[0].x == numberPlate[i].x && route[index].routePoint[0].y == numberPlate[i].y){
 			if(numberPlate[i].index != index){
 				valid = false;
@@ -120,7 +122,8 @@ function checkNumberPlate(index){
   return index
 */
 exports.findIndex = function(robotId, socket){
-	for(let i = 0; i < point.length; i++){
+	let pointLength = point.length;
+	for(let i = 0; i < pointLength; ++i){
 		if(robotId == point[i].id){
 			return i;
 		}
@@ -140,28 +143,28 @@ exports.findIndex = function(robotId, socket){
 */
 exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 	var routePoint = [];
-	var routeIndex = 0;
+	var routeIndex = -1;
 	var mapY;
 	if(nowX == 0){
 		if(nowY <= gotoY){
 			mapY = gotoY;
 			if(gotoY % 2 == 0){
-				mapY++;
+				++mapY;
 			}
-			for(let i = nowY + 1; i <= mapY; i++){
-				routePoint[routeIndex++] = {
+			for(let i = nowY + 1; i <= mapY; ++i){
+				routePoint[++routeIndex] = {
 					x : 0,
 					y : i
 				};
 			}
-			for(let i = 1; i < mapXLength; i++){
-				routePoint[routeIndex++] = {
+			for(let i = 1; i < mapXLength; ++i){
+				routePoint[++routeIndex] = {
 					x : i,
 					y : mapY
 				};
 			}
-			for(let i = mapY - 1; i >= gotoY; i--){
-				routePoint[routeIndex++] = {
+			for(let i = mapY - 1; i >= gotoY; --i){
+				routePoint[++routeIndex] = {
 					x : mapXLength - 1,
 					y : i
 				};
@@ -169,20 +172,20 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 		} else if(nowY > gotoY){
 			mapY = nowY;
 			if(nowY % 2 == 0){
-				mapY++;
-				routePoint[routeIndex++] = {
+				++mapY;
+				routePoint[++routeIndex] = {
 					x : 0,
 					y : mapY
 				};
 			}
-			for(let i = 1; i < mapXLength; i++){
-				routePoint[routeIndex++] = {
+			for(let i = 1; i < mapXLength; ++i){
+				routePoint[++routeIndex] = {
 					x : i,
 					y : mapY
 				};
 			}
-			for(let i = mapY - 1; i >= gotoY; i--){
-				routePoint[routeIndex++] = {
+			for(let i = mapY - 1; i >= gotoY; --i){
+				routePoint[++routeIndex] = {
 					x : mapXLength - 1,
 					y : i
 				};
@@ -192,22 +195,22 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 		if(nowY >= gotoY){
 			mapY = gotoY;
 			if(gotoY % 2 == 1){
-				mapY--;
+				--mapY;
 			}
-			for(let i = nowY - 1; i >= mapY; i--){
-				routePoint[routeIndex++] = {
+			for(let i = nowY - 1; i >= mapY; --i){
+				routePoint[++routeIndex] = {
 					x : mapXLength - 1,
 					y : i
 				};
 			}
-			for(let i = mapXLength - 2; i >= 0; i--){
-				routePoint[routeIndex++] = {
+			for(let i = mapXLength - 2; i >= 0; --i){
+				routePoint[++routeIndex] = {
 					x : i,
 					y : mapY
 				};
 			}
-			for(let i = mapY + 1; i <= gotoY; i++){
-				routePoint[routeIndex++] = {
+			for(let i = mapY + 1; i <= gotoY; ++i){
+				routePoint[++routeIndex] = {
 					x : 0,
 					y : i
 				};
@@ -215,20 +218,20 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 		} else if(nowY < gotoY){
 			mapY = nowY;
 			if(nowY % 2 == 1){
-				mapY--;
-				routePoint[routeIndex++] = {
+				--mapY;
+				routePoint[++routeIndex] = {
 					x : mapXLength - 1,
 					y : mapY
 				};
 			}
-			for(let i = mapXLength - 2; i >= 0; i--){
-				routePoint[routeIndex++] = {
+			for(let i = mapXLength - 2; i >= 0; --i){
+				routePoint[++routeIndex] = {
 					x : i,
 					y : mapY
 				};
 			}
-			for(let i = mapY + 1; i <= gotoY; i++){
-				routePoint[routeIndex++] = {
+			for(let i = mapY + 1; i <= gotoY; ++i){
+				routePoint[++routeIndex] = {
 					x : 0,
 					y : i
 				};
@@ -252,7 +255,7 @@ exports.findRoute = function(nowX, nowY, gotoX, gotoY, robotId, index) {
 */
 exports.findRestRoute = function(nowX, nowY, robotId, index){
 	var gotoX, gotoY = mapYLength;
-	for(let i = mapXLength - 1; i >= 0; i--){
+	for(let i = mapXLength - 1; i >= 0; --i){
 		if(!restStation[i]){
 			restStation[i] = true;
 			gotoX = i;
@@ -260,7 +263,8 @@ exports.findRestRoute = function(nowX, nowY, robotId, index){
 				console.log(startTime + " " + (new Date()));
 				console.log(totalStopCount);
 				var stepTotal = 0;
-				for(let j = 0; j < stepCount.length; j++){
+				let stepCountLength = stepCount.length;
+				for(let j = 0; j < stepCountLength; ++j){
 					stepTotal = stepTotal + stepCount[j];
 				}
 				console.log(stepTotal);
@@ -275,52 +279,52 @@ exports.findRestRoute = function(nowX, nowY, robotId, index){
         id : robotId
     };
 	var routePoint = [];
-	var routeIndex = 0;
+	var routeIndex = -1;
 	if(nowX == 0){
-		for(let i = nowY + 1; i < mapYLength; i++){
-			routePoint[routeIndex++] = {
+		for(let i = nowY + 1; i < mapYLength; ++i){
+			routePoint[++routeIndex] = {
 				x : 0,
 				y : i		
 			}
 		}
-		for(let i = 1; i <= gotoX; i++){
-			routePoint[routeIndex++] = {
+		for(let i = 1; i <= gotoX; ++i){
+			routePoint[++routeIndex] = {
 				x : i,
 				y : mapYLength - 1
 			}
 		}
-		routePoint[routeIndex++] = {
+		routePoint[++routeIndex] = {
 			x : gotoX,
 			y : mapYLength
 		}
 	} else if(nowX == mapXLength - 1){
 		var mapY = nowY;
 		if(nowY % 2 == 1){
-			mapY--;
-			routePoint[routeIndex++] = {
+			--mapY;
+			routePoint[++routeIndex] = {
 				x : mapXLength - 1,
 				y : mapY
 			}
 		}
-		for(let i = mapXLength - 2; i >= 0; i--){
-			routePoint[routeIndex++] = {
+		for(let i = mapXLength - 2; i >= 0; --i){
+			routePoint[++routeIndex] = {
 				x : i,
 				y : mapY
 			}
 		}
-		for(let i = 1; i < mapYLength; i++){
-			routePoint[routeIndex++] = {
+		for(let i = 1; i < mapYLength; ++i){
+			routePoint[++routeIndex] = {
 				x : 0,
 				y : i
 			}
 		}
-		for(let i = 1; i <= gotoX; i++){
-			routePoint[routeIndex++] = {
+		for(let i = 1; i <= gotoX; ++i){
+			routePoint[++routeIndex] = {
 				x : i,
 				y : mapYLength - 1
 			}
 		}
-		routePoint[routeIndex++] = {
+		routePoint[++routeIndex] = {
 			x : gotoX,
 			y : mapYLength
 		}
@@ -357,7 +361,7 @@ exports.signUpdrawNumberPlate = function(index){
 */
 exports.useNumberPlate = function(index, x, y){
 	if(point[index].x != x || point[index].y != y){
-		for(let i = 0; i < numberPlate.length; i++){
+		for(let i = 0; i < numberPlate.length; ++i){
 			if(numberPlate[i].index == index && numberPlate[i].x == x && numberPlate[i].y == y)
 				numberPlate.splice(i, 1);
 		}
@@ -383,7 +387,7 @@ exports.next = function(robotId, index, socket) {
 	var lastDirection = direction[index];
 	direction[index] = trunWhere(index);
 	if(lastDirection != direction[index]){
-		changeDirectionCount++;
+		++changeDirectionCount;
 	}
 	
 	if(!stop){
@@ -395,8 +399,8 @@ exports.next = function(robotId, index, socket) {
 
 	if(stop){
 		socket.emit('stop');
-		stopCount[index]++;
-		totalStopCount++;
+		++stopCount[index];
+		++totalStopCount;
 	} else {
 		stopCount[index] = 0;
 		changeRoute[index].changeRouteStatus = false;

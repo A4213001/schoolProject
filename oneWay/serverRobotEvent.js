@@ -12,7 +12,7 @@ function findOtherSideCargp(data, position){
 	    return null;
   	}
     if(position == 'left'){
-        for(let i = mapYLength - 1; i >= 0; i--){
+        for(let i = mapYLength - 1; i >= 0; --i){
             if(cargoByPosition[i].length > 0){
                 gotoList[0] = mapXLength - 1;;
                 gotoList[1] = i; //前往有貨物的位置
@@ -20,7 +20,7 @@ function findOtherSideCargp(data, position){
             } 
         }
     } else {
-        for(let i = 0; i < mapYLength - 1; i++){
+        for(let i = 0; i < mapYLength - 1; ++i){
             if(cargoByPosition[i].length > 0){
                 gotoList[0] = 0;
                 gotoList[1] = i; //前往有貨物的位置
@@ -50,7 +50,7 @@ function findCargo(data, position){
     //若此位置沒有貨物，則隨機一個位置去尋找有沒有貨物
     else {
         if(position == 'left'){
-            for(let i = data.nowY + 1; i < mapYLength; i++){
+            for(let i = data.nowY + 1; i < mapYLength; ++i){
                 if(cargoByPosition[i].length > 0){
                     gotoList[0] = 0;
                     gotoList[1] = i; //前往有貨物的位置
@@ -58,7 +58,7 @@ function findCargo(data, position){
                 } 
             }
         } else {
-            for(let i = data.nowY - 1; i >= 0; i--){
+            for(let i = data.nowY - 1; i >= 0; --i){
                 if(cargoByPosition[i].length > 0){
                     gotoList[0] = mapXLength - 1;
                     gotoList[1] = i; //前往有貨物的位置
@@ -162,16 +162,8 @@ exports.onWalk = function(data, socket){
     }
     routeMethod.next(data.id, data.index, socket);
     if(!data.isStop){
-        stepCount[data.index]++;
+        ++stepCount[data.index];
     }
-}
-
-exports.onXXXXX = function(data){
-	for(let i = 0; i < point.length; i++){
-		if(data.id == point[i].id){
-			io.emit('returnEndPoint', { endPoint : endPoint[i] });
-		}
-	}
 }
 
 exports.onAllAutoStart = function(){
