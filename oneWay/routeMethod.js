@@ -261,6 +261,7 @@ exports.findRestRoute = function(nowX, nowY, robotId, index){
 			gotoX = i;
 			if(i < 5){
 				console.log(startTime + " " + (new Date()));
+				console.timeEnd("runTime");
 				console.log(totalStopCount);
 				var stepTotal = 0;
 				let stepCountLength = stepCount.length;

@@ -169,6 +169,7 @@ exports.onWalk = function(data, socket){
 exports.onAllAutoStart = function(){
 	io.emit('autoStart');
 	startTime = new Date();
+    console.time("runTime");
 }
 
 exports.onDisconnect = function(){

@@ -2,6 +2,7 @@ var express = require('express');
 var app = require('express')();
 var variable = require('./variable');
 var server = require('http').Server(app);
+var api = require('./api');
 global.io = require('socket.io')(server);
 var serverRobotEvent = require('./serverRobotEvent');
 
@@ -9,6 +10,7 @@ server.listen(80);
 console.log('Server running at port 80');
 
 app.use(express.static('views'));
+app.use('/api', api);
 
 //webRoute start
 app.get('/', function (req, res) {
