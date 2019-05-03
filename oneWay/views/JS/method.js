@@ -5,7 +5,7 @@ function Square(ctx,sizeX,sizeY){		//用canvas畫出方格
 					size=41, //每格的大小
 					listNum=1,
 					listNumE=1;
-					lastLenght=0;
+					lastLenght=null;
 					clearX=new Array(),
 					clearY=new Array();
 				ctx.fillStyle="black";
@@ -117,6 +117,8 @@ function svgArrow(direction){
 
 function initMouse(cvs){
 	cvs.addEventListener('mousemove', mouseMoveHandler);
+	cvs.addEventListener('mousedown', mouseDownHandler);
+    cvs.addEventListener('dblclick', onDocumenDblClick);
 }
 
    	var coordinateX,
@@ -125,25 +127,78 @@ function initMouse(cvs){
 function mouseMoveHandler(event) {
    	let x=event.clientX-cvs.getBoundingClientRect().left,
    		y=event.clientY-cvs.getBoundingClientRect().top+51, 
-   		lattice=41+10,//size+distance
+   		msg = "座標: " +getCoordinate(x,y).y+ "," +getCoordinate(x,y).x ;
+   		document.getElementById("cvs").title=msg;
+}
+
+function getCoordinate(x,y){
+   	let	lattice=41+10,//size+distance
    		size=41;
    	if((x%lattice<=size)&&(y%lattice<=size)){
    		coordinateX=Math.floor(x/lattice); //Math.floor去小數點
    		coordinateY=Math.floor(y/lattice);
-   		msg = "座標: " +coordinateY+ "," +coordinateX;
-   		if(coordinateX>Xlenght||coordinateX<1||coordinateY>Ylenght||coordinateY<1) msg="";
+   		if((coordinateX>Xlenght)||(coordinateX<1)||(coordinateY>Ylenght)||(coordinateY<1)) return null;
    	}else{
-   		msg = "";
+   		return null;
    	}
- //    for (var data = 0; data < now.length; data++) {
-	// 	if ((now[data].x==(coordinateX-1))&&(now[data].y==(coordinateY-1))) {
-	// 		msg="id:"+data+"<br/>座標:"+coordinateY+ "," +	coordinateX;
-	// 		data=now.length;
-	// 	}
-	// }
-   	document.getElementById("cvs").title=msg;
+   	return {  'x' : coordinateX , 'y': coordinateY};  
 }
 
-function status(id,x,y){
-	document.getElementById(id).innerHTML='id:'+id+'<br/>現在座標:'+(y+1)+','+(x+1);
+var screen=true;
+function mouseDownHandler(event){
+   screen?outputCoordinate():inputAim(coordinateX,coordinateY);
+}
+
+function outputCoordinate(){
+   	if (getId()!=null) {
+		document.getElementById("mouseDown").innerHTML="id: "+getId()+"<br/>";
+		document.getElementById("mouseDown").innerHTML+="目標座標: "+"(0,0)";
+   	}else document.getElementById("mouseDown").innerHTML="";
+}
+
+function getId(){
+	for (var data = 0; data < now.length; data++) {
+		if ((now[data].x==(coordinateX-1))&&(now[data].y==(coordinateY-1))) {
+			// data=now.length;
+			return now[data].id;
+		}
+	}
+	return null;
+}
+
+var focusId;
+function onDocumenDblClick(event) {
+	// $(function() {
+	// 	$( event ).dialog({
+ //                    buttons: {
+ //                        "Yes": function() {alert('you chose yes');},
+ //                        "No":  function() {alert('you chose no');},
+ //                        "Cancel":  function() {
+ //                            alert('you chose cancel');
+ //                            dialog.dialog('close');
+ //                        }
+ //                    }
+ //                });
+ //  	});
+	if(getId()!=null){
+		document.getElementById("dddd").innerHTML="請點選目的地或<button onclick='closeAim()'>取消</button>";
+		screen=false;
+		focusId=getId();
+	}
+}
+
+function inputAim(x,y){  //
+	//傳給後端x,y
+	//等待後端傳成功的訊息
+	outputAim(x,y);
+}
+
+function closeAim(){
+	screen=true;
+	document.getElementById("dddd").innerHTML="已取消";
+}
+
+function outputAim(x,y){
+	document.getElementById("dddd").innerHTML="("+x+","+y+")輸入完成";
+	screen=true;
 }

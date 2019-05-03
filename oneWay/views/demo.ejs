@@ -1,9 +1,19 @@
 <% include template/header.ejs %>
 <body>
-	<h1 align=center id='Qua'>當前機器人數量0</h1>
-	<div id="asas">
-		<canvas id="cvs" class='canvas' height="501" width="806" title="">抱歉，您的瀏覽器不支持canvas</canvas>
-	</div>
+	<table>
+		<tr>
+			<td rowspan="2">
+				<h1 align=center id='Qua'>當前機器人數量0</h1>
+				<div id="asas">
+					<canvas id="cvs" class='canvas' height="501" width="806" title="">抱歉，您的瀏覽器不支持canvas</canvas>
+				</div>
+			</td>
+			<td id="mouseDown">顯示</td>  <!-- 內容 -->
+		</tr>
+		<tr>
+			<td id="dddd"></td>
+		</tr>
+	</table>
 	<script>
 		var socket = io.connect('http://localhost');
 		var cvs=document.getElementById("cvs");
@@ -17,22 +27,24 @@
 				var	nowX=0,nowY=51; //陣列畫到的位置(nowY初始位置是第二排)
 				now = data.point;
 				next = data.nextPoint;
+				// end = data.endPoint;
 				document.getElementById("Qua").innerHTML="當前機器人數量"+now.length;
 				for(lastLenght;lastLenght>=0;lastLenght--){
 					ctx.clearRect(clearY[lastLenght], clearX[lastLenght], size, size);
 				}
 				for (var locationX = 0; locationX < Xlenght; locationX++) {	//走訪x
 					for (var locationY = 0; locationY < Ylenght; locationY++) {	//走訪y
-							for (var data = 0; data < now.length; data++) {	//走訪現在位置的data
+						for (var data = 0; data < now.length; data++) {	//走訪現在位置的data
 							if (locationX==now[data].x && locationY==now[data].y) {	//位置 vs data
+								if((now[data].id==focusId)&&!screen) {
+									ctx.fillStyle="#cc0000";
+								} else ctx.fillStyle="black";
 								ctx.fillRect(nowY,nowX,size,size);
 								clearY[data]=nowY;//儲存此次的
 								clearX[data]=nowX;
 								Arrow(ctx,nowX,nowY,now[data].x,now[data].y,next[data].x,next[data].y);
 								ctx.fillStyle="white";
 								ctx.fillText(now[data].id,nowY+32.5,nowX+35);	//顯示的文字和位置
-								ctx.fillStyle="black";
-								status(now[data].id,now[data].x,now[data].y);
 							} else {
 								ctx.strokeRect(nowY,nowX,size,size);
 							}
@@ -48,5 +60,6 @@
 			});
 		});
 	</script>
+	<hr/>
 </body>
 <% include template/footer.ejs %>
