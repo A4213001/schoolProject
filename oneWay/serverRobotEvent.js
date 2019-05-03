@@ -117,6 +117,11 @@ exports.onStart = function(data, socket){
             y : data.gotoY,
             id : data.id
         };
+        io.emit('changeEndPoint',
+            {
+                endPoint : endPoint[data.index]
+            }
+        )
     } else if(data.gotoY == mapYLength){
         routeMethod.findRestRoute(data.nowX, data.nowY, data.id, data.index);
     }
