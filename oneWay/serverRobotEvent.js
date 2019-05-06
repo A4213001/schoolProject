@@ -121,7 +121,7 @@ exports.onStart = function(data, socket){
             {
                 endPoint : endPoint[data.index]
             }
-        )
+        );
     } else if(data.gotoY == mapYLength){
         routeMethod.findRestRoute(data.nowX, data.nowY, data.id, data.index);
     }

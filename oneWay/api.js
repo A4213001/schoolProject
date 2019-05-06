@@ -1,9 +1,23 @@
 var express = require('express');
 var variable = require('./variable');
-var router = express.Router();
+var api = express.Router();
 
-router.get('/point', function(req, res) {
+api.get('/point', function(req, res) {
     res.json({ point: point });
 });
 
-module.exports = router;
+api.get('/getRoute/:id', function(req, res) {
+	let exist = false;
+	for(let i = 0; i < route.length; ++i){
+		if(route[i].id == req.params.id){
+			res.json({ route : route[i]});
+			exist = true;
+			break;
+		}
+	}
+	if(!exist){
+		res.json({ route : '此id不存在'});
+	}
+});
+
+module.exports = api;
