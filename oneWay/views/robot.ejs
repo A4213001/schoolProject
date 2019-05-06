@@ -52,6 +52,7 @@
 	    <label>gotoY</label>
 	    <input type="number" id="gotoY">
 	    <br>
+	    <button onclick="signUp()">註冊機器人</button>
 	    <button onclick="start()">開始</button>
 	    <button onclick="autoStart()">自動模式</button>
 		<button onclick="openRobot()">多開9個</button>
@@ -69,6 +70,18 @@
 	        	 	nowY : nowY,
 	        	 	previousX : previousX,
 	        	 	previousY : previousY
+	        	}
+	        );
+	    };
+
+	    function signUp(){
+	    	nowX = parseInt($("#nowX").val());
+		    nowY = parseInt($("#nowY").val());
+	    	socket.emit('signUp',
+	        	{
+	        		id : id,
+		    		nowX : nowX,
+		    		nowY : nowY
 	        	}
 	        );
 	    };
@@ -98,7 +111,7 @@
 	        	{
 	        		id : id,
 		    		nowX : nowX,
-		    		nowY : nowY,
+		    		nowY : nowY
 	        	}
 	        );
         };
@@ -131,12 +144,14 @@
 		socket.on('returnIndex', function (data) {
         	index = data.index;
         	$("#index").html("<b>index : " + index + "</b>");
-        	socket.emit('getCargoEndPoint',
-        		{
-        			nowX : nowX,
-		    		nowY : nowY 
-        		}
-        	);
+        	if(auto){
+	        	socket.emit('getCargoEndPoint',
+	        		{
+	        			nowX : nowX,
+			    		nowY : nowY 
+	        		}
+	        	);
+        	}
 		});
 
 		socket.on('returnCargoEndPoint', function (data) {

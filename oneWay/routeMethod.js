@@ -118,10 +118,9 @@ function checkNumberPlate(index){
 /*
   尋找robot index
   params robotId robot編號
-         socket socket連線(用於發送returnIndex事件)
   return index
 */
-exports.findIndex = function(robotId, socket){
+exports.findIndex = function(robotId){
 	let pointLength = point.length;
 	for(let i = 0; i < pointLength; ++i){
 		if(robotId == point[i].id){
@@ -342,7 +341,7 @@ exports.findRestRoute = function(nowX, nowY, robotId, index){
   return 無
   會將抽出的號碼牌存進numberPlate Array中
 */
-exports.signUpdrawNumberPlate = function(index){
+exports.signUpDrawNumberPlate = function(index){
 	numberPlate.push(
 		{
 			x : point[index].x,
