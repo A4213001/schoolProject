@@ -141,19 +141,26 @@ function getCoordinate(x,y){
    	}else{
    		return null;
    	}
-   	return {  'x' : coordinateX , 'y': coordinateY};  
+   	return {  'x' : coordinateX , 'y': coordinateY};
 }
 
 var screen=true;
 function mouseDownHandler(event){
-   screen?outputCoordinate():inputAim(coordinateX,coordinateY);
+   screen?outputCoordinate():inputChangeAim(coordinateX,coordinateY);
 }
 
 function outputCoordinate(){
    	if (getId()!=null) {
-		document.getElementById("mouseDown").innerHTML="id: "+getId()+"<br/>";
-		document.getElementById("mouseDown").innerHTML+="目標座標: "+"(0,0)";
+		document.getElementById("mouseDown").innerHTML="id: "+getId()+"<br/>"+"目標座標: ("+getAim().x+","+getAim().y+")";
+		// document.getElementById("mouseDown").innerHTML+="目標座標: ("+getAim(getId()).x+","+getAim(getId()).y+")";
    	}else document.getElementById("mouseDown").innerHTML="";
+}
+
+function getAim(){   //////////////////測試
+	for(i in aim){
+		if(aim[i].id==getId()) return {'x' : aim[i].x , 'y': aim[i].y};
+		// return aim[i].id==getId()?{'x' : aim[i].x , 'y': aim[i].y};
+	}
 }
 
 function getId(){
@@ -181,24 +188,41 @@ function onDocumenDblClick(event) {
  //                });
  //  	});
 	if(getId()!=null){
-		document.getElementById("dddd").innerHTML="請點選目的地或<button onclick='closeAim()'>取消</button>";
+		document.getElementById("dddd").innerHTML="請點選目的地或<button onclick='closeChangeAim()'>取消</button>";
 		screen=false;
 		focusId=getId();
 	}
 }
 
-function inputAim(x,y){  //
+function inputChangeAim(x,y){  //
 	//傳給後端x,y
 	//等待後端傳成功的訊息
-	outputAim(x,y);
+	outputChangeAim(x,y);
 }
 
-function closeAim(){
+function closeChangeAim(){
 	screen=true;
 	document.getElementById("dddd").innerHTML="已取消";
 }
 
-function outputAim(x,y){
+function outputChangeAim(x,y){
 	document.getElementById("dddd").innerHTML="("+x+","+y+")輸入完成";
 	screen=true;
 }
+
+var aim=new Array();
+$(document).ready(function() {
+	socket.on('changeEndPoint', function(data) {
+		let end=data.endPoint,
+			input=false;
+		for(i in aim){
+			if(aim[i].id==end.id){
+				aim[i].x=end.x;
+				aim[i].y=end.y;
+				input=true;
+				break;
+			}
+		}
+		if(!input) aim.push({ 'id': end.id, 'x': end.x, 'y': end.y });
+	});
+});
