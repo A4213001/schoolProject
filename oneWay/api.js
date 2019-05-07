@@ -32,4 +32,13 @@ api.post('/controlRobot', function(req, res) {
 	res.json({ route : route[index]});
 });
 
+api.post('/insertCargo', function(req, res) {
+	let params = req.body;
+	if(params.x == 0){
+		cargo.left[params.y].unshift(params.targetY);
+	} else if (params.x == 13){
+		cargo.right[params.y].unshift(params.targetY);
+	}
+});
+
 module.exports = api;

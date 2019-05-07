@@ -85,6 +85,7 @@ exports.onSetAddress = function(data){
 }
 
 exports.onSignUp = function(data, socket){
+    console.log(data.id);
     point.push(
         {
             x : data.nowX,

@@ -42,6 +42,10 @@ app.get('/demo', function (req, res) {
 io.on('connection', function (socket) {
     serverRobotEvent.onConnection(io);
 
+    socket.on('joinView', function(data) {
+        socket.join('view');
+    });
+
     socket.on('signUp', function (data) {
         serverRobotEvent.onSignUp(data, socket);
     });
