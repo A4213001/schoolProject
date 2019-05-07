@@ -175,21 +175,10 @@ function getId(){
 
 var focusId;
 function onDocumenDblClick(event) {
-	// $(function() {
-	// 	$( event ).dialog({
- //                    buttons: {
- //                        "Yes": function() {alert('you chose yes');},
- //                        "No":  function() {alert('you chose no');},
- //                        "Cancel":  function() {
- //                            alert('you chose cancel');
- //                            dialog.dialog('close');
- //                        }
- //                    }
- //                });
- //  	});
 	if(getId()!=null){
 		document.getElementById("dddd").innerHTML="請點選目的地或<button onclick='closeChangeAim()'>取消</button>";
 		screen=false;
+		getRoute();
 		focusId=getId();
 	}
 }
@@ -226,3 +215,18 @@ $(document).ready(function() {
 		if(!input) aim.push({ 'id': end.id, 'x': end.x, 'y': end.y });
 	});
 });
+
+var route;
+function getRoute(){
+	$.ajax({
+		url: 'http://localhost/api/getRoute/'+getId(),
+		type: 'GET',
+		error: function(){
+			console.log('error');
+		},
+		success: function(e){
+			route=e.route.routePoint;
+			// console.log(route[0].x);
+		}
+	});
+}
