@@ -25,7 +25,7 @@ api.get('/getRoute/:id', function(req, res) {
 	}
 });
 
-api.post('/test', function(req, res) {
+api.post('/controlRobot', function(req, res) {
 	let params = req.body;
 	let index = routeMethod.findIndex(params.id);
 	routeMethod.findRoute(point[index].x, point[index].y, params.x, params.y, params.id, index);
